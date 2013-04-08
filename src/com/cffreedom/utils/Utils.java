@@ -14,9 +14,16 @@ import java.io.InputStreamReader;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-04-08 - markjacobsen.net - Added JavaDoc comments
  */
 public class Utils
 {
+	/**
+     * @param val The number to evaluate
+     * @return True if we can convert the value to an integer, otherwise false
+     */
 	public static boolean isInt(String val)
 	{
 		try
@@ -30,16 +37,20 @@ public class Utils
 		}
 	}
 	
-    public static boolean isNumeric(String a_sVal)
+	/**
+     * @param val The number to evaluate
+     * @return True if all characters in the string are digits, otherwise false
+     */
+    public static boolean isNumeric(String val)
     {
-        if (a_sVal.length() == 0)
+        if (val.length() == 0)
         {
             return false;
         }
        
-        for (int x = 0; x < a_sVal.length(); x++)
+        for (int x = 0; x < val.length(); x++)
         {
-            if (Character.isDigit(a_sVal.charAt(x)) == false)
+            if (Character.isDigit(val.charAt(x)) == false)
             {
                 return false;
             }
@@ -47,18 +58,26 @@ public class Utils
         return true;
     }
    
-    public static boolean isDate(String a_sVal)
+    /**
+     * @param val The date to evaluate
+     * @return True if we can convert it to a date, otherwise false
+     */
+    public static boolean isDate(String val)
     {
         try
         {
-            ConversionUtils.toDate(a_sVal);
+            ConversionUtils.toDate(val);
             return true;
         }catch (Exception e){
             return false;
         }
     }
     
-    public static void output(String val) { output(val, true); }
+    /**
+     * This is really just a wrapper to System.out.println and System.out.print - just shorter Utils.output("something")
+     * @param val What to output
+     * @param newline Include a newline at the end of the output
+     */
     public static void output(String val, boolean newline)
     {
     	if (newline == true) {
@@ -67,14 +86,29 @@ public class Utils
     		System.out.print(val);
     	}
     }
+    public static void output(String val) { output(val, true); }
     
+    /**
+     * Convenience method for prompting for input without any prompt shown on screen.
+     * Useful for continuation of input until a special character is read.
+     * @return The value the user types in
+     */
     public static String promptBare() { return prompt(null, null, false); } 
     
-    public static String promptPassword() { return promptPassword("Password"); }
+    /**
+     * Convenience method for prompting for a password
+     * @param prompt What to prompt the user with (ex: "Password:")
+     * @return The value the user types in
+     */
     public static String promptPassword(String prompt) { return prompt(prompt, null, true); }
+    public static String promptPassword() { return promptPassword("Password"); }
     
-    public static String prompt(String prompt) { return prompt(prompt, null); }
-    public static String prompt(String prompt, String defaultVal) { return prompt(prompt, defaultVal, false); }
+    /**
+     * @param prompt What to prompt the user with (ex: "Username:")
+     * @param defaultVal The value to use if the user just presses enter (ex: "Username [jdoe]:")
+     * @param isPassword If true, don't show the characters the user types
+     * @return The value the user types in
+     */
     public static String prompt(String prompt, String defaultVal, boolean isPassword)
 	{
     	String enteredVal = null;
@@ -120,7 +154,13 @@ public class Utils
 		
 		return enteredVal;
 	}
+    public static String prompt(String prompt) { return prompt(prompt, null); }
+    public static String prompt(String prompt, String defaultVal) { return prompt(prompt, defaultVal, false); }
     
+    /**
+     * @param val String to get the last character from.
+     * @return The last character (as a String) in the passed in string.
+     */
     public static String lastChar(String val)
     {
     	if (val.length() > 0)
