@@ -1,3 +1,10 @@
+bin
+build.xml
+testing
+
+.classpath
+.project
+
 *.class
 
 # Package Files #
