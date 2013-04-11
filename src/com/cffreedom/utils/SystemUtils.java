@@ -15,6 +15,9 @@ import java.io.IOException;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-04-11 	markjacobsen.net 	Changed getHomeDir() to use HOMEPATH and HOMEDRIVE when on Windows
  */
 public class SystemUtils
 {
@@ -30,7 +33,13 @@ public class SystemUtils
 	public static String getHomeDir()
 	{
 		if (isWindows() == true){
-			return getEnvVal("USERPROFILE");
+			String homePath = getEnvVal("HOMEPATH");
+			if (homePath.substring(homePath.length() - 1).equalsIgnoreCase("\\") == true)
+			{
+				// Strip the any trailing \
+				homePath = homePath.substring(0, homePath.length() - 1);
+			}
+			return getEnvVal("HOMEDRIVE") + homePath;
 		}else{
 			return getEnvVal("HOME");
 		}
