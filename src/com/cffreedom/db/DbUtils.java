@@ -25,6 +25,9 @@ import com.cffreedom.utils.Utils;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-04-11 	markjacobsen.net 	Added the ability to specify outputTo to runSql() - null/STDOUT or fileName
  */
 public class DbUtils
 {
@@ -160,7 +163,8 @@ public class DbUtils
 	}
 	
 	public static boolean runSql(Connection conn, String sql) { return runSql(conn, sql, FORMAT.XML); }
-	public static boolean runSql(Connection conn, String sql, FORMAT format)
+	public static boolean runSql(Connection conn, String sql, FORMAT format) { return runSql(conn, sql, format, null); }
+	public static boolean runSql(Connection conn, String sql, FORMAT format, String outputTo)
 	{
 		final String METHOD = "runSql";
 		boolean success = false;
@@ -175,7 +179,7 @@ public class DbUtils
 			if ((format.compareTo(DbUtils.FORMAT.NO_OUTPUT) != 0) && (hasResults == true))
 			{
 				ResultSet rs = stmt.getResultSet();
-				outputResultSet(rs, null, format);
+				outputResultSet(rs, outputTo, format);
 				try { rs.close(); } catch (Exception e) {}
 			}
 			
