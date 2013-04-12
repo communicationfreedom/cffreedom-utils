@@ -1,5 +1,13 @@
 package com.cffreedom.db;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -7,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -28,12 +37,13 @@ import com.cffreedom.utils.Utils;
  * 
  * Changes:
  * 2013-04-11 	markjacobsen.net 	Added the ability to specify outputTo to runSql() - null/STDOUT or fileName
+ * 2013-04-12	markjacobsen.net 	Added getObjectSerializedInBlob()
  */
 public class DbUtils
 {
 	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
 	
-	public static enum FORMAT {CSV,TAB,XML,NO_OUTPUT};
+	public static enum FORMAT {CSV,TAB,XML,RAW,NO_OUTPUT};
 		
 	public static String testConnection(String type, String host, String db, int port, String user, String pass)
 	{
@@ -190,11 +200,19 @@ public class DbUtils
 		{
 			success = false;
 		}
+		catch (IOException e)
+		{
+			success = false;
+		}
+		catch (ClassNotFoundException e)
+		{
+			success = false;
+		}
 		return success;
 	}
 	
-	public static void outputResultSet(ResultSet rs, String file, FORMAT format) throws SQLException
-	{
+	public static void outputResultSet(ResultSet rs, String file, FORMAT format) throws SQLException, IOException, ClassNotFoundException
+	{		
 		if (rs != null)
 		{
 			StringBuffer sb = new StringBuffer();
@@ -206,7 +224,10 @@ public class DbUtils
 			if (format.compareTo(DbUtils.FORMAT.TAB) == 0) { separator = "\t"; }
 			
 			// START: Output header
-			if (format.compareTo(DbUtils.FORMAT.XML) != 0)
+			if  (
+				(format.compareTo(DbUtils.FORMAT.XML) != 0) &&
+				(format.compareTo(DbUtils.FORMAT.RAW) != 0)
+				)
 			{
 				// Output column headers
 				for (int i = 1; i <= cols; i++) // ResultSet columns are 1 (not 0) based
@@ -215,7 +236,7 @@ public class DbUtils
 				}
 				sb.append("\n");
 			}
-			else
+			else if (format.compareTo(DbUtils.FORMAT.XML) == 0)
 			{
 				sb.append("<results>\n");
 			}
@@ -254,6 +275,40 @@ public class DbUtils
 				FileUtils.writeStringToFile(file, sb.toString(), false);
 			}
 		}
+	}
+	
+	/** 
+	 * @param conn DB Connection
+	 * @param sql SQL to get back 1 row with 1 field that is a BLOB
+	 * @return The contents of the BLOB as an Object
+	 */
+	public static Object getObjectSerializedInBlob(Connection conn, String sql)
+	{
+		Object returnVal = null;
+		try
+		{
+			Statement stmt = conn.createStatement();
+			boolean hasResults = stmt.execute(sql);
+			if (hasResults == true)
+			{
+				ResultSet rs = stmt.getResultSet();
+				while (rs.next() == true)
+				{
+					byte[] buf = rs.getBytes(1);
+				    ObjectInputStream objectIn = null;
+				    if (buf != null)
+				    {
+				    	objectIn = new ObjectInputStream(new ByteArrayInputStream(buf));
+				    }
+				    returnVal = objectIn.readObject();
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			returnVal = null;
+		}
+		return returnVal;
 	}
 	
 	public static boolean validFormat(String valueToCheck)
