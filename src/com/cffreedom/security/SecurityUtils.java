@@ -1,5 +1,7 @@
 package com.cffreedom.security;
 
+import com.cffreedom.utils.FileUtils;
+
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
@@ -11,6 +13,9 @@ package com.cffreedom.security;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-04-11 	markjacobsen.net 	Added savePasswordToFile() and getPasswordFromFile()
  */
 public class SecurityUtils
 {
@@ -32,5 +37,25 @@ public class SecurityUtils
 		}
 		
 		return work.toString();
+	}
+	
+	/**
+	 * Use the crappy encryptDecrypt() function and save the value to a file
+	 * @param file File to save the pw to
+	 * @param password Password to encrypt
+	 * @return true on success
+	 */
+	public static boolean savePasswordToFile(String file, String password)
+	{
+		return FileUtils.writeStringToFile(file, encryptDecrypt(password), false);
+	}
+	
+	/**
+	 * @param file File containing the password
+	 * @return The unencrypted password
+	 */
+	public static String getPasswordFromFile(String file)
+	{
+		return encryptDecrypt(FileUtils.getFileContents(file));
 	}
 }
