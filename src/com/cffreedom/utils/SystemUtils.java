@@ -18,6 +18,7 @@ import java.io.IOException;
  * 
  * Changes:
  * 2013-04-11 	markjacobsen.net 	Changed getHomeDir() to use HOMEPATH and HOMEDRIVE when on Windows
+ * 2013-04-11 	markjacobsen.net 	Added getTempDir()
  */
 public class SystemUtils
 {
@@ -60,6 +61,13 @@ public class SystemUtils
 	public static String getMyCFConfigDir()
 	{
 		String dir = getHomeDir() + getPathSeparator() + "CFConfig";
+		FileUtils.createFolder(dir);
+		return dir;
+	}
+	
+	public static String getTempDir()
+	{
+		String dir = getMyCFConfigDir() + getPathSeparator() + "temp";
 		FileUtils.createFolder(dir);
 		return dir;
 	}
