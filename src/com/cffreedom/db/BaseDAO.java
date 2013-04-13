@@ -21,6 +21,9 @@ import com.cffreedom.utils.LoggerUtil;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-04-12 	markjacobsen.net 	Added SQL_TEST_SQLSERVER
  */
 public class BaseDAO
 {
@@ -46,7 +49,8 @@ public class BaseDAO
 	public final static String TYPE_SQL_SERVER = "SQL_SERVER";
 	public final static String TYPE_ODBC = "ODBC";
 	public final static String TYPE_SQLITE = "SQLITE";
-	
+
+	public final static String SQL_TEST_SQLSERVER = "SELECT getDate()";
 	public final static String SQL_TEST_DB2 = "SELECT CURRENT_TIMESTAMP FROM SYSIBM.SYSDUMMY1";
 
 	public BaseDAO()
