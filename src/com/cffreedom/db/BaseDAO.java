@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
+import com.cffreedom.beans.DbConn;
 import com.cffreedom.utils.ConversionUtils;
 import com.cffreedom.utils.LoggerUtil;
 
@@ -23,7 +24,7 @@ import com.cffreedom.utils.LoggerUtil;
  * 3) Linking to: http://visit.markjacobsen.net
  * 
  * Changes:
- * 2013-04-12 	markjacobsen.net 	Added SQL_TEST_SQLSERVER
+ * 2013-04-12 	markjacobsen.net 	Added SQL_TEST_SQLSERVER and additional getConn() method
  */
 public class BaseDAO
 {
@@ -169,11 +170,13 @@ public class BaseDAO
 		}
 	}
 
-	/**
-	 * This should only be used for testing
-	 * 
-	 * @return
-	 */
+	public static Connection getConn(DbConn dbconn, String user, String pass)
+	{
+		String driver = BaseDAO.getDriver(dbconn.getType());
+		String url = BaseDAO.getUrl(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort());
+		return getConn(driver, url, user, pass);
+	}
+	
 	public static Connection getConn(String driver, String url, String user, String pass)
 	{
 		final String METHOD = "getConn";
