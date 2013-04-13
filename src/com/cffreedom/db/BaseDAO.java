@@ -25,6 +25,7 @@ import com.cffreedom.utils.LoggerUtil;
  * 
  * Changes:
  * 2013-04-12 	markjacobsen.net 	Added SQL_TEST_SQLSERVER and additional getConn() method
+ * 2013-04-12 	markjacobsen.net 	Added methods to check if a "type" is of the requested type (i.e. isMySql())
  */
 public class BaseDAO
 {
@@ -66,27 +67,27 @@ public class BaseDAO
 	
 	public static String getDriver(String type)
 	{
-		if (type.equalsIgnoreCase(BaseDAO.TYPE_MYSQL) == true)
+		if (isMySql(type) == true)
 		{
 			return BaseDAO.DRIVER_MYSQL;
 		}
-		else if (type.equalsIgnoreCase(BaseDAO.TYPE_DB2_JCC) == true)
+		else if (isDb2JCC(type) == true)
 		{
 			return BaseDAO.DRIVER_DB2_JCC;
 		}
-		else if (type.equalsIgnoreCase(BaseDAO.TYPE_DB2_APP) == true)
+		else if (isDb2App(type) == true)
 		{
 			return BaseDAO.DRIVER_DB2_APP;
 		}
-		else if (type.equalsIgnoreCase(BaseDAO.TYPE_SQL_SERVER) == true)
+		else if (isSqlServer(type) == true)
 		{
 			return BaseDAO.DRIVER_SQL_SERVER_2005;
 		}
-		else if (type.equalsIgnoreCase(BaseDAO.TYPE_ODBC) == true)
+		else if (isOdbc(type) == true)
 		{
 			return BaseDAO.DRIVER_ODBC;
 		}
-		else if (type.equalsIgnoreCase(BaseDAO.TYPE_SQLITE) == true)
+		else if (isSqlLite(type) == true)
 		{
 			return BaseDAO.DRIVER_SQLITE;
 		}
@@ -103,7 +104,7 @@ public class BaseDAO
 
 	public static String getUrl(String type, String host, String db, int port)
 	{
-		if (type.equalsIgnoreCase(BaseDAO.TYPE_MYSQL) == true)
+		if (isMySql(type) == true)
 		{
 			if (port <= 0)
 			{
@@ -111,15 +112,15 @@ public class BaseDAO
 			}
 			return "jdbc:mysql://" + host + ":" + port + "/" + db;
 		}
-		else if (type.equalsIgnoreCase(BaseDAO.TYPE_DB2_JCC) == true)
+		else if (isDb2JCC(type) == true)
 		{
 			return "jdbc:db2://" + host + ":" + port + "/" + db;
 		}
-		else if (type.equalsIgnoreCase(BaseDAO.TYPE_DB2_APP) == true)
+		else if (isDb2App(type) == true)
 		{
 			return "jdbc:db2:" + db;
 		}
-		else if (type.equalsIgnoreCase(BaseDAO.TYPE_SQL_SERVER) == true)
+		else if (isSqlServer(type) == true)
 		{
 			if (port <= 0)
 			{
@@ -127,11 +128,11 @@ public class BaseDAO
 			}
 			return "jdbc:microsoft:sqlserver://" + host + ":" + port + ";databaseName=" + db;
 		}
-		else if (type.equalsIgnoreCase(BaseDAO.TYPE_ODBC) == true)
+		else if (isOdbc(type) == true)
 		{
 			return "jdbc:odbc:" + db;
 		}
-		else if (type.equalsIgnoreCase(BaseDAO.TYPE_SQLITE) == true)
+		else if (isSqlLite(type) == true)
 		{
 			return "jdbc:sqlite:" + db;
 		}
@@ -147,20 +148,15 @@ public class BaseDAO
 		{
 			return 0;
 		}
-		else if (dbType.equalsIgnoreCase(BaseDAO.TYPE_MYSQL) == true)
+		else if (isMySql(dbType) == true)
 		{
 			return 3306;
 		}
-		else if (dbType.equalsIgnoreCase(BaseDAO.TYPE_SQL_SERVER) == true)
+		else if (isSqlServer(dbType) == true)
 		{
 			return 1443;
 		}
-		else if 
-		(
-			(dbType.equalsIgnoreCase(BaseDAO.TYPE_DB2) == true) ||
-			(dbType.equalsIgnoreCase(BaseDAO.TYPE_DB2_APP) == true) ||
-			(dbType.equalsIgnoreCase(BaseDAO.TYPE_DB2_JCC) == true)
-		)
+		else if (isDb2(dbType) == true)
 		{
 			return 50000;
 		}
@@ -220,18 +216,97 @@ public class BaseDAO
 	
 	public static String getTestSql(String dbType)
 	{
-		if 
-		(
-			(dbType.equalsIgnoreCase(BaseDAO.TYPE_DB2) == true) ||
-			(dbType.equalsIgnoreCase(BaseDAO.TYPE_DB2_APP) == true) ||
-			(dbType.equalsIgnoreCase(BaseDAO.TYPE_DB2_JCC) == true)
-		)
+		if (isDb2(dbType) == true)
 		{
 			 return BaseDAO.SQL_TEST_DB2;
+		}
+		else if (isSqlServer(dbType) == true)
+		{
+			return BaseDAO.SQL_TEST_SQLSERVER;
 		}
 		else
 		{
 			return null;
+		}
+	}	
+	
+	public static boolean isOdbc(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(BaseDAO.TYPE_ODBC) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}	
+	
+	public static boolean isMySql(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(BaseDAO.TYPE_MYSQL) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}	
+	
+	public static boolean isSqlServer(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(BaseDAO.TYPE_SQL_SERVER) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}	
+	
+	public static boolean isSqlLite(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(BaseDAO.TYPE_SQLITE) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}	
+	
+	public static boolean isDb2(String dbType)
+	{
+		if 
+		(
+			(isDb2Misc(dbType) == true) ||
+			(isDb2App(dbType) == true) ||
+			(isDb2JCC(dbType) == true)
+		)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}	
+	
+	public static boolean isDb2Misc(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(BaseDAO.TYPE_DB2) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}	
+	
+	public static boolean isDb2JCC(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(BaseDAO.TYPE_DB2_JCC) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public static boolean isDb2App(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(BaseDAO.TYPE_DB2_APP) == true){
+			return true;
+		}else{
+			return false;
 		}
 	}
 }
