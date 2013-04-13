@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.cffreedom.beans.DbConn;
+import com.cffreedom.exceptions.DbException;
 import com.cffreedom.utils.FileUtils;
 import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.Utils;
@@ -34,6 +35,7 @@ import com.cffreedom.utils.Utils;
  * 2013-04-11 	markjacobsen.net 	Added the ability to specify outputTo to runSql() - null/STDOUT or fileName
  * 2013-04-12	markjacobsen.net 	Added getObjectSerializedInBlob()
  * 2013-04-12 	markjacobsen.net 	Added additional testConnection() that accepts a DbConn bean
+ * 2013-04-12 	markjacobsen.net 	Running test SQL in testConnection() if we can - not just making a connection
  */
 public class DbUtils
 {
@@ -48,13 +50,26 @@ public class DbUtils
 	
 	public static String testConnection(String type, String host, String db, int port, String user, String pass)
 	{
+		final String METHOD = "testConnection";
 		String driver = BaseDAO.getDriver(type);
 		String url = BaseDAO.getUrl(type, host, db, port);
 		try
 		{
 			Connection conn = BaseDAO.getConn(driver, url, user, pass);
+			String testSql = BaseDAO.getTestSql(type);
+			if (testSql != null)
+			{
+				if (runSql(conn, BaseDAO.getTestSql(type)) == false)
+				{
+					throw new DbException(METHOD, "Error running test SQL", null);
+				}
+			}
 			conn.close();
 			return "SUCCESS: " + url;
+		}
+		catch (DbException e)
+		{
+			return e.getMessage();
 		}
 		catch (SQLException e)
 		{
@@ -62,7 +77,7 @@ public class DbUtils
 			String sqlState = e.getSQLState();
 			String readable = "";
 			if  (
-				(type.equalsIgnoreCase(BaseDAO.TYPE_DB2) == true) && 
+				(BaseDAO.isDb2(type) == true) && 
 				(errorCode == -1060) && 
 				(sqlState.equalsIgnoreCase("08004") == true)
 				)
