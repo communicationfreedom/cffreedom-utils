@@ -2,12 +2,7 @@ package com.cffreedom.db;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.sql.Blob;
-import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -15,10 +10,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.cffreedom.beans.DbConn;
 import com.cffreedom.utils.FileUtils;
 import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.Utils;
@@ -38,13 +33,19 @@ import com.cffreedom.utils.Utils;
  * Changes:
  * 2013-04-11 	markjacobsen.net 	Added the ability to specify outputTo to runSql() - null/STDOUT or fileName
  * 2013-04-12	markjacobsen.net 	Added getObjectSerializedInBlob()
+ * 2013-04-12 	markjacobsen.net 	Added additional testConnection() that accepts a DbConn bean
  */
 public class DbUtils
 {
 	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
 	
 	public static enum FORMAT {CSV,TAB,XML,RAW,NO_OUTPUT};
-		
+	
+	public static String testConnection(DbConn dbconn, String user, String pass)
+	{
+		return testConnection(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort(), user, pass);
+	}
+	
 	public static String testConnection(String type, String host, String db, int port, String user, String pass)
 	{
 		String driver = BaseDAO.getDriver(type);
