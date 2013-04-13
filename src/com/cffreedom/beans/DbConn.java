@@ -40,4 +40,11 @@ public class DbConn
 		this.user = user;
 		this.pass = pass;
 	}
+	
+	public String getType() { return this.type; }
+	public String getHost() { return this.host; }
+	public String getDb() { return this.db; }
+	public int getPort() { return this.port; }
+	public String getUser() { return this.user; }
+	public String getPassword() { return this.pass; } 
 }
