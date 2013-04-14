@@ -81,7 +81,7 @@ public class SystemUtils
 	 */
 	public static String getMyCFWorkDir(String[] dirs)
 	{
-		String dir = getHomeDir();
+		String dir = getMyCFWorkDir();
 		
 		for (int x = 0; x < dirs.length; x++)
 		{
