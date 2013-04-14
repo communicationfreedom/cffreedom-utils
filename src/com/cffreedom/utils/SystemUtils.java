@@ -19,6 +19,7 @@ import java.io.IOException;
  * Changes:
  * 2013-04-11 	markjacobsen.net 	Changed getHomeDir() to use HOMEPATH and HOMEDRIVE when on Windows
  * 2013-04-11 	markjacobsen.net 	Added getTempDir()
+ * 2013-04-13 	markjacobsen.net 	Added getMyCFWorkDir() and getMyCFWorkDir(String[] dirs)
  */
 public class SystemUtils
 {
@@ -65,16 +66,42 @@ public class SystemUtils
 		return dir;
 	}
 	
+	public static String getMyCFWorkDir()
+	{
+		String dir = getHomeDir() + getPathSeparator() + "CFWork";
+		FileUtils.createFolder(dir);
+		return dir;
+	}
+	
+	/**
+	 * Get a subdirectory off the working directory being sure to create
+	 * each subdir if it does not exist
+	 * @param dirs Array of directories off the working dir
+	 * @return The full path
+	 */
+	public static String getMyCFWorkDir(String[] dirs)
+	{
+		String dir = getHomeDir();
+		
+		for (int x = 0; x < dirs.length; x++)
+		{
+			dir += getPathSeparator() + dirs[x];
+			FileUtils.createFolder(dir);
+		}
+		
+		return dir;
+	}
+	
 	public static String getTempDir()
 	{
-		String dir = getMyCFConfigDir() + getPathSeparator() + "temp";
+		String dir = getMyCFWorkDir() + getPathSeparator() + "temp";
 		FileUtils.createFolder(dir);
 		return dir;
 	}
 	
 	public static String getDefaultOutputFile()
 	{
-		String file = getMyCFConfigDir() + getPathSeparator() + "default.out";
+		String file = getMyCFWorkDir() + getPathSeparator() + "default.out";
 		FileUtils.createFile(file, true);
  		return file;
 	}
