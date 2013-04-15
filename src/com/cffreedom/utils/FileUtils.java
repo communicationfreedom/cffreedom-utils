@@ -15,6 +15,9 @@ import java.util.jar.*;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-04-14 	markjacobsen.net 	Added concatFiles()
  */
 public class FileUtils
 {
@@ -373,6 +376,56 @@ public class FileUtils
 				fos.write(buf, 0, i);
 			}
 			fis.close();
+			fos.close();
+
+			success = true;
+		}
+		catch (Exception e)
+		{
+			success = false;
+			e.printStackTrace();
+		}
+
+		return success;
+	}
+	
+	/**
+	 * Does a byte by byte concatenation of 1 or more files
+	 * @param files Array of full file names to concatenate together
+	 * @param outputFile The file to output them to
+	 * @return true on success
+	 */
+	public static boolean concatFiles(String[] files, String outputFile)
+	{
+		boolean success = false;
+		File src;
+		File dst;
+
+		try
+		{
+			dst = new File(outputFile);
+			if (dst.exists() == false)
+			{
+				success = new File(outputFile).createNewFile();
+			}
+			FileOutputStream fos = new FileOutputStream(dst);
+			
+			// Concatenate the files
+			for (int x = 0; x < files.length; x++)
+			{
+				src = new File(files[x]);
+				FileInputStream fis = new FileInputStream(src);
+				
+				byte[] buf = new byte[1024];
+				
+				// Get file 1
+				int i = 0;
+				while ((i = fis.read(buf)) != -1)
+				{
+					fos.write(buf, 0, i);
+				}
+				fis.close();
+			}
 			fos.close();
 
 			success = true;
