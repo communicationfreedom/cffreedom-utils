@@ -36,6 +36,7 @@ import com.cffreedom.utils.Utils;
  * 2013-04-12	markjacobsen.net 	Added getObjectSerializedInBlob()
  * 2013-04-12 	markjacobsen.net 	Added additional testConnection() that accepts a DbConn bean
  * 2013-04-12 	markjacobsen.net 	Running test SQL in testConnection() if we can - not just making a connection
+ * 2013-04-16 	markjacobsen.net 	testConnection() methods now return a boolean
  */
 public class DbUtils
 {
@@ -43,12 +44,12 @@ public class DbUtils
 	
 	public static enum FORMAT {CSV,TAB,XML,RAW,NO_OUTPUT};
 	
-	public static String testConnection(DbConn dbconn, String user, String pass)
+	public static boolean testConnection(DbConn dbconn, String user, String pass)
 	{
 		return testConnection(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort(), user, pass);
 	}
 	
-	public static String testConnection(String type, String host, String db, int port, String user, String pass)
+	public static boolean testConnection(String type, String host, String db, int port, String user, String pass)
 	{
 		final String METHOD = "testConnection";
 		String driver = BaseDAO.getDriver(type);
@@ -65,11 +66,13 @@ public class DbUtils
 				}
 			}
 			conn.close();
-			return "SUCCESS: " + url;
+			Utils.output("SUCCESS: " + url);
+			return true;
 		}
 		catch (DbException e)
 		{
-			return e.getMessage();
+			Utils.output("ERROR: " + e.getMessage());
+			return false;
 		}
 		catch (SQLException e)
 		{
@@ -84,7 +87,8 @@ public class DbUtils
 			{
 				readable = user + " does not have CONNECT permission: ";
 			}
-			return "ERROR: SQLException: " + readable + url + ": " + e.getMessage() + " (" + errorCode + "/" + sqlState + ")";
+			Utils.output("ERROR: SQLException: " + readable + url + ": " + e.getMessage() + " (" + errorCode + "/" + sqlState + ")");
+			return false;
 		}
 	}
 	
