@@ -301,9 +301,11 @@ public class DbUtils
 	 * @param conn DB Connection
 	 * @param sql SQL to get back 1 row with 1 field that is a BLOB
 	 * @return The contents of the BLOB as an Object
+	 * @throws DbException 
 	 */
-	public static Object getObjectSerializedInBlob(Connection conn, String sql)
+	public static Object getObjectSerializedInBlob(Connection conn, String sql) throws DbException
 	{
+		final String METHOD = "getObjectSerializedInBlob";
 		Object returnVal = null;
 		try
 		{
@@ -324,9 +326,17 @@ public class DbUtils
 				}
 			}
 		}
-		catch (Exception e)
+		catch (SQLException e)
 		{
-			returnVal = null;
+			throw new DbException(METHOD, "SQLException - " + e.getMessage(), e);
+		}
+		catch (IOException e)
+		{
+			throw new DbException(METHOD, "IOException - " + e.getMessage(), e);
+		}
+		catch (ClassNotFoundException e)
+		{
+			throw new DbException(METHOD, "ClassNotFoundException - " + e.getMessage(), e);
 		}
 		return returnVal;
 	}
