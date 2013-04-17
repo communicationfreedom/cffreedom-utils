@@ -33,6 +33,11 @@ public class ApplicationStateException extends Exception
 	{
 		super(message);
 	}
+
+	public ApplicationStateException(String source, String message)
+	{
+		super(source + ": " + message);
+	}
 	
 	public ApplicationStateException(String source, String message, Throwable exception)
 	{

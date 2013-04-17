@@ -34,6 +34,11 @@ public class GeneralException extends Exception
 		super(message);
 	}
 	
+	public GeneralException(String source, String message)
+	{
+		super(source + ": " + message);
+	}
+	
 	public GeneralException(String source, String message, Throwable exception)
 	{
 		super(source + ": " + message, exception);

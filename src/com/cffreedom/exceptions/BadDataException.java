@@ -34,6 +34,11 @@ public class BadDataException extends Exception
 		super(message);
 	}
 	
+	public BadDataException(String source, String message)
+	{
+		super(source + ": " + message);
+	}
+	
 	public BadDataException(String source, String message, Throwable exception)
 	{
 		super(source + ": " + message, exception);

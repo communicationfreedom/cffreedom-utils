@@ -34,6 +34,11 @@ public class DbException extends Exception
 		super(message);
 	}
 	
+	public DbException(String source, String message)
+	{
+		super(source + ": " + message);
+	}
+	
 	public DbException(String source, String message, Throwable exception)
 	{
 		super(source + ": " + message, exception);
