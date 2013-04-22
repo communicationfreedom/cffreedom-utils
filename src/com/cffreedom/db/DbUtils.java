@@ -37,6 +37,7 @@ import com.cffreedom.utils.Utils;
  * 2013-04-12 	markjacobsen.net 	Added additional testConnection() that accepts a DbConn bean
  * 2013-04-12 	markjacobsen.net 	Running test SQL in testConnection() if we can - not just making a connection
  * 2013-04-16 	markjacobsen.net 	testConnection() methods now return a boolean
+ * 2013-04-22 	markjacobsen.net 	Added toInClausItems()
  */
 public class DbUtils
 {
@@ -353,4 +354,38 @@ public class DbUtils
     		return false;
     	}
     }
+	
+	/**
+	 * Convert a ArrayList of Strings to a SQL IN clause values ex: 'val 1', 'val 2', 'something else'
+	 * @param vals ArrayList of strings
+	 * @param stringList true if you want values surrounded by single quotes
+	 * @return String containing SQL IN clause values
+	 */
+	public static String toInClausItems(ArrayList<String> vals, boolean stringList)
+	{
+		StringBuffer retVal = new StringBuffer();
+		String valPrefix = "";
+		String valSuffix = "";
+		int counter = 0;
+		
+		if (stringList == true)
+		{
+			valPrefix = "\'";
+			valSuffix = "\'";
+		}
+		
+		for (String val : vals)
+		{
+			counter++;
+			retVal.append(valPrefix);
+			retVal.append(val);
+			retVal.append(valSuffix);
+			if (counter < vals.size())
+			{
+				retVal.append(", ");
+			}
+		}
+		
+		return retVal.toString();
+	}
 }
