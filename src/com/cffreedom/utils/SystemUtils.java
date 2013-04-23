@@ -20,6 +20,7 @@ import java.io.IOException;
  * 2013-04-11 	markjacobsen.net 	Changed getHomeDir() to use HOMEPATH and HOMEDRIVE when on Windows
  * 2013-04-11 	markjacobsen.net 	Added getTempDir()
  * 2013-04-13 	markjacobsen.net 	Added getMyCFWorkDir() and getMyCFWorkDir(String[] dirs)
+ * 2013-04-23 	markjacobsen.net	Added execIt()
  */
 public class SystemUtils
 {
@@ -111,6 +112,16 @@ public class SystemUtils
 		return System.getenv().get(key);
 	}
 	
+	/**
+	 * Run a random command and don't care if it succeeds.  Useful for popping a file in notepad or something
+	 * @param command The command to run (ex: "\"C:\\Program Files\\Notepad++\\notepad++.exe\" \"" + file + "\"")
+	 */
+	public static void execIt(String command)
+	{
+		try{
+			Process process = Runtime.getRuntime().exec(command);
+		}catch (Exception e){}
+	}
 	
 	public static int exec(String command) { return exec(command, null); }
 	public static int exec(String command, String[] args) { return exec(command, args, null); }
