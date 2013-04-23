@@ -1,0 +1,35 @@
+<project name="cffreedom-utils" default="done" basedir=".">
+	<description>Build the cffreedom-utils.jar file</description>
+	
+	<loadproperties srcFile="build.properties" />
+	
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="lib" location="lib"/>
+	
+	<path id="libraries">
+	    <fileset dir="C:\My Dropbox\Dev\cffreedom-dependencies" includes="cffreedom-dependencies.jar" />
+		<fileset dir="C:\My Dropbox\Dev\cffreedom-dependencies\lib" includes="cfusion.jar" /> 
+	</path>
+	
+	<target name="init">
+		<tstamp />
+		<delete file="${jar.dest}"/>
+		<delete dir="${build}"/>
+		<mkdir dir="${build}"/>
+	</target>
+	
+	<target name="compile" depends="init" description="compile the source">
+	    <!-- Compile the java code from ${src} into ${build} -->
+		<javac srcdir="${src}" destdir="${build}" classpathref="libraries" />
+	</target>
+	
+	<target name="package" depends="compile">
+		<jar destfile="${jar.dest}" basedir="${build}">
+			<fileset dir="${src}" includes="**/*.java" />
+		</jar>
+	</target>
+	
+	<target name="done" depends="package">
+	</target>
+</project>
