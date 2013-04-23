@@ -18,6 +18,9 @@ import com.cffreedom.utils.LoggerUtil;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-04-23 	markjacobsen.net 	Removed old ColdFusion connection logic
  */
 public class ConnectionFactory
 {
@@ -25,7 +28,6 @@ public class ConnectionFactory
 
 	public static final int FACTORY_TYPE_UNKNOWN = 0;
 	public static final int FACTORY_TYPE_JNDI = 1;
-	public static final int FACTORY_TYPE_CF = 3;
 	public static final int FACTORY_TYPE_BATCH = 2;
 
 	private int factoryType = FACTORY_TYPE_UNKNOWN;
@@ -68,8 +70,8 @@ public class ConnectionFactory
 	}
 
 	/**
-	 * Get a Connection (Really a com.cffreedom.db.DbConnection) for
-	 * the passed in key.
+	 * Get a Connection (Really a com.cffreedom.db.DbConnection) for the passed
+	 * in key.
 	 * 
 	 * @param key
 	 *            DB to get connection for. If an I3K app, the "key" should be
@@ -82,18 +84,7 @@ public class ConnectionFactory
 
 		Connection conn = null;
 
-		if (this.getFactoryType() == FACTORY_TYPE_CF)
-		{
-			try
-			{
-				conn = coldfusion.server.ServiceFactory.getDataSourceService().getDatasource(key).getConnection();
-			}
-			catch (SQLException sqe)
-			{
-				logger.logWarn(METHOD, "ColdFusion Connection not found for key: " + key);
-			}
-		}
-		else if (this.getFactoryType() == FACTORY_TYPE_JNDI)
+		if (this.getFactoryType() == FACTORY_TYPE_JNDI)
 		{
 			logger.logDebug(METHOD, "Getting jndi connection: " + key);
 			try
