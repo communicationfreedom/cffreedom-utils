@@ -8,8 +8,7 @@
 	<property name="lib" location="lib"/>
 	
 	<path id="libraries">
-	    <fileset dir="C:\My Dropbox\Dev\cffreedom-dependencies" includes="cffreedom-dependencies.jar" />
-		<fileset dir="C:\My Dropbox\Dev\cffreedom-dependencies\lib" includes="cfusion.jar" /> 
+	    <fileset dir="D:\jpod\eclipse\workspace\jPod Utils\lib" includes="cffreedom-dependencies.jar" />
 	</path>
 	
 	<target name="init">
