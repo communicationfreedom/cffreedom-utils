@@ -1,6 +1,7 @@
-package com.cffreedom.utils;
+package com.cffreedom.net;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -8,6 +9,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
+
+import com.cffreedom.exceptions.GeneralException;
+import com.cffreedom.utils.LoggerUtil;
+import com.cffreedom.utils.SystemUtils;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -20,6 +25,10 @@ import java.util.Map;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-04-24 	markjacobsen.net 	Moved from com.cffreedom.utils to com.cffreedom.net package
+ * 2013-04-24 	markjacobsen.net 	Added optional setupProxy param to httpGet() and created httpPost()
  */
 public class HttpUtils
 {
@@ -42,12 +51,13 @@ public class HttpUtils
 	}
 	
 	public static String httpGet(String urlStr) throws IOException { return httpGet(urlStr, null); }
-	public static String httpGet(String urlStr, Map<String, String> queryParams) throws IOException
+	public static String httpGet(String urlStr, Map<String, String> queryParams) throws IOException { return httpGet(urlStr, queryParams, true); }
+	public static String httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws IOException
 	{
 		final String METHOD = "httpGet";
 		urlStr = buildUrl(urlStr, queryParams);
 		
-		setupProxy();
+		if (setupProxy == true) { setupProxy(); }
 		
 		URL url = new URL(urlStr);
 		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -90,6 +100,53 @@ public class HttpUtils
 
 		conn.disconnect();
 		return sb.toString();
+	}
+	
+	public static String httpPost(String urlStr, Map<String, String> queryParams) throws GeneralException, IOException { return httpPost(urlStr, queryParams, true); }
+	public static String httpPost(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws GeneralException, IOException
+	{
+		final String METHOD = "httpPost";
+		int responseCode = 0;
+		StringBuilder response = new StringBuilder();
+		String urlParameters = encodeParams(queryParams);
+		
+		if (setupProxy == true) { setupProxy(); }
+		
+		URL url = new URL(urlStr);
+		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+		conn.setDoOutput(true);
+		conn.setDoInput(true);
+		conn.setInstanceFollowRedirects(false); 
+		conn.setRequestMethod("POST"); 
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
+		conn.setRequestProperty("charset", "utf-8");
+		conn.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+		conn.setUseCaches(false);
+
+		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		wr.writeBytes(urlParameters);
+		wr.flush();
+		wr.close();
+
+		responseCode = conn.getResponseCode();
+		
+		if ((responseCode == 200) || (responseCode == 301) || (responseCode == 302))
+		{
+			// Buffer the result into a string
+			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String line;
+			while ((line = rd.readLine()) != null) {
+				response.append(line);
+			}
+			rd.close();
+		}
+		
+		conn.disconnect();
+		
+		if (responseCode != 200) {
+			throw new GeneralException(METHOD, "Bad Response Code: " + responseCode);
+		}
+		return response.toString();
 	}
 	
 	public static String encodeParams(Map<String, String> params) throws UnsupportedEncodingException
