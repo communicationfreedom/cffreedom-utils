@@ -1,5 +1,10 @@
 package com.cffreedom.utils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
@@ -20,6 +25,9 @@ import org.apache.commons.codec.binary.Base64;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-04-24 	markjacobsen.net 	Added toString(InputStream)
  */
 public class ConversionUtils
 {
@@ -84,6 +92,17 @@ public class ConversionUtils
 	public static String toString(char[] val)
 	{
 		return new String(val);
+	}
+	
+	public static String toString(InputStream val) throws IOException
+	{
+		StringBuilder sb = new StringBuilder();
+		String line = null;
+		BufferedReader br = new BufferedReader(new InputStreamReader(val));
+		while ((line = br.readLine()) != null) {
+			sb.append(line);
+		}
+		return sb.toString();
 	}
 	
 	//------------------------------------------------------------------
