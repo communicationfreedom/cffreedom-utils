@@ -100,9 +100,9 @@ public class HttpSessionService
 	{
 		final String METHOD = "getRequest";
 		this.lastRequestUrl = url;
-		logger.logDebug(METHOD, "URL: " + url);
+		//logger.logDebug(METHOD, "URL: " + url);
 		HttpGet httpGet = new HttpGet(url);
-		logger.logDebug(METHOD, "Calling execute");
+		//logger.logDebug(METHOD, "Calling execute");
 		HttpResponse response = this.httpClient.execute(httpGet, this.httpContext);
 		processResponse(response);
 		return this.lastResult;
@@ -127,12 +127,12 @@ public class HttpSessionService
 	{
 		final String METHOD = "processResponse";
 		
-		logger.logDebug(METHOD, "Processing response");
+		//logger.logDebug(METHOD, "Processing response");
 		
 		this.lastRedirectUrl = null;
 		this.lastResponse = response;
 		
-		logger.logDebug(METHOD, "Getting lastResult");
+		//logger.logDebug(METHOD, "Getting lastResult");
 		if ((response.getEntity() != null) && (response.getEntity().getContent() != null))
 		{
 			this.lastResult = ConversionUtils.toString(response.getEntity().getContent());
@@ -142,13 +142,13 @@ public class HttpSessionService
 			this.lastResult = response.toString();
 		}
 		
-		logger.logDebug(METHOD, "Getting lastRedirectUrl");
+		//logger.logDebug(METHOD, "Getting lastRedirectUrl");
 		if (response.containsHeader("Location") == true)
 		{
 			this.lastRedirectUrl = response.getLastHeader("Location").getValue();
 		}
 		
-		logger.logDebug(METHOD, "Consuming response");
+		//logger.logDebug(METHOD, "Consuming response");
 		if (response.getEntity() != null) {
 			EntityUtils.consume(response.getEntity());
 	    }
