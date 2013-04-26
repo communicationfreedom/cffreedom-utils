@@ -18,6 +18,7 @@ import java.util.jar.*;
  * 
  * Changes:
  * 2013-04-14 	markjacobsen.net 	Added concatFiles()
+ * 2013-04-26 	markjacobsen.net 	Added getDateStampedFileName() and getTimeStampedFileName()
  */
 public class FileUtils
 {
@@ -801,6 +802,13 @@ public class FileUtils
 		}	
 
 		return success;
+	}
+	
+	public static String getDateStampedFileName(String prefix, String suffix) { return getTimeStampedFileName(prefix, suffix, "yyyy-MM-dd"); }
+	public static String getTimeStampedFileName(String prefix, String suffix) { return getTimeStampedFileName(prefix, suffix, "yyyyMMddHHmmss"); }
+	public static String getTimeStampedFileName(String prefix, String suffix, String mask)
+	{
+		return prefix + DateTimeUtils.formatDate(mask, new Date()) + suffix;
 	}
 	
 	public static boolean touch(String file)
