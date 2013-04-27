@@ -248,8 +248,7 @@ public class DbUtils
 		{
 			Statement stmt = conn.createStatement();
 			LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "Running: " + sql);
-			rs = stmt.executeQuery(sql);			
-			stmt.close();
+			rs = stmt.executeQuery(sql);
 		}
 		catch (SQLException e)
 		{
