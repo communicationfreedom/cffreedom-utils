@@ -38,6 +38,7 @@ import com.cffreedom.utils.Utils;
  * 2013-04-12 	markjacobsen.net 	Running test SQL in testConnection() if we can - not just making a connection
  * 2013-04-16 	markjacobsen.net 	testConnection() methods now return a boolean
  * 2013-04-22 	markjacobsen.net 	Added toInClausItems()
+ * 2013-04-27 	markjacobsen.net 	Added getResultSet()
  */
 public class DbUtils
 {
@@ -232,6 +233,40 @@ public class DbUtils
 		return success;
 	}
 	
+	/**
+	 * Execute SQL and return the result set
+	 * @param conn DB Connection
+	 * @param sql SQL to execute
+	 * @return ResultSet for the SQL
+	 */
+	public static ResultSet getResultSet(Connection conn, String sql)
+	{
+		final String METHOD = "getResultSet";
+		ResultSet rs = null;
+		
+		try
+		{
+			Statement stmt = conn.createStatement();
+			LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "Running: " + sql);
+			rs = stmt.executeQuery(sql);			
+			stmt.close();
+		}
+		catch (SQLException e)
+		{
+			rs = null;
+		}
+		return rs;
+	}
+	
+	/**
+	 * Output the contents of a ResultSet
+	 * @param rs ResultSet to output
+	 * @param file Full path to write output to. Null if output to STDOUT
+	 * @param format How to show the data (delimited, xml, etc)
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public static void outputResultSet(ResultSet rs, String file, FORMAT format) throws SQLException, IOException, ClassNotFoundException
 	{		
 		if (rs != null)
