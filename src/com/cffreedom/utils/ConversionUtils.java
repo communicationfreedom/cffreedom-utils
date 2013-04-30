@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.apache.commons.codec.binary.Base64;
@@ -28,6 +29,7 @@ import org.apache.commons.codec.binary.Base64;
  * 
  * Changes:
  * 2013-04-24 	markjacobsen.net 	Added toString(InputStream)
+ * 2013-04-30 	markjacobsen.net 	Added toArrayListOfStrings()
  */
 public class ConversionUtils
 {
@@ -103,6 +105,16 @@ public class ConversionUtils
 			sb.append(line);
 		}
 		return sb.toString();
+	}
+	
+	public static ArrayList<String> toArrayListOfStrings(String[] vals)
+	{
+		ArrayList<String> ret = new ArrayList<String>();
+		for (int x = 0; x < vals.length; x++)
+		{
+			ret.add(vals[x]);
+		}
+		return ret;
 	}
 	
 	//------------------------------------------------------------------
