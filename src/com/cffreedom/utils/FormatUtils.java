@@ -265,9 +265,9 @@ public class FormatUtils
 		}
 	}
 	
-	public static String pad(String val, int totalChars) { return pad(val, totalChars, true); }
-	public static String pad(String val, int totalChars, boolean padRight) { return pad(val, totalChars, padRight, " "); }
-	public static String pad(String val, int totalChars, boolean padRight, String padChar)
+	public static String pad(String val, int totalChars) { return pad(val, totalChars, " "); }
+	public static String pad(String val, int totalChars, String padChar) { return pad(val, totalChars, padChar, true); }
+	public static String pad(String val, int totalChars, String padChar, boolean padRight)
 	{
 		int len = val.length();
 		if (len < totalChars)
