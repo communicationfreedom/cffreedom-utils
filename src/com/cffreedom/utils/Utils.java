@@ -2,6 +2,7 @@ package com.cffreedom.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -16,7 +17,8 @@ import java.io.InputStreamReader;
  * 3) Linking to: http://visit.markjacobsen.net
  * 
  * Changes:
- * 2013-04-08 - markjacobsen.net - Added JavaDoc comments
+ * 2013-04-08 	markjacobsen.net 	Added JavaDoc comments
+ * 2013-04-30 	markjacobsen.net 	Added longestString()
  */
 public class Utils
 {
@@ -172,4 +174,19 @@ public class Utils
     		return "";
     	}
     }
+    
+    public static int longestString(ArrayList<String> vals)
+    {
+    	int longest = 0;
+    	for (String val : vals)
+    	{
+    		if (val.length() > longest) { longest = val.length(); }
+    	}
+    	return longest;
+    }
+
+	public static int longestString(String[] vals)
+	{
+		return longestString(ConversionUtils.toArrayListOfStrings(vals));
+	}
 }
