@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
  * 
  * Changes:
  * 2013-04-27 	markjacobsen.net 	Added pad()
+ * 2013-04-30 	markjacobsne.net 	Fixed repeatString()
  */
 public class FormatUtils
 {
@@ -98,7 +99,7 @@ public class FormatUtils
 
 	public static String repeatString(String repeatThis, int repeatTimes)
 	{
-		StringBuffer buffer = new StringBuffer(repeatThis);
+		StringBuffer buffer = new StringBuffer();
 		for (int x = 0; x < repeatTimes; x++)
 		{
 			buffer.append(repeatThis);
