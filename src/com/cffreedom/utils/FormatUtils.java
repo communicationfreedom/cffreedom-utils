@@ -18,6 +18,9 @@ import java.text.SimpleDateFormat;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-04-27 	markjacobsen.net 	Added pad()
  */
 public class FormatUtils
 {
@@ -259,5 +262,19 @@ public class FormatUtils
 		{
 			return "";
 		}
+	}
+	
+	public static String pad(String val, int totalChars) { return pad(val, totalChars, true); }
+	public static String pad(String val, int totalChars, boolean padRight) { return pad(val, totalChars, padRight, " "); }
+	public static String pad(String val, int totalChars, boolean padRight, String padChar)
+	{
+		int len = val.length();
+		if (len < totalChars)
+		{
+			String pad = repeatString(padChar, totalChars - len);
+			if (padRight == true) { val += pad; }
+			else { val = pad + val; }
+		}
+		return val;
 	}
 }
