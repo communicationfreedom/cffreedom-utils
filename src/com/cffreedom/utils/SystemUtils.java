@@ -23,6 +23,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-04-11 	markjacobsen.net 	Added getTempDir()
  * 2013-04-13 	markjacobsen.net 	Added getMyCFWorkDir() and getMyCFWorkDir(String[] dirs)
  * 2013-04-23 	markjacobsen.net	Added execIt()
+ * 2013-05-02 	markjacobsen.net 	Added sleep()
  */
 public class SystemUtils
 {
@@ -113,6 +114,17 @@ public class SystemUtils
 	{
 		return System.getenv().get(key);
 	}
+	
+	public static void sleep(int seconds)
+    {
+        final String METHOD = "sleep";
+
+        try {
+            Thread.sleep(seconds * 1000);
+        } catch (InterruptedException e) {
+            LoggerUtil.log(LoggerUtil.LEVEL_ERROR, METHOD, "ERROR: Sleeping");
+        }
+    }
 	
 	/**
 	 * Run a random command and don't care if it succeeds.  Useful for popping a file in notepad or something
