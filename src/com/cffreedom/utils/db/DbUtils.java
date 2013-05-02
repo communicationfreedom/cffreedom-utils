@@ -1,4 +1,4 @@
-package com.cffreedom.db;
+package com.cffreedom.utils.db;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

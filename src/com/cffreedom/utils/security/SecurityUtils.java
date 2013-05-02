@@ -1,4 +1,4 @@
-package com.cffreedom.security;
+package com.cffreedom.utils.security;
 
 import com.cffreedom.utils.FileUtils;
 

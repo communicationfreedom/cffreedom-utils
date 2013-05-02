@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.cffreedom.security.EncryptDecryptProxy;
 import com.cffreedom.utils.FileUtils;
 import com.cffreedom.utils.LoggerUtil;
+import com.cffreedom.utils.security.EncryptDecryptProxy;
 
 /**
  * Simple java based serializable key/value pair manager with the option to

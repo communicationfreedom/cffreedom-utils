@@ -1,4 +1,4 @@
-package com.cffreedom.net;
+package com.cffreedom.utils.net;
 
 import java.util.ArrayList;
 import java.util.Date;

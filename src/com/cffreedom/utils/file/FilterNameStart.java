@@ -1,10 +1,10 @@
-package com.cffreedom.file;
+package com.cffreedom.utils.file;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
 /**
- * FilenameFilter implementation to get only files containing the specified text
+ * FilenameFilter implementation to get only files starting with the specified text
  * 
  * Credit: http://www.java-samples.com/showtutorial.php?tutorialid=384
  * 
@@ -19,17 +19,17 @@ import java.io.FilenameFilter;
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
  */
-public class FilterNameContains implements FilenameFilter
+public class FilterNameStart implements FilenameFilter
 {
 	String find;
 	
-	public FilterNameContains(String find)
+	public FilterNameStart(String find)
 	{
 		this.find = find.toLowerCase();
 	}
 	
 	public boolean accept(File dir, String name)
 	{ 
-		return name.toLowerCase().contains(this.find); 
+		return name.toLowerCase().startsWith(this.find); 
 	}
 }

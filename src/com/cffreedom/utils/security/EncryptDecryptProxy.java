@@ -1,4 +1,4 @@
-package com.cffreedom.security;
+package com.cffreedom.utils.security;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

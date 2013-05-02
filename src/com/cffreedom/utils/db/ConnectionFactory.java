@@ -1,4 +1,4 @@
-package com.cffreedom.db;
+package com.cffreedom.utils.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;

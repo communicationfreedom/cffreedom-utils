@@ -1,4 +1,4 @@
-package com.cffreedom.net;
+package com.cffreedom.utils.net;
 
 import java.io.IOException;
 import java.security.KeyManagementException;

@@ -2,7 +2,7 @@ package com.cffreedom.utils;
 
 import java.io.File;
 
-import com.cffreedom.file.FilterNameEnd;
+import com.cffreedom.utils.file.FilterNameEnd;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
