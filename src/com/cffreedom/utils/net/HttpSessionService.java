@@ -72,8 +72,7 @@ public class HttpSessionService
 		{
 			TrustStrategy easyStrategy = new TrustStrategy()
 			{
-				@Override
-			    public boolean isTrusted(X509Certificate[] chain, String authType)
+				public boolean isTrusted(X509Certificate[] chain, String authType)
 			    {
 			        return true;
 			    }

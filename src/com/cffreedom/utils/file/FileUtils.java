@@ -459,7 +459,7 @@ public class FileUtils
 		boolean success = false;
 		try
 		{
-			com.cffreedom.utils.file.FileUtils.copyDirectory(new File(source), new File(destination));
+			org.apache.commons.io.FileUtils.copyDirectory(new File(source), new File(destination));
 			success = true;
 		}
 		catch (IOException e)
