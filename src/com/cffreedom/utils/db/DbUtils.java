@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 
 import com.cffreedom.beans.DbConn;
 import com.cffreedom.exceptions.DbException;
-import com.cffreedom.utils.FileUtils;
 import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.Utils;
+import com.cffreedom.utils.file.FileUtils;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)

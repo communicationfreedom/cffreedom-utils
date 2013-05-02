@@ -1,6 +1,6 @@
 package com.cffreedom.utils.security;
 
-import com.cffreedom.utils.FileUtils;
+import com.cffreedom.utils.file.FileUtils;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)

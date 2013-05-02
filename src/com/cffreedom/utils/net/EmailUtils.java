@@ -1,8 +1,10 @@
-package com.cffreedom.utils;
+package com.cffreedom.utils.net;
 
 import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.*;
+
+import com.cffreedom.utils.ConversionUtils;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)

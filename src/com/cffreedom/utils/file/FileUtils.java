@@ -1,8 +1,12 @@
-package com.cffreedom.utils;
+package com.cffreedom.utils.file;
 
 import java.io.*;
 import java.util.*;
 import java.util.jar.*;
+
+import com.cffreedom.utils.DateTimeUtils;
+import com.cffreedom.utils.LoggerUtil;
+import com.cffreedom.utils.SystemUtils;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -455,7 +459,7 @@ public class FileUtils
 		boolean success = false;
 		try
 		{
-			org.apache.commons.io.FileUtils.copyDirectory(new File(source), new File(destination));
+			com.cffreedom.utils.file.FileUtils.copyDirectory(new File(source), new File(destination));
 			success = true;
 		}
 		catch (IOException e)

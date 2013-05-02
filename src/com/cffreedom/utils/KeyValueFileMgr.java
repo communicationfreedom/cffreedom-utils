@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.cffreedom.utils.FileUtils;
 import com.cffreedom.utils.LoggerUtil;
+import com.cffreedom.utils.file.FileUtils;
 import com.cffreedom.utils.security.EncryptDecryptProxy;
 
 /**

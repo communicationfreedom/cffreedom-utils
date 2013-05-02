@@ -2,6 +2,7 @@ package com.cffreedom.utils;
 
 import java.io.File;
 
+import com.cffreedom.utils.file.FileUtils;
 import com.cffreedom.utils.file.FilterNameEnd;
 
 /**
