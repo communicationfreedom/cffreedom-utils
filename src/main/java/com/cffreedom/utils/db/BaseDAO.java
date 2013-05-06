@@ -26,6 +26,7 @@ import com.cffreedom.utils.LoggerUtil;
  * Changes:
  * 2013-04-12 	markjacobsen.net 	Added SQL_TEST_SQLSERVER and additional getConn() method
  * 2013-04-12 	markjacobsen.net 	Added methods to check if a "type" is of the requested type (i.e. isMySql())
+ * 2013-05-06 	markjacobsen.net 	Additional logging in getConn()
  */
 public class BaseDAO
 {
@@ -175,11 +176,11 @@ public class BaseDAO
 	
 	public static Connection getConn(String driver, String url, String user, String pass)
 	{
-		final String METHOD = "getConn";
+		final String METHOD = "com.cffreedom.db.BaseDAO.getConn(driver, url, user, pass)";
 		
 		try
 		{
-			//LoggerUtil.log(METHOD, "DEBUG: com.cffreedom.db.BaseDAO: " + METHOD + ": Creating new connection\n   Driver: " + driver + "\n   Url:" + url);
+			LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "Creating new connection\n   Driver: " + driver + "\n   Url:" + url);
 			Class.forName(driver);
 			return DriverManager.getConnection(url, user, pass);
 		}
@@ -190,7 +191,7 @@ public class BaseDAO
 		}
 		catch (ClassNotFoundException e)
 		{
-			LoggerUtil.log(METHOD, "ERROR: " + url + ": ClassNotFoundException (check that the driver is on the CLASSPATH): " + e.getMessage());
+			LoggerUtil.log(LoggerUtil.LEVEL_ERROR, METHOD, "ERROR: " + url + ": ClassNotFoundException (check that the driver is on the CLASSPATH): " + e.getMessage());
 			e.printStackTrace(); 
 			return null;
 		}
