@@ -17,6 +17,9 @@ import com.cffreedom.utils.file.FileUtils;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-05-06 	markjacobsen.net 	Using Utils.output instead of System.out.println
  */
 public class LoggerUtil
 {
@@ -53,13 +56,13 @@ public class LoggerUtil
 			}
 			catch (IOException e)
 			{
-				System.out.println("ERROR: IOException in constructor: " + e.getMessage());
+				Utils.output("ERROR: IOException in constructor: " + e.getMessage());
 			}
 		}
 		
 		if (loggers.containsKey(name) == false)
 		{
-			System.out.println("Creating new LoggerUtil instance: " + name);
+			Utils.output("Creating new LoggerUtil instance: " + name);
 			this.family = family;
 			this.name = name;
 			loggers.put(name, this);
@@ -78,7 +81,7 @@ public class LoggerUtil
 		if (method != null)			{ fullmsg += method + ": "; }
 		if (msg != null)			{ fullmsg += msg; }
 		
-		System.out.println(fullmsg);
+		Utils.output(fullmsg);
 	}
 	
 	public void logDebug(String method, String msg)
@@ -110,7 +113,7 @@ public class LoggerUtil
 		if (method != null)			{ fullmsg += method + ": "; }
 		if (msg != null)			{ fullmsg += msg; }
 		
-		System.out.println(fullmsg);
+		Utils.output(fullmsg);
 		try
 		{
 			FileWriter fw = this.getFileWriter();
@@ -132,7 +135,7 @@ public class LoggerUtil
 		}
 		catch (IOException io)
 		{
-			System.out.println("ERROR: IOException");
+			Utils.output("ERROR: IOException");
 		}
 	}
 	
