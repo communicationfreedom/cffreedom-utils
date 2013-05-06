@@ -98,4 +98,30 @@ public class ConnectionManager
 	{
 		return this.kvfm.removeEntry(key);
 	}
+	
+	public void printConnInfo(String key)
+	{
+		DbConn dbconn = getDbConn(key);
+		Utils.output("");
+		Utils.output("Key = " + key);
+		Utils.output("Type = " + dbconn.getType());
+		Utils.output("DB = " + dbconn.getDb());
+		Utils.output("Host = " + dbconn.getHost());
+		Utils.output("Port = " + dbconn.getPort());
+	}
+	
+	public boolean testConnection(String key, String user, String pass)
+	{
+		DbConn dbconn = getDbConn(key);
+		boolean success = DbUtils.testConnection(dbconn, user, pass);
+		if (success == true)
+		{
+			Utils.output("Test SQL succeeded for " + key);
+		}
+		else
+		{
+			Utils.output("ERROR: Running test SQL for " + key);
+		}
+		return success;
+	}
 }
