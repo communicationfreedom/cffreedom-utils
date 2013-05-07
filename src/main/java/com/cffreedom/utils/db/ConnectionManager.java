@@ -40,10 +40,10 @@ public class ConnectionManager
 	
 	public ConnectionManager(String file) throws DbException
 	{
-		this.loadFile(file);
+		this.loadConnectionFile(file);
 	}
 	
-	public void loadFile(String file) throws DbException
+	public void loadConnectionFile(String file) throws DbException
 	{
 		final String METHOD = "loadFile";
 		
@@ -58,6 +58,8 @@ public class ConnectionManager
 			throw new DbException(METHOD, "File does not exist: " + file);
 		}
 	}
+	
+	public String getConnectionFile() { return this.file; }
 	
 	public boolean keyExists(String key)
 	{
