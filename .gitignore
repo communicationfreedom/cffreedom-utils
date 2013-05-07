@@ -1,11 +1,11 @@
 bin
 build
-deploy.xml
 testing
+target/maven*
 
 .classpath
 .project
+.settings
 
 *.class
 
-/target

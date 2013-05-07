@@ -7,7 +7,7 @@
     <artifactId>cffreedom-utils</artifactId>
     <version>1.0</version>
     
-     <dependencies>
+    <dependencies>
         <dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
