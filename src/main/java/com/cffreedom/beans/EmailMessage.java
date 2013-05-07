@@ -13,6 +13,9 @@ import java.util.Date;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-05-07 	markjacobsen.net 	Additional constructor
  */
 public class EmailMessage
 {
@@ -20,6 +23,7 @@ public class EmailMessage
 	private String replyTo;
 	private String to;
 	private String cc;
+	private String bcc;
 	private String subject;
 	private String body;
 	private String bodyHtml;
@@ -42,10 +46,29 @@ public class EmailMessage
 		this.msgHeaders = headers;
 	}
 	
+	/**
+	 * Useful for creating objects to pass to getMailtoLink()
+	 * @param to
+	 * @param cc
+	 * @param bcc
+	 * @param subject
+	 * @param body
+	 */
+	public EmailMessage(String to, String cc, String bcc, String subject, String body)
+	{
+		super();
+		this.to = to;
+		this.cc = cc;
+		this.bcc = bcc;
+		this.subject = subject;
+		this.body = body;
+	}
+	
 	public String getFrom() { return this.from; }
 	public String getReplyTo() { return this.replyTo; }
 	public String getTo() { return this.to; }
 	public String getCc() { return this.cc; }
+	public String getBcc() { return this.bcc; }
 	public String getSubject() { return this.subject; }
 	public String getBody() { return this.body; }
 	public String getBodyHtml() { return this.bodyHtml; }
