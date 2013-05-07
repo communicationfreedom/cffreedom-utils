@@ -99,6 +99,11 @@ public class ConnectionManager
 		return this.kvfm.removeEntry(key);
 	}
 	
+	public void printKeys()
+	{
+		this.kvfm.printEntryKeys();
+	}
+	
 	public void printConnInfo(String key)
 	{
 		DbConn dbconn = getDbConn(key);
