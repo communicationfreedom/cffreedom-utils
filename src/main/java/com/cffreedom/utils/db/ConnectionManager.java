@@ -40,7 +40,12 @@ public class ConnectionManager
 	
 	public ConnectionManager(String file) throws DbException
 	{
-		final String METHOD = "init";
+		this.loadFile(file);
+	}
+	
+	public void loadFile(String file) throws DbException
+	{
+		final String METHOD = "loadFile";
 		
 		if (FileUtils.fileExists(file) == true)
 		{
