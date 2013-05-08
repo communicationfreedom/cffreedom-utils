@@ -30,6 +30,7 @@ import org.apache.commons.codec.binary.Base64;
  * Changes:
  * 2013-04-24 	markjacobsen.net 	Added toString(InputStream)
  * 2013-04-30 	markjacobsen.net 	Added toArrayListOfStrings()
+ * 2013-05-08 	markjacobsen.net 	Added toDate(long)
  */
 public class ConversionUtils
 {
@@ -189,6 +190,11 @@ public class ConversionUtils
     public static java.util.Date toDate(String a_sVal)
     {
     	return toDate(a_sVal, DateTimeUtils.MASK_DEFAULT_DATE);
+    }
+    
+    public static java.util.Date toDate(long val)
+    {
+    	return new java.util.Date(val * 1000);
     }
    
     public static java.util.Date toDate(String a_sVal, String a_sMask)
