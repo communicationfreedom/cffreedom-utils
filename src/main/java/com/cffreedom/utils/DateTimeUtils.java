@@ -13,6 +13,9 @@ import java.util.*;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-05-08 	markjacobsen.net 	Added MASK_FILE_DATESTAMP and MASK_FILE_TIMESTAMP
  */
 public class DateTimeUtils extends FormatUtils
 {          
@@ -22,6 +25,8 @@ public class DateTimeUtils extends FormatUtils
     public static final String MASK_DB2_TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
     public static final String MASK_TIME_12_HOUR = "h:mm a";
     public static final String MASK_TIME_24_HOUR = "H:mm";
+    public static final String MASK_FILE_DATESTAMP = "yyyy-MM-dd";
+    public static final String MASK_FILE_TIMESTAMP = MASK_DB2_TIMESTAMP;
     public static final char DATE_PART_SECOND = 's';
     public static final char DATE_PART_MINUTE = 'n';
     public static final char DATE_PART_HOUR = 'h';
