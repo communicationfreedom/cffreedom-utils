@@ -23,6 +23,7 @@ import com.cffreedom.utils.SystemUtils;
  * Changes:
  * 2013-04-14 	markjacobsen.net 	Added concatFiles()
  * 2013-04-26 	markjacobsen.net 	Added getDateStampedFileName() and getTimeStampedFileName()
+ * 2013-05-08	markjacobsen.net 	Added getFirstXLines() and getLastXLines()
  */
 public class FileUtils
 {
@@ -829,6 +830,62 @@ public class FileUtils
 		{
 			return false;
 		}
+	}
+	
+	/**
+	 * Get the first X lines in the file specified
+	 * @param file File to read
+	 * @param lines Number of lines at the beginning to return
+	 * @return The first X lines in the file specified
+	 */
+	public static ArrayList<String> getFirstXLines(String file, int lines)
+	{
+		int counter = 0;
+		ArrayList<String> ret = new ArrayList<String>();
+
+		try
+		{
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line = "";
+
+			while ( ((line = br.readLine()) != null) && (counter < lines) )
+			{
+				counter++;
+				ret.add(line);
+			}
+			br.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+	
+	/**
+	 * Get the last X lines in the file specified
+	 * @param file File to read
+	 * @param lines Number of lines at the end to return
+	 * @return The last X lines in the file specified
+	 */
+	public static ArrayList<String> getLastXLines(String file, int lines)
+	{
+		ArrayList<String> ret = new ArrayList<String>();
+		ArrayList<String> allLines = getFileLines(file);
+		int startIndex = 0;
+		
+		if (allLines.size() > lines)
+		{
+			startIndex = allLines.size() - lines - 1;
+		}
+		
+		for (int x = startIndex; x < allLines.size(); x++)
+		{
+			ret.add(allLines.get(x));
+		}
+		
+		return ret;
 	}
 }
 
