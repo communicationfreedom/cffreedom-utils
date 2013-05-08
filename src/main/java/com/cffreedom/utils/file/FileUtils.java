@@ -24,13 +24,14 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-04-14 	markjacobsen.net 	Added concatFiles()
  * 2013-04-26 	markjacobsen.net 	Added getDateStampedFileName() and getTimeStampedFileName()
  * 2013-05-08	markjacobsen.net 	Added getFirstXLines() and getLastXLines()
+ * 2013-05-08 	markjacobsen.net 	Added appendFile()
  */
 public class FileUtils
 {
 	/**
 	 * Get the file extension
 	 * 
-	 * @param file = File to get the extension for
+	 * @param file File to get the extension for
 	 * @return the file extension
 	 */
 	public static String getFileExtension(String file)
@@ -43,8 +44,7 @@ public class FileUtils
 	 * Get just the file name from a full path ex: c:\temp\junk.txt would return
 	 * junk.txt
 	 * 
-	 * @param fullPath
-	 *            Full path of the file to get the file name for
+	 * @param fullPath Full path of the file to get the file name for
 	 * @return File name
 	 */
 	public static String getFileName(String fullPath)
@@ -71,11 +71,8 @@ public class FileUtils
 
 	/**
 	 * Append a line to a file
-	 * 
-	 * @param line
-	 *            = The text to append
-	 * @param file
-	 *            = File to append to
+	 * @param line The text to append
+	 * @param file File to append to
 	 */
 	public static boolean appendLine(String line, String file)
 	{
@@ -103,13 +100,18 @@ public class FileUtils
 
 		return success;
 	}
+	
+	public static boolean appendFile(String fileToAppend, String fileToAppendTo)
+	{
+		String[] files = { fileToAppend };
+		return concatFiles(files, fileToAppendTo);
+	}
 
 	/**
 	 * Get the entire contents of a file as a string
 	 * 
-	 * @param file
-	 *            = File to get contents of
-	 * @return the entire contents of a file as a string
+	 * @param file File to get contents of
+	 * @return The entire contents of a file as a string
 	 */
 	public static String getFileContents(String file)
 	{
