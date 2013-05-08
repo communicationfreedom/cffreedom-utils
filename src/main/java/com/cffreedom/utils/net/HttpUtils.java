@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyStore;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
@@ -52,6 +53,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-04-24 	markjacobsen.net 	Moved from com.cffreedom.utils to com.cffreedom.net package
  * 2013-04-24 	markjacobsen.net 	Added optional setupProxy param to httpGet() and created httpPost()
  * 2013-05-07 	markjacobsen.net 	Added getMailtoLink()
+ * 2013-05-08 	markjacobsen.net 	Added encodeParams() call to getMailtoLink()
  */
 public class HttpUtils
 {
@@ -265,15 +267,25 @@ public class HttpUtils
 	public static String getMailtoLink(String to, String linkText, String subject, String body, String cc) { return getMailtoLink(to, linkText, subject, body, cc, null); }
 	public static String getMailtoLink(String to, String linkText, String subject, String body, String cc, String bcc)
 	{
-		String ccParam = "";
-		String bccParam = "";
-		String bodyParam = "";
-		String subjectParam = "";
-		if ((cc != null) && (cc.trim().length() > 0)){ ccParam = "&cc=" + cc; }
-		if ((bcc != null) && (bcc.trim().length() > 0)){ bccParam = "&bcc=" + bcc; }
-		if ((body != null) && (body.trim().length() > 0)){ bodyParam = "&body=" + body; }
-		if ((subject != null) && (subject.trim().length() > 0)){ subjectParam = "&subject=" + subject; }
-		return "<a href=\"mailto:"+to+ccParam+bccParam+subjectParam+bodyParam+"\">"+linkText+"</a>";
+		try
+		{
+			Map<String, String> params = new HashMap<String, String>();
+			String ccParam = "";
+			String bccParam = "";
+			String bodyParam = "";
+			String subjectParam = "";
+			if ((cc != null) && (cc.trim().length() > 0)){ params.put("cc", cc); }
+			if ((bcc != null) && (bcc.trim().length() > 0)){ params.put("bcc", bcc); }
+			if ((body != null) && (body.trim().length() > 0)){ params.put("body", body); }
+			if ((subject != null) && (subject.trim().length() > 0)){ params.put("subject", subject); }
+			String qs = encodeParams(params);
+			return "<a href=\"mailto:"+to+"&"+qs+"\">"+linkText+"</a>";
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public static String getMailtoLink(String to, String linkText, String subject, String[] body)
