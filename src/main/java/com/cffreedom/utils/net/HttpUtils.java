@@ -53,7 +53,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-04-24 	markjacobsen.net 	Moved from com.cffreedom.utils to com.cffreedom.net package
  * 2013-04-24 	markjacobsen.net 	Added optional setupProxy param to httpGet() and created httpPost()
  * 2013-05-07 	markjacobsen.net 	Added getMailtoLink()
- * 2013-05-08 	markjacobsen.net 	Added encodeParams() call to getMailtoLink()
+ * 2013-05-09 	markjacobsen.net 	Fixed encoding of params containing an ampersand in getMailtoLink()
  */
 public class HttpUtils
 {
@@ -269,16 +269,12 @@ public class HttpUtils
 	{
 		try
 		{
-			Map<String, String> params = new HashMap<String, String>();
-			String ccParam = "";
-			String bccParam = "";
-			String bodyParam = "";
-			String subjectParam = "";
-			if ((cc != null) && (cc.trim().length() > 0)){ params.put("cc", cc); }
-			if ((bcc != null) && (bcc.trim().length() > 0)){ params.put("bcc", bcc); }
-			if ((body != null) && (body.trim().length() > 0)){ params.put("body", body); }
-			if ((subject != null) && (subject.trim().length() > 0)){ params.put("subject", subject); }
-			String qs = encodeParams(params);
+			String qs = "";
+			if ((cc != null) && (cc.trim().length() > 0)){ qs += "cc="+cc+"&"; }
+			if ((bcc != null) && (bcc.trim().length() > 0)){ qs += "bcc="+bcc+"&"; }
+			if ((subject != null) && (subject.trim().length() > 0)){ qs += "subject="+subject.replace("&", "%26")+"&"; }
+			if ((body != null) && (body.trim().length() > 0)){ qs += "body="+body.replace("&", "%26")+"&"; }
+			
 			return "<a href=\"mailto:"+to+"&"+qs+"\">"+linkText+"</a>";
 		}
 		catch (Exception e)
