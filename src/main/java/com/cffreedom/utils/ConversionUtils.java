@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -49,15 +50,15 @@ public class ConversionUtils
 		// convert the byte to hex format method 1
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < byteData.length; i++) {
-			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16)
-					.substring(1));
+			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
 		}
 
 		System.out.println("Digest(in hex format):: " + sb.toString());
 
 		// convert the byte to hex format method 2
 		StringBuffer hexString = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++) {
+		for (int i = 0; i < byteData.length; i++)
+		{
 			String hex = Integer.toHexString(0xff & byteData[i]);
 			if (hex.length() == 1)
 				hexString.append('0');
@@ -120,24 +121,24 @@ public class ConversionUtils
 	
 	//------------------------------------------------------------------
 	// Int methods
-	public static int toInt(String a_sVal)
+	public static int toInt(String val)
 	{
-		return (new Integer(a_sVal)).intValue();	
+		return (new Integer(val)).intValue();	
 	}
 	
-	public static int toInt(long a_nVal)
+	public static int toInt(long val)
 	{
-		return (new Long(a_nVal)).intValue();	
+		return (new Long(val)).intValue();	
 	}
 	
-	public static int toInt(double a_nVal)
+	public static int toInt(double val)
 	{
-		return (new Double(a_nVal)).intValue();	
+		return (new Double(val)).intValue();	
 	}
 	
-	public static int toInt(boolean a_bVal)
+	public static int toInt(boolean val)
 	{
-	    if (a_bVal == true)
+	    if (val == true)
 	    {
 	        return 1;
 	    }else{
@@ -145,78 +146,78 @@ public class ConversionUtils
 	    }
 	}
 	
-	public static int[] toIntArray(String[] a_sVal)
+	public static int[] toIntArray(String[] vals)
 	{
-		int[] l_nArray = new int[a_sVal.length];
-		for (int x = 0; x < a_sVal.length; x++)
+		int[] l_nArray = new int[vals.length];
+		for (int x = 0; x < vals.length; x++)
 		{
-			l_nArray[x] = toInt(a_sVal[x]);
+			l_nArray[x] = toInt(vals[x]);
 		}
 		return l_nArray;	
 	}
 
     //------------------------------------------------------------------
     // Calendar methods
-    public static Calendar toCalendar(String a_sVal, String a_sMask) throws ParseException
+    public static Calendar toCalendar(String val, String mask) throws ParseException
     {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(toDate(a_sVal, a_sMask));
-                return cal;
+    	Calendar cal = Calendar.getInstance();
+        cal.setTime(toDate(val, mask));
+        return cal;
     }
    
-    public static Calendar toCalendar(java.util.Date a_dVal)
+    public static Calendar toCalendar(java.util.Date val)
     {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(a_dVal);
-                return cal;
+    	Calendar cal = Calendar.getInstance();
+        cal.setTime(val);
+        return cal;
     }
    
     //------------------------------------------------------------------
     // Date/Time methods           
-    public static java.util.Date toDate(Calendar a_oVal)
+    public static java.util.Date toDate(Calendar val)
     {
         try {
-            return a_oVal.getTime();
+            return val.getTime();
         } catch (Exception e) { return null; }
     }
    
-    public static java.util.Date toDate(java.sql.Date a_oVal)
+    public static java.util.Date toDate(java.sql.Date val)
     {
         try {
-            return (java.util.Date)a_oVal;
+            return (java.util.Date)val;
         } catch (Exception e) { return null; }
     }
    
-    public static java.util.Date toDate(String a_sVal)
+    public static java.util.Date toDate(String val)
     {
-    	return toDate(a_sVal, DateTimeUtils.MASK_DEFAULT_DATE);
+    	return toDate(val, DateTimeUtils.MASK_DEFAULT_DATE);
     }
     
     public static java.util.Date toDate(long val)
     {
-    	return new java.util.Date(val * 1000);
+    	return new Date(val);
     }
    
-    public static java.util.Date toDate(String a_sVal, String a_sMask)
+    public static java.util.Date toDate(String val, String mask)
     {
-        String l_sVal = a_sVal;
+        String retVal = val;
        
         try
         {
-                    if (a_sMask.compareTo(DateTimeUtils.MASK_DEFAULT_DATE) == 0)
-                    {
-                                String[] l_oParts = a_sVal.split("/"); // split(a_sVal, "/");
-                                if ( (l_oParts.length == 3) && (l_oParts[2].length() != 4) )
-                                {
-                                    String l_sYear = toString(DateTimeUtils.year(new java.util.Date()));
-                                    l_sYear = l_sYear.substring(0, 4 - l_oParts[2].length());
-                                    l_sYear = l_sYear + l_oParts[2];
-                                    l_sVal = l_oParts[0] + "/" + l_oParts[1] + "/" + l_sYear;
-                                }
-                    }
+        	if (mask.compareTo(DateTimeUtils.MASK_DEFAULT_DATE) == 0)
+            {
+        		String[] parts = val.split("/"); // split(a_sVal, "/");
+                if ( (parts.length == 3) && (parts[2].length() != 4) )
+                {
+                	String year = toString(DateTimeUtils.year(new java.util.Date()));
+                    year = year.substring(0, 4 - parts[2].length());
+                    year = year + parts[2];
+                    retVal = parts[0] + "/" + parts[1] + "/" + year;
+                }
+            }
                    
-                            DateFormat df = new SimpleDateFormat(a_sMask);
-                            return df.parse(l_sVal);
+            DateFormat df = new SimpleDateFormat(mask);
+            return df.parse(retVal);
         }
         catch (Exception e) { return null; }
     }
@@ -226,41 +227,41 @@ public class ConversionUtils
     	return toDate(DateTimeUtils.dateFormat(val));
     }
    
-    public static java.util.Date[] toDateArray(String[] a_sVal) throws ParseException
+    public static java.util.Date[] toDateArray(String[] vals) throws ParseException
     {
-                return toDateArray(a_sVal, DateTimeUtils.MASK_DEFAULT_DATE);
+        return toDateArray(vals, DateTimeUtils.MASK_DEFAULT_DATE);
     }
                
-    public static java.util.Date[] toDateArray(String[] a_sVal, String a_sMask) throws ParseException
+    public static java.util.Date[] toDateArray(String[] vals, String mask) throws ParseException
     {
-                java.util.Date[] l_dArray = new java.util.Date[a_sVal.length];
-                for (int x = 0; x < a_sVal.length; x++)
-                {
-                            l_dArray[x] = toDate(a_sVal[x], a_sMask);
-                }
-                return l_dArray;         
+        java.util.Date[] dateArray = new java.util.Date[vals.length];
+        for (int x = 0; x < vals.length; x++)
+        {
+        	dateArray[x] = toDate(vals[x], mask);
+        }
+        return dateArray;         
     }
    
     @SuppressWarnings("deprecation")
-	public static java.sql.Date toSqlDate(String a_sVal)
+	public static java.sql.Date toSqlDate(String val)
     {
         try {
-            return new java.sql.Date(java.sql.Date.parse(a_sVal));
+            return new java.sql.Date(java.sql.Date.parse(val));
         } catch (Exception e) { return null; }
     }
    
-    public static java.sql.Date toSqlDate(java.util.Date a_dVal)
+    public static java.sql.Date toSqlDate(java.util.Date val)
     {
         try {
-            return (java.sql.Date)a_dVal;
+            return (java.sql.Date)val;
         } catch (Exception e) { return null; }
     }
    
-    public static java.util.Date toTime(String a_sVal) throws Exception
+    public static java.util.Date toTime(String val) throws Exception
     {
         try {
-                            DateFormat df = new SimpleDateFormat(DateTimeUtils.MASK_TIME_12_HOUR);
-                            return df.parse(a_sVal);
+        	DateFormat df = new SimpleDateFormat(DateTimeUtils.MASK_TIME_12_HOUR);
+            return df.parse(val);
         } catch (Exception e) { return null; }
     }
    
@@ -270,9 +271,9 @@ public class ConversionUtils
      * @param inDate java.util.Date to convert to DB2 date string
     * @return DB2 date string
     */
-    public static String toDB2DateString(java.util.Date inDate){
+    public static String toDB2DateString(java.util.Date val){
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        return df.format(inDate);
+        return df.format(val);
     }
    
     /***
@@ -281,9 +282,9 @@ public class ConversionUtils
      * @param inDate java.sql.Date to convert to DB2 date string
     * @return DB2 date string
     */       
-    public static String toDB2DateString(java.sql.Date inDate){
+    public static String toDB2DateString(java.sql.Date val){
        
-        return inDate.toString();
+        return val.toString();
     }          
     /***
     * This function converts a standard java.util.Date to a
@@ -292,15 +293,15 @@ public class ConversionUtils
     * @return DB2 date string
     * @throws ParseException
     */
-    public static java.sql.Date toDB2Date(String inDate) throws ParseException{
+    public static java.sql.Date toDB2Date(String val) throws ParseException{
         DateFormat df;
-        if (inDate.trim().charAt(4)=='-'){
+        if (val.trim().charAt(4)=='-'){
             df = new SimpleDateFormat("yyyy-MM-dd");
         } else {
             df = new SimpleDateFormat("MM/dd/yyyy");
         }
        
-        java.util.Date tempdate = df.parse(inDate);
+        java.util.Date tempdate = df.parse(val);
         java.sql.Date db2date = (java.sql.Date)tempdate;
 
         return db2date;
@@ -309,12 +310,12 @@ public class ConversionUtils
     /**
     * This function converts a standard java.util.Date to a
     * java.sql.Timestamp suitable for a db TIMESTAMP or DATETIME
-     * @param a_dVal java.util.Date to convert to a Timestamp object
+    * @param a_dVal java.util.Date to convert to a Timestamp object
     * @return java.sql.Timestamp object
     */
-    public static java.sql.Timestamp toTimestamp(java.util.Date a_dVal)
+    public static java.sql.Timestamp toTimestamp(java.util.Date val)
     {
-        return new java.sql.Timestamp( a_dVal.getTime() );
+        return new java.sql.Timestamp(val.getTime());
     }
 
 }
