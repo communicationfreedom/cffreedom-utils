@@ -4,11 +4,16 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -19,19 +24,22 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.LaxRedirectStrategy;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import com.cffreedom.beans.Container;
 import com.cffreedom.utils.ConversionUtils;
 import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.Utils;
@@ -49,6 +57,10 @@ import com.cffreedom.utils.Utils;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-05-10 	markjacobsen.net 	Using PoolingClientConnectionManager() instead of ThreadSafeClientConnManager()
+ * 									Allowed usage of non-standard ports
  */
 public class HttpSessionService
 {
@@ -58,18 +70,27 @@ public class HttpSessionService
 	private HttpContext httpContext = null;
 	private String lastRequestUrl = null;
 	private String lastRedirectUrl = null;
-	private HttpResponse lastResponse = null;
 	private String lastResult = null;
+	private HttpResponse lastResponse = null;
 
 	public HttpSessionService() throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException
 	{
-		this(false);
+		this(new ArrayList<Container>());
 	}
 	
-	public HttpSessionService(boolean overrideSSLTrustStrategy) throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException
+	public HttpSessionService(ArrayList<Container> protocols) throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException
 	{
-		if (overrideSSLTrustStrategy == true)
-		{
+		//if (overrideSSLTrustStrategy == true)
+		//{
+			X509TrustManager tm = new X509TrustManager() 
+			{
+				public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
+				 
+				public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
+				 
+				public X509Certificate[] getAcceptedIssuers() { return null; }
+			};
+			
 			TrustStrategy easyStrategy = new TrustStrategy()
 			{
 				public boolean isTrusted(X509Certificate[] chain, String authType)
@@ -77,18 +98,36 @@ public class HttpSessionService
 			        return true;
 			    }
 			};
-			SSLSocketFactory sf = new SSLSocketFactory(easyStrategy, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+			
+			SSLContext ctx = SSLContext.getInstance("TLS");
+			ctx.init(null, new TrustManager[]{tm}, null);
+			SSLSocketFactory sf = new SSLSocketFactory(ctx, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+			
+			//SSLSocketFactory sf = new SSLSocketFactory(easyStrategy, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 			SchemeRegistry registry = new SchemeRegistry();
-	        registry.register(new Scheme("https", 8443, sf));
+	        registry.register(new Scheme("https", 443, sf));
+	        registry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+	        
+	        for (Container container : protocols)
+	        {
+	        	if (container.getCode().equalsIgnoreCase("https") == true)
+	        	{
+	        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getName()), sf));
+	        	}
+	        	else
+	        	{
+	        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getName()), PlainSocketFactory.getSocketFactory()));
+	        	}
+	        }
 	
-	        ClientConnectionManager ccm = new ThreadSafeClientConnManager(registry);
+	        ClientConnectionManager ccm = new PoolingClientConnectionManager(registry); //new ThreadSafeClientConnManager(registry);
 	        
 			this.httpClient = new DefaultHttpClient(ccm);
-		}
-		else
-		{
-			this.httpClient = new DefaultHttpClient();
-		}
+		//}
+		//else
+		//{
+		//	this.httpClient = new DefaultHttpClient();
+		//}
 		this.httpClient.setRedirectStrategy(new LaxRedirectStrategy());
 		this.cookieStore = new BasicCookieStore();
 		this.httpContext = new BasicHttpContext();
