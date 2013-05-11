@@ -80,54 +80,47 @@ public class HttpSessionService
 	
 	public HttpSessionService(ArrayList<Container> protocols) throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException
 	{
-		//if (overrideSSLTrustStrategy == true)
-		//{
-			X509TrustManager tm = new X509TrustManager() 
-			{
-				public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
-				 
-				public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
-				 
-				public X509Certificate[] getAcceptedIssuers() { return null; }
-			};
-			
-			TrustStrategy easyStrategy = new TrustStrategy()
-			{
-				public boolean isTrusted(X509Certificate[] chain, String authType)
-			    {
-			        return true;
-			    }
-			};
-			
-			SSLContext ctx = SSLContext.getInstance("TLS");
-			ctx.init(null, new TrustManager[]{tm}, null);
-			SSLSocketFactory sf = new SSLSocketFactory(ctx, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-			
-			//SSLSocketFactory sf = new SSLSocketFactory(easyStrategy, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-			SchemeRegistry registry = new SchemeRegistry();
-	        registry.register(new Scheme("https", 443, sf));
-	        registry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-	        
-	        for (Container container : protocols)
-	        {
-	        	if (container.getCode().equalsIgnoreCase("https") == true)
-	        	{
-	        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getName()), sf));
-	        	}
-	        	else
-	        	{
-	        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getName()), PlainSocketFactory.getSocketFactory()));
-	        	}
-	        }
-	
-	        ClientConnectionManager ccm = new PoolingClientConnectionManager(registry); //new ThreadSafeClientConnManager(registry);
-	        
-			this.httpClient = new DefaultHttpClient(ccm);
-		//}
-		//else
-		//{
-		//	this.httpClient = new DefaultHttpClient();
-		//}
+		X509TrustManager tm = new X509TrustManager() 
+		{
+			public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
+			 
+			public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
+			 
+			public X509Certificate[] getAcceptedIssuers() { return null; }
+		};
+		
+		TrustStrategy easyStrategy = new TrustStrategy()
+		{
+			public boolean isTrusted(X509Certificate[] chain, String authType)
+		    {
+		        return true;
+		    }
+		};
+		
+		SSLContext ctx = SSLContext.getInstance("TLS");
+		ctx.init(null, new TrustManager[]{tm}, null);
+		SSLSocketFactory sf = new SSLSocketFactory(ctx, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		
+		//SSLSocketFactory sf = new SSLSocketFactory(easyStrategy, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		SchemeRegistry registry = new SchemeRegistry();
+        registry.register(new Scheme("https", 443, sf));
+        registry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+        
+        for (Container container : protocols)
+        {
+        	if (container.getCode().equalsIgnoreCase("https") == true)
+        	{
+        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getName()), sf));
+        	}
+        	else
+        	{
+        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getName()), PlainSocketFactory.getSocketFactory()));
+        	}
+        }
+
+        ClientConnectionManager ccm = new PoolingClientConnectionManager(registry); //new ThreadSafeClientConnManager(registry);
+        
+		this.httpClient = new DefaultHttpClient(ccm);
 		this.httpClient.setRedirectStrategy(new LaxRedirectStrategy());
 		this.cookieStore = new BasicCookieStore();
 		this.httpContext = new BasicHttpContext();
