@@ -110,11 +110,11 @@ public class HttpSessionService
         {
         	if (container.getCode().equalsIgnoreCase("https") == true)
         	{
-        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getName()), sf));
+        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getValue()), sf));
         	}
         	else
         	{
-        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getName()), PlainSocketFactory.getSocketFactory()));
+        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getValue()), PlainSocketFactory.getSocketFactory()));
         	}
         }
 

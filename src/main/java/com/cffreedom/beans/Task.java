@@ -45,13 +45,13 @@ public class Task
 		String returnVal = "";
 		returnVal += "Code: " + this.getCode() + "\n";
 		returnVal += "Title: " + this.getTitle() + "\n";
-		returnVal += "Folder: " + this.getFolder().getName() + "\n";
+		returnVal += "Folder: " + this.getFolder().getValue() + "\n";
 		returnVal += "Project: " + this.getProject().getName() + "\n";
 		returnVal += "Note: " + this.getNote() + "\n";
 		returnVal += "Tags: ";
 		for (Container tag : this.getTags())
 		{
-			returnVal += tag.getName() + ", ";
+			returnVal += tag.getValue() + ", ";
 		}
 		returnVal += "\n";
 		return returnVal;

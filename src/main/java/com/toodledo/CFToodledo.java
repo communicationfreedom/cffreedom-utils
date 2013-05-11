@@ -99,7 +99,7 @@ public class CFToodledo
 
 		for (Container tag : tags)
 		{
-			String tagName = tag.getName();
+			String tagName = tag.getValue();
 			if ((tagName.length() >= 3) 
 					&& (tagName.startsWith("sr") == true) 
 					&& (Utils.isInt(tagName.replaceFirst("sr", "")) == true))
@@ -163,13 +163,13 @@ public class CFToodledo
 
 		for (Task task : this.getTasks())
 		{
-			if (task.getFolder().getName().equalsIgnoreCase(folder.getName()) == true)
+			if (task.getFolder().getValue().equalsIgnoreCase(folder.getValue()) == true)
 			{
 				tasks.add(task);
 			}
 		}
 
-		logger.logInfo(METHOD, "Returning "+tasks.size()+" tasks for folder "+folder.getName());
+		logger.logInfo(METHOD, "Returning "+tasks.size()+" tasks for folder "+folder.getValue());
 		return tasks;
 	}
 	

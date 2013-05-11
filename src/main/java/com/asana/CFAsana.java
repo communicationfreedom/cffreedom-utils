@@ -98,8 +98,7 @@ public class CFAsana
 	public ArrayList<Project> getProjects(Container workspace) throws IOException, ParseException
 	{
 		final String METHOD = "getProjects";
-		logger.logDebug(METHOD, "Getting projects for workspace: " + workspace
-				.getName());
+		logger.logDebug(METHOD, "Getting projects for workspace: " + workspace.getValue());
 		ArrayList<Project> projects = new ArrayList<Project>();
 
 		try
@@ -192,7 +191,7 @@ public class CFAsana
 			}
 		}
 
-		logger.logInfo(METHOD, "Returning " + tasks.size() + " tasks for workspace " + workspace.getName());
+		logger.logInfo(METHOD, "Returning " + tasks.size() + " tasks for workspace " + workspace.getValue());
 		return tasks;
 	}
 
