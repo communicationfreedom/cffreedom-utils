@@ -11,19 +11,22 @@ package com.cffreedom.beans;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-05-10 	markjacobsen.net	Renamed name to value
  */
 public class Container
 {
 	private String code;
-	private String name;
+	private String value;
 	
-	public Container(String code, String name)
+	public Container(String code, String value)
 	{
 		this.code = code;
-		this.name = name;
+		this.value = value;
 	}
 	
-	public String toString() { return this.getCode() + "::" + this.getName(); }
+	public String toString() { return this.getCode() + "::" + this.getValue(); }
 	public String getCode() { return this.code; }
-	public String getName() { return this.name; }
+	public String getValue() { return this.value; }
 }
