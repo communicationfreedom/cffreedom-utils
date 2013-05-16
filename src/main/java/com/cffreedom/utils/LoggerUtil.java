@@ -2,6 +2,7 @@ package com.cffreedom.utils;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Hashtable;
 
 import com.cffreedom.utils.file.FileUtils;
@@ -20,6 +21,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 
  * Changes:
  * 2013-05-06 	markjacobsen.net 	Using Utils.output instead of System.out.println
+ * 2013-05-16 	markjacobsen.net	Adding DateTime stamp to messages
  */
 public class LoggerUtil
 {
@@ -76,7 +78,7 @@ public class LoggerUtil
 	public static void log(String method, String msg) { log(null, method, msg); }
 	public static void log(String level, String method, String msg)
 	{
-		String fullmsg = "";
+		String fullmsg = FormatUtils.formatDate(FormatUtils.DATE_DB2_TIMESTAMP, new Date()) + ": ";
 		if (level != null)			{ fullmsg += level + ": "; }
 		if (method != null)			{ fullmsg += method + ": "; }
 		if (msg != null)			{ fullmsg += msg; }
@@ -107,7 +109,7 @@ public class LoggerUtil
 	
 	private void logIt(String level, String method, String msg, Throwable err)
 	{
-		String fullmsg = "";
+		String fullmsg = FormatUtils.formatDate(FormatUtils.DATE_DB2_TIMESTAMP, new Date()) + ": ";
 		if (level != null)			{ fullmsg += level + ": "; }
 		if (this.getName() != null)	{ fullmsg += this.getName() + ": "; }
 		if (method != null)			{ fullmsg += method + ": "; }
