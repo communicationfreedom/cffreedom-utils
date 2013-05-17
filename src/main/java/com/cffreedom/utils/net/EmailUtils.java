@@ -20,44 +20,63 @@ import com.cffreedom.utils.ConversionUtils;
  * 
  * Changes:
  * 2013-05-15 	markjacobsen.net	Added unauthenticated sendEmail() option
+ * 2013-05-17 	markjacobsen.net 	Added sendGmail() option and added protocol to sendEmail()
  */
 public class EmailUtils
 {
 	public static final String SMTP_SERVER_GMAIL = "smtp.gmail.com";
 	public static final String SMTP_PORT_GMAIL = "465";
+	public static final String PROTOCOL_SMTP = "smtp";
+	public static final String PROTOCOL_SMTPS = "smtps";
     
-	public static void sendEmail(String to, String from, String subject, String body, String smtpServer, String port) throws Exception
+	public static void sendGmail(String to, String from, String subject, String body, String user, String pass) throws Exception
 	{
-		sendEmail(to, from, subject, body, null, null, smtpServer, port);
+		sendEmail(to, from, subject, body, user, pass, SMTP_SERVER_GMAIL, PROTOCOL_SMTPS, SMTP_PORT_GMAIL);
 	}
 	
-    public static void sendEmail(String to, String from, String subject, String body, String user, String pass, String smtpServer, String port) throws Exception
+	public static void sendEmail(String to, String from, String subject, String body, String smtpServer, String port) throws Exception
+	{
+		sendEmail(to, from, subject, body, null, null, smtpServer, null, port);
+	}
+	
+    public static void sendEmail(String to, String from, String subject, String body, String user, String pass, String smtpServer, String protocol, String port) throws Exception
 	{
     	boolean authenticatedSession = true;
     	if ((user == null) || (user.length() == 0)) { authenticatedSession = false; }
-		Properties l_oSysProps = System.getProperties();
-		l_oSysProps.put("mail.transport.protocol", "smtps");
-		l_oSysProps.put("mail.smtp.host", smtpServer);
+		Properties sysProps = System.getProperties();
+		sysProps.put("mail.smtp.host", smtpServer);
+		if (protocol != null)
+		{
+			sysProps.put("mail.transport.protocol", protocol);
+		}
 		if (authenticatedSession == true){
-			l_oSysProps.put("mail.smtps.auth", "true");
+			sysProps.put("mail.smtps.auth", "true");
 		}
 		
-		Session l_oSession = Session.getDefaultInstance(l_oSysProps, null);
+		to = to.replace(',', ';');
+		String[] toArray = to.split(";");
+		
+		Session session = Session.getDefaultInstance(sysProps, null);
         
-		MimeMessage l_oMessage = new MimeMessage(l_oSession);
-		l_oMessage.setFrom(new InternetAddress(from));
-		l_oMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-		l_oMessage.setSubject(subject);
-		l_oMessage.setText(body);
+		MimeMessage message = new MimeMessage(session);
+		message.setFrom(new InternetAddress(from));
+		for (int y = 0; y < toArray.length; y++) {
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(toArray[y]));
+		}
+		message.setSubject(subject);
+		message.setText(body);
         
 		System.out.println("EmailUtils: Sending message to " + to + " from " + from + " w/ subject: " + subject);
 		
-		Transport l_oTransport = l_oSession.getTransport();
 		if (authenticatedSession == true){
-			l_oTransport.connect(smtpServer, ConversionUtils.toInt(port), user, pass);
+			Transport transport = session.getTransport();
+			transport.connect(smtpServer, ConversionUtils.toInt(port), user, pass);
+			transport.sendMessage(message, message.getAllRecipients());
+			transport.close();
+		}else{
+			Transport.send(message);
 		}
-		l_oTransport.sendMessage(l_oMessage, l_oMessage.getAllRecipients());
-		l_oTransport.close();
+		
 	}
 }
 
