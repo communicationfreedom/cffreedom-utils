@@ -25,6 +25,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-04-26 	markjacobsen.net 	Added getDateStampedFileName() and getTimeStampedFileName()
  * 2013-05-08	markjacobsen.net 	Added getFirstXLines() and getLastXLines()
  * 2013-05-08 	markjacobsen.net 	Added appendFile()
+ * 2013-05-17 	markjacobsen.net 	Fixed getFileContents() to not add an additional CRLF at the end of the file
  */
 public class FileUtils
 {
@@ -56,8 +57,7 @@ public class FileUtils
 	/**
 	 * Same thing as getFileName, but removes the extension
 	 * 
-	 * @param fullPath
-	 *            Full path of the file to get the file name for
+	 * @param fullPath Full path of the file to get the file name for
 	 * @return File name (minus the extension)
 	 */
 	public static String getFileNameWithoutExtension(String fullPath)
@@ -115,25 +115,28 @@ public class FileUtils
 	 */
 	public static String getFileContents(String file)
 	{
-		StringBuffer l_oBuffer = new StringBuffer();
-		BufferedReader l_oInput = null;
-		String l_sLine = "";
+		StringBuffer sb = new StringBuffer();
+		BufferedReader br = null;
+		String line = "";
 
 		try
 		{
-			l_oInput = new BufferedReader(new FileReader(file));
-			while ((l_sLine = l_oInput.readLine()) != null)
+			br = new BufferedReader(new FileReader(file));
+			line = br.readLine();
+			while (line != null)
 			{
-				l_oBuffer.append(l_sLine + SystemUtils.getNewline());
+				sb.append(line);
+				line = br.readLine();
+				if (line != null) { sb.append(SystemUtils.getNewline()); }
 			}
-			l_oInput.close();
+			br.close();
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 
-		return l_oBuffer.toString();
+		return sb.toString();
 	}
 
 	/**
