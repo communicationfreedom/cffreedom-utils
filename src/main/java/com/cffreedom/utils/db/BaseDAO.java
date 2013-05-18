@@ -27,6 +27,7 @@ import com.cffreedom.utils.LoggerUtil;
  * 2013-04-12 	markjacobsen.net 	Added SQL_TEST_SQLSERVER and additional getConn() method
  * 2013-04-12 	markjacobsen.net 	Added methods to check if a "type" is of the requested type (i.e. isMySql())
  * 2013-05-06 	markjacobsen.net 	Additional logging in getConn()
+ * 2013-05-18 	markjacobsen.net 	Added getListTablesSql()
  */
 public class BaseDAO
 {
@@ -55,6 +56,10 @@ public class BaseDAO
 
 	public final static String SQL_TEST_SQLSERVER = "SELECT getDate()";
 	public final static String SQL_TEST_DB2 = "SELECT CURRENT_TIMESTAMP FROM SYSIBM.SYSDUMMY1";
+	
+	public final static String SQL_LIST_TABLES_DB2 = "SELECT TRIM(CREATOR)||\'.\'||TRIM(NAME) AS TABLE_NM FROM SYSIBM.SYSTABLES WHERE TYPE = \'T\' AND CREATOR NOT IN (\'SYSIBM\', \'SYSPROC\') ORDER BY CREATOR, NAME";
+	public final static String SQL_LIST_TABLES_SQLSERVER = "SELECT TABLE_SCHEMA+\'.\'+TABLE_NAME AS TABLE_NM FROM information_schema.tables WHERE TABLE_TYPE = \'BASE TABLE\' ORDER BY TABLE_SCHEMA, TABLE_NAME";
+	public final static String SQL_LIST_TABLES_MYSQL = "SELECT CONCAT(TABLE_SCHEMA, \'.\', TABLE_NAME) AS TABLE_NM FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = \'BASE TABLE\' ORDER BY TABLE_SCHEMA, TABLE_NAME";
 
 	public BaseDAO()
 	{
@@ -214,6 +219,26 @@ public class BaseDAO
 
 		return count;
 	}
+	
+	public static String getListTablesSql(String dbType)
+	{
+		if (isDb2(dbType) == true)
+		{
+			 return BaseDAO.SQL_LIST_TABLES_DB2;
+		}
+		else if (isSqlServer(dbType) == true)
+		{
+			return BaseDAO.SQL_LIST_TABLES_SQLSERVER;
+		}
+		else if (isMySql(dbType) == true)
+		{
+			return BaseDAO.SQL_LIST_TABLES_MYSQL;
+		}
+		else
+		{
+			return null;
+		}
+	}	
 	
 	public static String getTestSql(String dbType)
 	{
