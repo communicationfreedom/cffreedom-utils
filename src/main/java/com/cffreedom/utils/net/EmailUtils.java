@@ -21,6 +21,7 @@ import com.cffreedom.utils.ConversionUtils;
  * Changes:
  * 2013-05-15 	markjacobsen.net	Added unauthenticated sendEmail() option
  * 2013-05-17 	markjacobsen.net 	Added sendGmail() option and added protocol to sendEmail()
+ * 2013-05-18 	markjacobsen.net 	Added htmlBody options
  */
 public class EmailUtils
 {
@@ -29,17 +30,22 @@ public class EmailUtils
 	public static final String PROTOCOL_SMTP = "smtp";
 	public static final String PROTOCOL_SMTPS = "smtps";
     
-	public static void sendGmail(String to, String from, String subject, String body, String user, String pass) throws Exception
+	public static void sendGmail(String to, String from, String subject, String body, boolean htmlBody, String user, String pass) throws Exception
 	{
-		sendEmail(to, from, subject, body, user, pass, SMTP_SERVER_GMAIL, PROTOCOL_SMTPS, SMTP_PORT_GMAIL);
+		sendEmail(to, from, subject, body, htmlBody, user, pass, SMTP_SERVER_GMAIL, PROTOCOL_SMTPS, SMTP_PORT_GMAIL);
 	}
 	
 	public static void sendEmail(String to, String from, String subject, String body, String smtpServer, String port) throws Exception
 	{
-		sendEmail(to, from, subject, body, null, null, smtpServer, null, port);
+		sendEmail(to, from, subject, body, false, null, null, smtpServer, null, port);
 	}
 	
-    public static void sendEmail(String to, String from, String subject, String body, String user, String pass, String smtpServer, String protocol, String port) throws Exception
+	public static void sendHtmlEmail(String to, String from, String subject, String body, String smtpServer, String port) throws Exception
+	{
+		sendEmail(to, from, subject, body, true, null, null, smtpServer, null, port);
+	}
+	
+    public static void sendEmail(String to, String from, String subject, String body, boolean htmlBody, String user, String pass, String smtpServer, String protocol, String port) throws Exception
 	{
     	boolean authenticatedSession = true;
     	if ((user == null) || (user.length() == 0)) { authenticatedSession = false; }
@@ -64,7 +70,11 @@ public class EmailUtils
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(toArray[y]));
 		}
 		message.setSubject(subject);
-		message.setText(body);
+		if (htmlBody == true){
+			message.setText(body, "utf-8", "html");
+		}else{
+			message.setText(body);
+		}
         
 		System.out.println("EmailUtils: Sending message to " + to + " from " + from + " w/ subject: " + subject);
 		
