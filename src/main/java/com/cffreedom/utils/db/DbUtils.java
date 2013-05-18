@@ -39,12 +39,31 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-04-16 	markjacobsen.net 	testConnection() methods now return a boolean
  * 2013-04-22 	markjacobsen.net 	Added toInClausItems()
  * 2013-04-27 	markjacobsen.net 	Added getResultSet()
+ * 2013-05-18 	markjacobsen.net 	Added listTables()
  */
 public class DbUtils
 {
 	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
 	
 	public static enum FORMAT {CSV,TAB,XML,RAW,NO_OUTPUT};
+	
+	public static void listTables(DbConn dbconn, String user, String pass)
+	{
+		try
+		{
+			Connection conn = BaseDAO.getConn(dbconn, user, pass);
+			String testSql = BaseDAO.getListTablesSql(dbconn.getType());
+			if (testSql != null)
+			{
+				runSql(conn, testSql);
+			}
+			conn.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
 	
 	public static boolean testConnection(DbConn dbconn, String user, String pass)
 	{
