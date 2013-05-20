@@ -16,6 +16,7 @@ import java.util.*;
  * 
  * Changes:
  * 2013-05-08 	markjacobsen.net 	Added MASK_FILE_DATESTAMP and MASK_FILE_TIMESTAMP
+ * 2013-05-20 	markjacobsen.net 	dayOfWeekAsString() now returns full day (not just 3 letter abbreviation)
  */
 public class DateTimeUtils extends FormatUtils
 {          
@@ -70,46 +71,46 @@ public class DateTimeUtils extends FormatUtils
     	return a_oDate.get(Calendar.HOUR_OF_DAY);
     }
            
-            public static int hour24(Date a_oDate)
-            {
-                        return hour(ConversionUtils.toCalendar(a_oDate));
-            }
+    public static int hour24(Date a_oDate)
+    {
+                return hour(ConversionUtils.toCalendar(a_oDate));
+    }
+   
+    public static int hour(Calendar a_oDate)
+    {
+                return a_oDate.get(Calendar.HOUR);
+    }
+   
+    public static int hour(Date a_oDate)
+    {
+                return hour(ConversionUtils.toCalendar(a_oDate));
+    }
+   
+    public static int day(Calendar a_oDate)
+    {
+                return a_oDate.get(Calendar.DAY_OF_MONTH);
+    }
+   
+    public static int day(Date a_oDate)
+    {
+                return day(ConversionUtils.toCalendar(a_oDate));
+    }
+   
+    public static int dayOfWeek(Calendar a_oDate)
+    {
+                return a_oDate.get(Calendar.DAY_OF_WEEK);
+    }
            
-            public static int hour(Calendar a_oDate)
-            {
-                        return a_oDate.get(Calendar.HOUR);
-            }
+    public static int dayOfWeek(Date a_oDate)
+    {
+                return dayOfWeek(ConversionUtils.toCalendar(a_oDate));
+    }
            
-            public static int hour(Date a_oDate)
-            {
-                        return hour(ConversionUtils.toCalendar(a_oDate));
-            }
-           
-            public static int day(Calendar a_oDate)
-            {
-                        return a_oDate.get(Calendar.DAY_OF_MONTH);
-            }
-           
-            public static int day(Date a_oDate)
-            {
-                        return day(ConversionUtils.toCalendar(a_oDate));
-            }
-           
-            public static int dayOfWeek(Calendar a_oDate)
-            {
-                        return a_oDate.get(Calendar.DAY_OF_WEEK);
-            }
-           
-            public static int dayOfWeek(Date a_oDate)
-            {
-                        return dayOfWeek(ConversionUtils.toCalendar(a_oDate));
-            }
-           
-            /**
-* Return the number of minutes for a given time
-* @param a_oDate Object containing the time
-* @return Minutes in the time
-*/
+    /**
+	* Return the number of minutes for a given time
+	* @param a_oDate Object containing the time
+	* @return Minutes in the time
+	*/
     public static int minutes(Calendar a_oDate)
     {
                 int l_nMin = a_oDate.get(Calendar.MINUTE);
@@ -119,28 +120,28 @@ public class DateTimeUtils extends FormatUtils
     }
    
     /**
-* Return the number of minutes for a given time
-* @param a_oDate Object containing the time
-* @return Minutes in the time
-*/
-public static int minutes(Date a_oDate)
-{
-            return minutes(ConversionUtils.toCalendar(a_oDate));
-}
+	* Return the number of minutes for a given time
+	* @param a_oDate Object containing the time
+	* @return Minutes in the time
+	*/
+	public static int minutes(Date a_oDate)
+	{
+	            return minutes(ConversionUtils.toCalendar(a_oDate));
+	}
            
-public static Date minutesToTime(int a_nMin) throws Exception
-{
-            String l_sTime;
-            int l_nHours = ConversionUtils.toInt( Math.floor(a_nMin / 60) );
-            int l_nMin = a_nMin - (60 * l_nHours);
+	public static Date minutesToTime(int a_nMin) throws Exception
+	{
+		String l_sTime;
+        int l_nHours = ConversionUtils.toInt( Math.floor(a_nMin / 60) );
+        int l_nMin = a_nMin - (60 * l_nHours);
            
-            if (l_nMin < 10){
-                        l_sTime = l_nHours + ":0" + l_nMin;
-            }else{
-                        l_sTime = l_nHours + ":" + l_nMin;
-                }
+        if (l_nMin < 10){
+        	l_sTime = l_nHours + ":0" + l_nMin;
+        }else{
+        	l_sTime = l_nHours + ":" + l_nMin;
+        }
                
-                return ConversionUtils.toDate(l_sTime, MASK_TIME_24_HOUR);
+        return ConversionUtils.toDate(l_sTime, MASK_TIME_24_HOUR);
     }
    
     public static Date[] minutesToTimeArray(int[] a_oMin) throws Exception
@@ -155,12 +156,12 @@ public static Date minutesToTime(int a_nMin) throws Exception
    
     public static int month(Calendar a_oDate)
     {
-                return a_oDate.get(Calendar.MONTH) + 1;
+    	return a_oDate.get(Calendar.MONTH) + 1;
     }
    
     public static int month(Date a_oDate)
     {
-                return month(ConversionUtils.toCalendar(a_oDate));
+    	return month(ConversionUtils.toCalendar(a_oDate));
     }
    
     public static int month()
@@ -170,12 +171,12 @@ public static Date minutesToTime(int a_nMin) throws Exception
    
     public static int year(Calendar a_oDate)
     {
-                return a_oDate.get(Calendar.YEAR);
+    	return a_oDate.get(Calendar.YEAR);
     }
    
     public static int year(Date a_oDate)
     {
-                return year(ConversionUtils.toCalendar(a_oDate));
+    	return year(ConversionUtils.toCalendar(a_oDate));
     }
    
     public static int year()
@@ -184,44 +185,44 @@ public static Date minutesToTime(int a_nMin) throws Exception
     }
    
     /**
-* Add on to a date
-* @param a_oDate Date to add to
-* @param a_nInterval Number of units of datepart to add to date (positive, to get dates in the future; negative, to get dates in the past)
-* @param a_cDatePart s = seconds, n = minutes, h = hours, d = days, m = months, y = years
-* @return New date
-*/
+	* Add on to a date
+	* @param a_oDate Date to add to
+	* @param a_nInterval Number of units of datepart to add to date (positive, to get dates in the future; negative, to get dates in the past)
+	* @param a_cDatePart s = seconds, n = minutes, h = hours, d = days, m = months, y = years
+	* @return New date
+	*/
     public static Calendar dateAdd(Calendar a_oDate, int a_nInterval, char a_cDatePart)
     {
-                Calendar l_oCal = a_oDate;
+    	Calendar l_oCal = a_oDate;
    
-                switch (a_cDatePart)
-                {
-                            case (DATE_PART_SECOND):
-                                        l_oCal.add(Calendar.SECOND, a_nInterval);
-                                        break;
+        switch (a_cDatePart)
+        {
+        	case (DATE_PART_SECOND):
+        		l_oCal.add(Calendar.SECOND, a_nInterval);
+                break;
                                                              
-                            case (DATE_PART_MINUTE):
-                                        l_oCal.add(Calendar.MINUTE, a_nInterval);
-                                        break;
+            case (DATE_PART_MINUTE):
+            	l_oCal.add(Calendar.MINUTE, a_nInterval);
+                break;
                                                              
-                            case (DATE_PART_HOUR):
-                                        l_oCal.add(Calendar.HOUR, a_nInterval);
-                                        break;
+            case (DATE_PART_HOUR):
+                l_oCal.add(Calendar.HOUR, a_nInterval);
+                break;
                                                              
-                            case (DATE_PART_DAY):
-                                        l_oCal.add(Calendar.DATE, a_nInterval);
-                                        break;
+            case (DATE_PART_DAY):
+                l_oCal.add(Calendar.DATE, a_nInterval);
+                break;
                            
-                            case (DATE_PART_MONTH):
-                                        l_oCal.add(Calendar.MONTH, a_nInterval);
-                                        break;
+            case (DATE_PART_MONTH):
+                l_oCal.add(Calendar.MONTH, a_nInterval);
+                break;
                            
-                            case (DATE_PART_YEAR):
-                                        l_oCal.add(Calendar.YEAR, a_nInterval);
-                                        break;
-                }
+            case (DATE_PART_YEAR):
+                l_oCal.add(Calendar.YEAR, a_nInterval);
+                break;
+        }
    
-                return l_oCal;
+        return l_oCal;
     }
    
    
@@ -233,49 +234,49 @@ public static Date minutesToTime(int a_nMin) throws Exception
    
     public static int dateDiff(Date a_dOne, Date a_dTwo, char a_cDatePart)
     {
-                int l_nReturn = 0;
+    	int l_nReturn = 0;
                
-                long l_nMilliseconds = a_dTwo.getTime() - a_dOne.getTime();
-                if (l_nMilliseconds < 0)
-                {
-                            l_nMilliseconds = -l_nMilliseconds;
-                }
-                long l_nSeconds = l_nMilliseconds / 1000L;
-                long l_nMinutes = l_nSeconds / 60L;
-                long l_nHours = l_nMinutes / 60L;
-                long l_nDays = l_nHours / 24L;
+        long l_nMilliseconds = a_dTwo.getTime() - a_dOne.getTime();
+        if (l_nMilliseconds < 0)
+        {
+        	l_nMilliseconds = -l_nMilliseconds;
+        }
+        long l_nSeconds = l_nMilliseconds / 1000L;
+        long l_nMinutes = l_nSeconds / 60L;
+        long l_nHours = l_nMinutes / 60L;
+        long l_nDays = l_nHours / 24L;
                                        
-                switch (a_cDatePart)
-                {
-                            case (DATE_PART_MONTH):
-        int l_iMonthsOne = (year(a_dOne) * 12) + month(a_dOne);
-        int l_iMonthsTwo = (year(a_dTwo) * 12) + month(a_dTwo);
-        l_nReturn = l_iMonthsTwo - l_iMonthsOne;
-                                        break;                         
+        switch (a_cDatePart)
+        {
+        	case (DATE_PART_MONTH):
+        		int l_iMonthsOne = (year(a_dOne) * 12) + month(a_dOne);
+        		int l_iMonthsTwo = (year(a_dTwo) * 12) + month(a_dTwo);
+        		l_nReturn = l_iMonthsTwo - l_iMonthsOne;
+                break;                         
                            
-                            case (DATE_PART_DAY):
-                                        l_nReturn = ConversionUtils.toInt(l_nDays);
-                                        break;
+            case (DATE_PART_DAY):
+                l_nReturn = ConversionUtils.toInt(l_nDays);
+                break;
                                        
-                            case (DATE_PART_HOUR):
-                                        l_nReturn = ConversionUtils.toInt(l_nHours);
-                                        break;
+            case (DATE_PART_HOUR):
+                l_nReturn = ConversionUtils.toInt(l_nHours);
+                break;
                                        
-                            case (DATE_PART_MINUTE):
-                                        l_nReturn = ConversionUtils.toInt(l_nMinutes);
-                                        break;
+            case (DATE_PART_MINUTE):
+                l_nReturn = ConversionUtils.toInt(l_nMinutes);
+                break;
                                        
-                            case (DATE_PART_SECOND):
-                                        l_nReturn = ConversionUtils.toInt(l_nSeconds);
-                                        break;
-                }
+            case (DATE_PART_SECOND):
+                l_nReturn = ConversionUtils.toInt(l_nSeconds);
+                break;
+        }
                
-                return l_nReturn;
+        return l_nReturn;
     }
    
     public static int dateDiff(Calendar a_dOne, Calendar a_dTwo, char a_cDatePart)
     {
-                return dateDiff(ConversionUtils.toDate(a_dOne), ConversionUtils.toDate(a_dTwo), a_cDatePart);
+        return dateDiff(ConversionUtils.toDate(a_dOne), ConversionUtils.toDate(a_dTwo), a_cDatePart);
     }
    
     public static boolean datesEqual(Date date1, Date date2)
@@ -289,7 +290,7 @@ public static Date minutesToTime(int a_nMin) throws Exception
    
     public static String dayOfWeekAsString(Date date)
     {
-    	return formatDate("E", date);
+    	return formatDate("EEEE", date);
     }
    
     public static String monthAsString(Date date)
