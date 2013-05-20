@@ -33,6 +33,7 @@ public class FormatUtils
 	public static final String DATE_ONLY = "MM/dd/yyyy";
     public static final String DATE_FULL_DATE_TIME = "MM/dd/yyyy hh:mm a";
     public static final String DATE_YYYYMMDD = "yyyyMMdd";
+    public static final String DATE_MMDDYY = "MMddyy";
     public static final String DATE_DB2_TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_TIME_12_HOUR = "h:mm a";
     public static final String DATE_TIME_24_HOUR = "H:mm";
