@@ -55,6 +55,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-05-07 	markjacobsen.net 	Added getMailtoLink()
  * 2013-05-09 	markjacobsen.net 	Fixed encoding of params containing an ampersand in getMailtoLink()
  * 2013-05-20 	markjacobsen.net 	Added httpGetWithReqProp(String urlStr, HashMap<String, String> reqProps) for sending req w/ multiple request headers
+ * 2013-05-21 	markjacobsen.net 	Added reqProps param to httpPost()
  */
 public class HttpUtils
 {
@@ -138,8 +139,9 @@ public class HttpUtils
 		return httpGetWithReqProp(urlStr, reqProps);
 	}
 	
-	public static String httpPost(String urlStr, Map<String, String> queryParams) throws GeneralException, IOException { return httpPost(urlStr, queryParams, true); }
-	public static String httpPost(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws GeneralException, IOException
+	public static String httpPost(String urlStr, Map<String, String> queryParams) throws GeneralException, IOException { return httpPost(urlStr, queryParams, null); }
+	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps) throws GeneralException, IOException { return httpPost(urlStr, queryParams, reqProps, true); }
+	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps, boolean setupProxy) throws GeneralException, IOException
 	{
 		final String METHOD = "httpPost";
 		int responseCode = 0;
@@ -150,6 +152,15 @@ public class HttpUtils
 		
 		URL url = new URL(urlStr);
 		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+		
+		if (reqProps != null)
+		{
+			for (String key : reqProps.keySet())
+			{
+				conn.setRequestProperty(key, reqProps.get(key));
+			}
+		}
+		
 		conn.setDoOutput(true);
 		conn.setDoInput(true);
 		conn.setInstanceFollowRedirects(false); 
