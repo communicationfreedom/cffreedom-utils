@@ -54,6 +54,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-04-24 	markjacobsen.net 	Added optional setupProxy param to httpGet() and created httpPost()
  * 2013-05-07 	markjacobsen.net 	Added getMailtoLink()
  * 2013-05-09 	markjacobsen.net 	Fixed encoding of params containing an ampersand in getMailtoLink()
+ * 2013-05-20 	markjacobsen.net 	Added httpGetWithReqProp(String urlStr, HashMap<String, String> reqProps) for sending req w/ multiple request headers
  */
 public class HttpUtils
 {
@@ -104,11 +105,14 @@ public class HttpUtils
 		return sb.toString();
 	}
 
-	public static String httpGetWithReqProp(String urlStr, String reqPropKey, String reqPropVal) throws IOException
+	public static String httpGetWithReqProp(String urlStr, HashMap<String, String> reqProps) throws IOException
 	{
 		URL url = new URL(urlStr);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestProperty(reqPropKey, reqPropVal);
+		for (String key : reqProps.keySet())
+		{
+			conn.setRequestProperty(key, reqProps.get(key));
+		}
 
 		if (conn.getResponseCode() != 200) {
 			throw new IOException(conn.getResponseMessage());
@@ -125,6 +129,13 @@ public class HttpUtils
 
 		conn.disconnect();
 		return sb.toString();
+	}
+	
+	public static String httpGetWithReqProp(String urlStr, String reqPropKey, String reqPropVal) throws IOException
+	{
+		HashMap<String, String> reqProps = new HashMap<String, String>();
+		reqProps.put(reqPropKey, reqPropVal);
+		return httpGetWithReqProp(urlStr, reqProps);
 	}
 	
 	public static String httpPost(String urlStr, Map<String, String> queryParams) throws GeneralException, IOException { return httpPost(urlStr, queryParams, true); }
