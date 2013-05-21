@@ -2,6 +2,7 @@ package com.cffreedom.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -22,6 +23,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -35,17 +37,26 @@ import org.xml.sax.SAXException;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-05-20 	markjacobsen.net 	Added getFirstChildNodeNamed()
+ * 									Added the ability to get a Document from XML string (not in a file)
  */
 public class XmlUtils
 {
-	public static Document getDomDocument(String file)
+	public static Document getDomDocument(String source) { return getDomDocument(source, true); }
+	public static Document getDomDocument(String source, boolean sourceIsFile)
 	{
 		try
 		{
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 			domFactory.setNamespaceAware(false); // NEVER FORGET THIS
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
-		    return builder.parse(file);
+			if (sourceIsFile == false){
+				return builder.parse(new InputSource(new StringReader(source)));
+			}else{
+				return builder.parse(source);
+			}
 		}
 		catch (IOException e){e.printStackTrace(); return null;}
 		catch (ParserConfigurationException e) {e.printStackTrace(); return null;}
@@ -68,6 +79,19 @@ public class XmlUtils
 			return (NodeList)expr.evaluate(domDocument, XPathConstants.NODESET);
 		}
 		catch (XPathExpressionException e) {e.printStackTrace(); return null;}
+	}
+	
+	public static Node getFirstChildNodeNamed(Node node, String name)
+	{
+		NodeList nodes = node.getChildNodes();
+		for (int x = 0; x < nodes.getLength(); x++)
+		{
+			if (nodes.item(x).getNodeName().equalsIgnoreCase(name) == true)
+			{
+				return nodes.item(x);
+			}
+		}
+		return null;
 	}
 	
 	public static String getAttributeValue(Node element, String attribute)
