@@ -3,6 +3,7 @@ package com.cffreedom.utils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -19,6 +20,7 @@ import java.util.ArrayList;
  * Changes:
  * 2013-04-08 	markjacobsen.net 	Added JavaDoc comments
  * 2013-04-30 	markjacobsen.net 	Added longestString()
+ * 2013-05-21 	markjacobsen.net 	Added appendToStringArray() and appendToIntArray()
  */
 public class Utils
 {
@@ -188,5 +190,41 @@ public class Utils
 	public static int longestString(String[] vals)
 	{
 		return longestString(ConversionUtils.toArrayListOfStrings(vals));
+	}
+	
+	public static String[] appendToStringArray(String[] array, String val)
+	{
+		String[] newArray = null;
+		
+		if (array == null)
+		{
+			newArray = new String[1];
+			newArray[0] = val;
+		}
+		else
+		{
+			newArray = Arrays.copyOf(array, array.length + 1);
+			newArray[newArray.length - 1] = val;
+		}
+		
+		return newArray;
+	}
+	
+	public static int[] appendToIntArray(int[] array, int val)
+	{
+		int[] newArray = null;
+		
+		if (array == null)
+		{
+			newArray = new int[1];
+			newArray[0] = val;
+		}
+		else
+		{
+			newArray = Arrays.copyOf(array, array.length + 1);
+			newArray[newArray.length - 1] = val;
+		}
+		
+		return newArray;
 	}
 }
