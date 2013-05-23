@@ -40,6 +40,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-04-22 	markjacobsen.net 	Added toInClausItems()
  * 2013-04-27 	markjacobsen.net 	Added getResultSet()
  * 2013-05-18 	markjacobsen.net 	Added listTables()
+ * 2013-05-23	markjacobsen.net 	Updated outputResultSet() to handle RAW format better
  */
 public class DbUtils
 {
@@ -300,6 +301,7 @@ public class DbUtils
 			String separator = null;
 			if (format.compareTo(DbUtils.FORMAT.CSV) == 0) { separator = ","; }
 			if (format.compareTo(DbUtils.FORMAT.TAB) == 0) { separator = "\t"; }
+			if (format.compareTo(DbUtils.FORMAT.RAW) == 0) { separator = ""; }
 			
 			// START: Output header
 			if  (
