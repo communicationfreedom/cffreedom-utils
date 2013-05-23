@@ -11,6 +11,9 @@ package com.cffreedom.beans;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes
+ * 2013-05-23 	markjacobsen.net 	Added setUser() and setPassword()
  */
 public class DbConn
 {
@@ -47,4 +50,7 @@ public class DbConn
 	public int getPort() { return this.port; }
 	public String getUser() { return this.user; }
 	public String getPassword() { return this.pass; } 
+	
+	public void setUser(String s) { this.user = s; }
+	public void setPassword(String s) { this.pass = s; }
 }
