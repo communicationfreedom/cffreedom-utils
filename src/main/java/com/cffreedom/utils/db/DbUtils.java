@@ -47,21 +47,25 @@ public class DbUtils
 	
 	public static enum FORMAT {CSV,TAB,XML,RAW,NO_OUTPUT};
 	
-	public static void listTables(DbConn dbconn, String user, String pass)
+	public static void listTables(DbConn dbconn)
 	{
+		Connection conn = null;
 		try
 		{
-			Connection conn = BaseDAO.getConn(dbconn, user, pass);
+			conn = BaseDAO.getConn(dbconn, dbconn.getUser(), dbconn.getPassword());
 			String testSql = BaseDAO.getListTablesSql(dbconn.getType());
 			if (testSql != null)
 			{
 				runSql(conn, testSql);
 			}
-			conn.close();
 		}
-		catch (SQLException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			try {conn.close();} catch (Exception e) {}
 		}
 	}
 	
