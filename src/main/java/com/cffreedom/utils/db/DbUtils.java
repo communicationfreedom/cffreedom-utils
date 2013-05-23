@@ -56,7 +56,7 @@ public class DbUtils
 			String testSql = BaseDAO.getListTablesSql(dbconn.getType());
 			if (testSql != null)
 			{
-				runSql(conn, testSql);
+				runSql(conn, testSql, FORMAT.RAW);
 			}
 		}
 		catch (Exception e)
