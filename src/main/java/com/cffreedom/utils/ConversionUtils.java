@@ -220,12 +220,13 @@ public class ConversionUtils
         	{
         		String tmp = val.substring(5, val.length()) + "-" + val.substring(0, 4);
         		retVal = tmp.replace('-', '/');
+        		mask = DateTimeUtils.MASK_DEFAULT_DATE; // Have to reset it to parse correctly
         	}
                    
             DateFormat df = new SimpleDateFormat(mask);
             return df.parse(retVal);
         }
-        catch (Exception e) { return null; }
+        catch (Exception e) { e.printStackTrace(); return null; }
     }
     
     public static java.util.Date toDateNoTime(java.util.Date val)
