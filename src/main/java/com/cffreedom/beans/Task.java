@@ -1,6 +1,7 @@
 package com.cffreedom.beans;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -13,9 +14,13 @@ import java.util.ArrayList;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-05-29 	markjacobsen.net 	Additional constructors and start/due dates added
  */
 public class Task
 {
+	public final static String SYS_UNKNOWN = "unknown";
 	public final static String SYS_ASANA = "asana";
 	public final static String SYS_TOODLEDO = "toodledo";
 	
@@ -26,9 +31,31 @@ public class Task
 	private String title;
 	private String note;
 	private String meta;
+	private Date startDate;
+	private Date dueDate;
 	private ArrayList<Container> tags;
 
-	public Task(String sourceSystem, Container folder, Project project, String code, String title, String note, String meta, ArrayList<Container> tags)
+	public Task(String code, String title, String note)
+	{
+		this(Task.SYS_UNKNOWN, null, null, code, title, note, null, null, null, null);
+	}
+	
+	public Task(String code, String title, String note, Date dueDate)
+	{
+		this(Task.SYS_UNKNOWN, null, null, code, title, note, null, dueDate, dueDate, null);
+	}
+	
+	public Task(String folder, String code, String title, String note)
+	{
+		this(Task.SYS_UNKNOWN, new Container(folder, folder), null, code, title, note, null, null, null, null);
+	}
+	
+	public Task(String folder, String code, String title, String note, Date dueDate)
+	{
+		this(Task.SYS_UNKNOWN, new Container(folder, folder), null, code, title, note, null, dueDate, dueDate, null);
+	}
+	
+	public Task(String sourceSystem, Container folder, Project project, String code, String title, String note, String meta, Date startDate, Date dueDate, ArrayList<Container> tags)
 	{
 		this.sourceSystem = sourceSystem;
 		this.folder = folder;
@@ -45,16 +72,24 @@ public class Task
 		String returnVal = "";
 		returnVal += "Code: " + this.getCode() + "\n";
 		returnVal += "Title: " + this.getTitle() + "\n";
-		returnVal += "Folder: " + this.getFolder().getValue() + "\n";
-		returnVal += "Project: " + this.getProject().getName() + "\n";
+		if (this.getFolder() != null) { returnVal += "Folder: " + this.getFolder().getValue() + "\n"; }
+		if (this.getProject() != null) { returnVal += "Project: " + this.getProject().getName() + "\n"; }
 		returnVal += "Note: " + this.getNote() + "\n";
-		returnVal += "Tags: ";
-		for (Container tag : this.getTags())
+		if (this.getTags() != null)
 		{
-			returnVal += tag.getValue() + ", ";
+			returnVal += "Tags: ";
+			for (Container tag : this.getTags())
+			{
+				returnVal += tag.getValue() + ", ";
+			}
+			returnVal += "\n";
 		}
-		returnVal += "\n";
 		return returnVal;
+	}
+	
+	public String getSourceSystem()
+	{
+		return this.sourceSystem;
 	}
 
 	public Container getFolder()
@@ -85,6 +120,16 @@ public class Task
 	public String getMeta()
 	{
 		return this.meta;
+	}
+	
+	public Date getStartDate()
+	{
+		return this.startDate;
+	}
+	
+	public Date getDueDate()
+	{
+		return this.dueDate;
 	}
 
 	public ArrayList<Container> getTags()
