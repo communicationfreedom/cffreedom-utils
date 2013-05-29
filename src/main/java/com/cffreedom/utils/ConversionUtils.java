@@ -32,6 +32,7 @@ import org.apache.commons.codec.binary.Base64;
  * 2013-04-24 	markjacobsen.net 	Added toString(InputStream)
  * 2013-04-30 	markjacobsen.net 	Added toArrayListOfStrings()
  * 2013-05-08 	markjacobsen.net 	Added toDate(long)
+ * 2013-05-29 	markjacobsen.net 	Handling string dates in the form yyyy-MM-dd better in toDate(val, mask)
  */
 public class ConversionUtils
 {
@@ -215,6 +216,11 @@ public class ConversionUtils
                     retVal = parts[0] + "/" + parts[1] + "/" + year;
                 }
             }
+        	else if (mask.compareTo(DateTimeUtils.MASK_FILE_DATESTAMP) == 0)
+        	{
+        		String tmp = val.substring(5, val.length()) + "-" + val.substring(0, 4);
+        		retVal = tmp.replace('-', '/');
+        	}
                    
             DateFormat df = new SimpleDateFormat(mask);
             return df.parse(retVal);
