@@ -64,6 +64,8 @@ public class Task
 		this.title = title;
 		this.note = note;
 		this.meta = meta;
+		this.startDate = startDate;
+		this.dueDate = dueDate;
 		this.setTags(tags);
 	}
 
@@ -72,6 +74,8 @@ public class Task
 		String returnVal = "";
 		returnVal += "Code: " + this.getCode() + "\n";
 		returnVal += "Title: " + this.getTitle() + "\n";
+		if (this.getStartDate() != null) { returnVal += "Start: " + this.getStartDate() + "\n"; }
+		if (this.getDueDate() != null) { returnVal += "Due: " + this.getDueDate() + "\n"; }
 		if (this.getFolder() != null) { returnVal += "Folder: " + this.getFolder().getValue() + "\n"; }
 		if (this.getProject() != null) { returnVal += "Project: " + this.getProject().getName() + "\n"; }
 		returnVal += "Note: " + this.getNote() + "\n";
