@@ -226,7 +226,7 @@ public class ConversionUtils
             DateFormat df = new SimpleDateFormat(mask);
             return df.parse(retVal);
         }
-        catch (Exception e) { e.printStackTrace(); return null; }
+        catch (Exception e) { return null; }
     }
     
     public static java.util.Date toDateNoTime(java.util.Date val)
