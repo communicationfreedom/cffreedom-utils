@@ -8,30 +8,20 @@
     <version>1.0</version>
     
     <dependencies>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
+		</dependency>
         <dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.2.4</version>
 		</dependency>
 		<dependency>
-			<groupId>com.stripe</groupId>
-			<artifactId>stripe-java</artifactId>
-			<version>1.1.18</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.clerezza.ext</groupId>
 			<artifactId>org.json.simple</artifactId>
 			<version>0.3-incubating</version>
-		</dependency>
-		<dependency>
-			<groupId>com.twilio.sdk</groupId>
-			<artifactId>twilio-java-sdk</artifactId>
-			<version>3.3.15</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4.7</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
