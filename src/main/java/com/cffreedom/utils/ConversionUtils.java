@@ -33,6 +33,7 @@ import org.apache.commons.codec.binary.Base64;
  * 2013-04-30 	markjacobsen.net 	Added toArrayListOfStrings()
  * 2013-05-08 	markjacobsen.net 	Added toDate(long)
  * 2013-05-29 	markjacobsen.net 	Handling string dates in the form yyyy-MM-dd better in toDate(val, mask)
+ * 2013-06-05 	markjacobsen.net 	Added toBoolean() methods
  */
 public class ConversionUtils
 {
@@ -157,6 +158,35 @@ public class ConversionUtils
 		return l_nArray;	
 	}
 
+	//------------------------------------------------------------------
+    // Boolean methods
+	public static boolean toBoolean(int val)
+	{
+		if (val == 0){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+	public static boolean toBoolean(String val)
+	{
+		if  (
+			(val == null) ||
+			(val.trim().length() == 0) ||
+			(val.substring(0, 1).equalsIgnoreCase("0") == true) ||  // Note: that's a zero
+			(val.substring(0, 1).equalsIgnoreCase("N") == true) ||
+			(val.substring(0, 1).equalsIgnoreCase("F") == true)
+			)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	
     //------------------------------------------------------------------
     // Calendar methods
     public static Calendar toCalendar(String val, String mask) throws ParseException
