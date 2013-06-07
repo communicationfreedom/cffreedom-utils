@@ -24,6 +24,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-04-13 	markjacobsen.net 	Added getMyCFWorkDir() and getMyCFWorkDir(String[] dirs)
  * 2013-04-23 	markjacobsen.net	Added execIt()
  * 2013-05-02 	markjacobsen.net 	Added sleep()
+ * 2013-06-07 	markjacobsen.net 	Added exception handling to getHomeDir()
  */
 public class SystemUtils
 {
@@ -38,17 +39,27 @@ public class SystemUtils
 	
 	public static String getHomeDir()
 	{
-		if (isWindows() == true){
-			String homePath = getEnvVal("HOMEPATH");
-			if (homePath.substring(homePath.length() - 1).equalsIgnoreCase("\\") == true)
-			{
-				// Strip the any trailing \
-				homePath = homePath.substring(0, homePath.length() - 1);
+		String ret = null;
+		try
+		{
+			if (isWindows() == true){
+				String homePath = getEnvVal("HOMEPATH");
+				if (homePath.substring(homePath.length() - 1).equalsIgnoreCase("\\") == true)
+				{
+					// Strip the any trailing \
+					homePath = homePath.substring(0, homePath.length() - 1);
+				}
+				ret = getEnvVal("HOMEDRIVE") + homePath;
+			}else{
+				ret = getEnvVal("HOME");
 			}
-			return getEnvVal("HOMEDRIVE") + homePath;
-		}else{
-			return getEnvVal("HOME");
 		}
+		catch (Exception e)
+		{
+			ret = null;
+		}
+		
+		return ret;
 	}
 	
 	public static String getMyDocDir()
