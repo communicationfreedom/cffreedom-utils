@@ -337,8 +337,6 @@ public class DateTimeUtils extends FormatUtils
     	Calendar dateCal = ConversionUtils.toCalendar(dateDate);
     	dateCal.setTime(timeDate);
     	return ConversionUtils.toDate(dateCal);
-    	//Calendar timeCal = ConversionUtils.toCalendar(timeDate);
-    	//Calendar combined = new Calendar();
     }
     
     /**
@@ -349,16 +347,16 @@ public class DateTimeUtils extends FormatUtils
      * @param date Date with GMT value
      * @return Date in the local time
      */
-    public static Date gmtToLocal(Date date)
+    public static Date gmtToLocal(Date gmtDate)
     {
     	try 
     	{
     		TimeZone localTimeZone = Calendar.getInstance().getTimeZone();
-    		Date ret = new Date(date.getTime() - localTimeZone.getRawOffset());
+    		Date ret = new Date(gmtDate.getTime() - localTimeZone.getRawOffset());
     		
     		// If we are now in DST, back off by the delta.  
     		// Note that we are checking the GMT date, this is the KEY.
-    		if (localTimeZone.inDaylightTime(ret) == true)
+    		if (localTimeZone.inDaylightTime(gmtDate) == true)
     		{
     			Date dstDate = new Date(ret.getTime() - localTimeZone.getDSTSavings());
     			
