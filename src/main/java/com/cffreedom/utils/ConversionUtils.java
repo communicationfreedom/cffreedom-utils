@@ -34,6 +34,8 @@ import org.apache.commons.codec.binary.Base64;
  * 2013-05-08 	markjacobsen.net 	Added toDate(long)
  * 2013-05-29 	markjacobsen.net 	Handling string dates in the form yyyy-MM-dd better in toDate(val, mask)
  * 2013-06-05 	markjacobsen.net 	Added toBoolean() methods
+ * 2013-06-12	markjacobsen.net 	Handling string dates in the form yyyy-MM-dd HH:mm:ss better in toDate(val, mask)
+ * 									Added toLong(String) and toString(Date)
  */
 public class ConversionUtils
 {
@@ -68,6 +70,12 @@ public class ConversionUtils
 		}
 
 		return hexString.toString();
+	}
+	
+	public static String toString(Date val) { return toString(val, FormatUtils.MASK_FULL_TIMESTAMP); }
+	public static String toString(Date val, String mask)
+	{
+		return FormatUtils.formatDate(mask, val);
 	}
 
 	public static String toString(Long val)
@@ -187,6 +195,13 @@ public class ConversionUtils
 		}
 	}
 	
+	//------------------------------------------------------------------
+    // Long methods
+	public static long toLong(String val)
+	{
+		return (new Long(val)).longValue();	
+	}
+	
     //------------------------------------------------------------------
     // Calendar methods
     public static Calendar toCalendar(String val, String mask) throws ParseException
@@ -252,11 +267,17 @@ public class ConversionUtils
         		retVal = tmp.replace('-', '/');
         		mask = DateTimeUtils.MASK_DEFAULT_DATE; // Have to reset it to parse correctly
         	}
+        	else if (mask.compareTo(DateTimeUtils.MASK_FULL_TIMESTAMP) == 0)
+        	{
+        		String tmp = val.substring(5, 10) + "-" + val.substring(0, 4) + " " + val.substring(11, val.length());
+        		retVal = tmp.replace('-', '/');
+        		mask = "MM/dd/yyyy HH:mm:ss"; // Have to use to parse correctly
+        	}
                    
             DateFormat df = new SimpleDateFormat(mask);
             return df.parse(retVal);
         }
-        catch (Exception e) { return null; }
+        catch (Exception e) { e.printStackTrace(); return null; }
     }
     
     public static java.util.Date toDateNoTime(java.util.Date val)

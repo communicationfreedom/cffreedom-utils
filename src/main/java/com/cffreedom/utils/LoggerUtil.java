@@ -78,7 +78,7 @@ public class LoggerUtil
 	public static void log(String method, String msg) { log(null, method, msg); }
 	public static void log(String level, String method, String msg)
 	{
-		String fullmsg = FormatUtils.formatDate(FormatUtils.DATE_DB2_TIMESTAMP, new Date()) + ": ";
+		String fullmsg = FormatUtils.formatDate(FormatUtils.MASK_FULL_TIMESTAMP, new Date()) + ": ";
 		if (level != null)			{ fullmsg += level + ": "; }
 		if (method != null)			{ fullmsg += method + ": "; }
 		if (msg != null)			{ fullmsg += msg; }
@@ -109,7 +109,7 @@ public class LoggerUtil
 	
 	private void logIt(String level, String method, String msg, Throwable err)
 	{
-		String fullmsg = FormatUtils.formatDate(FormatUtils.DATE_DB2_TIMESTAMP, new Date()) + ": ";
+		String fullmsg = FormatUtils.formatDate(FormatUtils.MASK_FULL_TIMESTAMP, new Date()) + ": ";
 		if (level != null)			{ fullmsg += level + ": "; }
 		if (this.getName() != null)	{ fullmsg += this.getName() + ": "; }
 		if (method != null)			{ fullmsg += method + ": "; }

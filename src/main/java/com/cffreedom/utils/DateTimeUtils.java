@@ -1,5 +1,7 @@
 package com.cffreedom.utils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -17,17 +19,11 @@ import java.util.*;
  * Changes:
  * 2013-05-08 	markjacobsen.net 	Added MASK_FILE_DATESTAMP and MASK_FILE_TIMESTAMP
  * 2013-05-20 	markjacobsen.net 	dayOfWeekAsString() now returns full day (not just 3 letter abbreviation)
+ * 2013-06-12 	markjacobsen.net 	Moved masks into FormatUtils for consistency and added combineDates()
+ * 2013-06-13	markjacobsen.net 	Added gmtToLocal()
  */
 public class DateTimeUtils extends FormatUtils
-{          
-    public static final String MASK_DEFAULT_DATE = "MM/dd/yyyy";
-    public static final String MASK_FULL_DATE_TIME = "MM/dd/yyyy hh:mm a";
-    public static final String MASK_YYYYMMDD = "yyyyMMdd";
-    public static final String MASK_DB2_TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
-    public static final String MASK_TIME_12_HOUR = "h:mm a";
-    public static final String MASK_TIME_24_HOUR = "H:mm";
-    public static final String MASK_FILE_DATESTAMP = "yyyy-MM-dd";
-    public static final String MASK_FILE_TIMESTAMP = MASK_DB2_TIMESTAMP;
+{
     public static final char DATE_PART_SECOND = 's';
     public static final char DATE_PART_MINUTE = 'n';
     public static final char DATE_PART_HOUR = 'h';
@@ -73,37 +69,37 @@ public class DateTimeUtils extends FormatUtils
            
     public static int hour24(Date a_oDate)
     {
-                return hour(ConversionUtils.toCalendar(a_oDate));
+    	return hour(ConversionUtils.toCalendar(a_oDate));
     }
    
     public static int hour(Calendar a_oDate)
     {
-                return a_oDate.get(Calendar.HOUR);
+    	return a_oDate.get(Calendar.HOUR);
     }
    
     public static int hour(Date a_oDate)
     {
-                return hour(ConversionUtils.toCalendar(a_oDate));
+    	return hour(ConversionUtils.toCalendar(a_oDate));
     }
    
     public static int day(Calendar a_oDate)
     {
-                return a_oDate.get(Calendar.DAY_OF_MONTH);
+    	return a_oDate.get(Calendar.DAY_OF_MONTH);
     }
    
     public static int day(Date a_oDate)
     {
-                return day(ConversionUtils.toCalendar(a_oDate));
+    	return day(ConversionUtils.toCalendar(a_oDate));
     }
    
     public static int dayOfWeek(Calendar a_oDate)
     {
-                return a_oDate.get(Calendar.DAY_OF_WEEK);
+    	return a_oDate.get(Calendar.DAY_OF_WEEK);
     }
            
     public static int dayOfWeek(Date a_oDate)
     {
-                return dayOfWeek(ConversionUtils.toCalendar(a_oDate));
+    	return dayOfWeek(ConversionUtils.toCalendar(a_oDate));
     }
            
     /**
@@ -113,10 +109,10 @@ public class DateTimeUtils extends FormatUtils
 	*/
     public static int minutes(Calendar a_oDate)
     {
-                int l_nMin = a_oDate.get(Calendar.MINUTE);
-                int l_nHours = a_oDate.get(Calendar.HOUR_OF_DAY);
-               
-                return l_nMin + (l_nHours * 60);
+        int l_nMin = a_oDate.get(Calendar.MINUTE);
+        int l_nHours = a_oDate.get(Calendar.HOUR_OF_DAY);
+       
+        return l_nMin + (l_nHours * 60);
     }
    
     /**
@@ -126,7 +122,7 @@ public class DateTimeUtils extends FormatUtils
 	*/
 	public static int minutes(Date a_oDate)
 	{
-	            return minutes(ConversionUtils.toCalendar(a_oDate));
+        return minutes(ConversionUtils.toCalendar(a_oDate));
 	}
            
 	public static Date minutesToTime(int a_nMin) throws Exception
@@ -228,7 +224,7 @@ public class DateTimeUtils extends FormatUtils
    
     public static Date dateAdd(Date a_dDate, int a_nInterval, char a_cDatePart)
     {
-                return ConversionUtils.toDate(dateAdd(ConversionUtils.toCalendar(a_dDate), a_nInterval, a_cDatePart));
+        return ConversionUtils.toDate(dateAdd(ConversionUtils.toCalendar(a_dDate), a_nInterval, a_cDatePart));
     }
    
    
@@ -334,5 +330,48 @@ public class DateTimeUtils extends FormatUtils
         Calendar l_oCal = ConversionUtils.toCalendar(a_dDate);
         l_oCal.setFirstDayOfWeek(a_iFirstDayOfWeek);
         return l_oCal.get(Calendar.WEEK_OF_YEAR);
+    }
+    
+    public static Date combineDates(Date dateDate, Date timeDate)
+    {
+    	Calendar dateCal = ConversionUtils.toCalendar(dateDate);
+    	dateCal.setTime(timeDate);
+    	return ConversionUtils.toDate(dateCal);
+    	//Calendar timeCal = ConversionUtils.toCalendar(timeDate);
+    	//Calendar combined = new Calendar();
+    }
+    
+    /**
+     * Convert a date in GMT to the local time
+     * 
+     * Hat tip to: http://stackoverflow.com/questions/10599109/how-to-convert-a-local-date-to-gmt
+     * 
+     * @param date Date with GMT value
+     * @return Date in the local time
+     */
+    public static Date gmtToLocal(Date date)
+    {
+    	try 
+    	{
+    		TimeZone localTimeZone = Calendar.getInstance().getTimeZone();
+    		Date ret = new Date(date.getTime() - localTimeZone.getRawOffset());
+    		
+    		// If we are now in DST, back off by the delta.  
+    		// Note that we are checking the GMT date, this is the KEY.
+    		if (localTimeZone.inDaylightTime(ret) == true)
+    		{
+    			Date dstDate = new Date(ret.getTime() - localTimeZone.getDSTSavings());
+    			
+    			// Check to make sure we have not crossed back into standard time.
+                // This happens when we are on the cusp of DST (7pm the day before the change for PDT)
+    			if (localTimeZone.inDaylightTime(dstDate) == true)
+    			{
+    				ret = dstDate;
+    			}
+    		}
+    		
+    		return ret;
+        }
+    	catch (Exception e) {e.printStackTrace(); return null; }
     }
 }

@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
  * Changes:
  * 2013-04-27 	markjacobsen.net 	Added pad()
  * 2013-04-30 	markjacobsne.net 	Fixed repeatString()
+ * 2013-06-12 	markjacobsen.net 	Consolidated date masks here
  */
 public class FormatUtils
 {
@@ -30,13 +31,16 @@ public class FormatUtils
 	public final static String PHONE_DOT = "PHONE_DOT";
 	public final static String PHONE_INT = "PHONE_INT";
 	
-	public static final String DATE_ONLY = "MM/dd/yyyy";
-    public static final String DATE_FULL_DATE_TIME = "MM/dd/yyyy hh:mm a";
-    public static final String DATE_YYYYMMDD = "yyyyMMdd";
-    public static final String DATE_MMDDYY = "MMddyy";
-    public static final String DATE_DB2_TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
-    public static final String DATE_TIME_12_HOUR = "h:mm a";
-    public static final String DATE_TIME_24_HOUR = "H:mm";
+	public static final String MASK_DEFAULT_DATE = "MM/dd/yyyy";
+    public static final String MASK_FULL_DATE_TIME = "MM/dd/yyyy hh:mm a";
+    public static final String MASK_FULL_TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
+    public static final String MASK_YYYYMMDD = "yyyyMMdd";
+    public static final String MASK_TIME_12_HOUR = "h:mm a";
+    public static final String MASK_TIME_24_HOUR = "H:mm";
+    public static final String MASK_FILE_DATESTAMP = "yyyy-MM-dd";
+    public static final String MASK_FILE_TIMESTAMP = MASK_FULL_TIMESTAMP;
+    public static final String MASK_DB2_TIMESTAMP = MASK_FULL_TIMESTAMP;
+    public static final String MASK_MMDDYY = "MMddyy";
 	
 	public static String formatDate(String format, Date date)
 	{
