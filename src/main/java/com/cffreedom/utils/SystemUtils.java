@@ -25,6 +25,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-04-23 	markjacobsen.net	Added execIt()
  * 2013-05-02 	markjacobsen.net 	Added sleep()
  * 2013-06-07 	markjacobsen.net 	Added exception handling to getHomeDir()
+ * 2013-06-20 	markjacobsen.net 	Changed sleep() to take a double so that you can pass in fractions of a second
  */
 public class SystemUtils
 {
@@ -126,12 +127,12 @@ public class SystemUtils
 		return System.getenv().get(key);
 	}
 	
-	public static void sleep(int seconds)
+	public static void sleep(double seconds)
     {
         final String METHOD = "sleep";
 
         try {
-            Thread.sleep(seconds * 1000);
+            Thread.sleep(ConversionUtils.toInt(seconds * 1000));
         } catch (InterruptedException e) {
             LoggerUtil.log(LoggerUtil.LEVEL_ERROR, METHOD, "ERROR: Sleeping");
         }
