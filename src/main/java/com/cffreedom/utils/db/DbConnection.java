@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+import com.cffreedom.utils.LoggerUtil;
+
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
@@ -33,6 +35,7 @@ import java.util.concurrent.Executor;
  */
 public class DbConnection implements Connection
 {
+	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
     private ConnectionPool pool;
     private Connection conn;
     private boolean inuse;
@@ -108,12 +111,16 @@ public class DbConnection implements Connection
 
     public void close() throws SQLException
     {
+    	final String METHOD = "close";
+    	
     	if (this.jndiConnection == true)
     	{
+    		this.logger.logDebug(METHOD, "Returning connection to app server pool");
     		this.conn.close();
     	}
     	else
     	{
+    		this.logger.logDebug(METHOD, "Returning connection to internal pool");
     		pool.returnConnection(this);
     	}
     }

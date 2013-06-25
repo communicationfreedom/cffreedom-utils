@@ -5,9 +5,13 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import com.cffreedom.beans.DbConn;
 import com.cffreedom.utils.LoggerUtil;
 
 /**
+ * Provides a key/value set of connection pools (essentially a pool of pools)
+ * for a single interface into getting connections to more than 1 DB
+ * 
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -21,6 +25,7 @@ import com.cffreedom.utils.LoggerUtil;
  * 
  * Changes:
  * 2013-04-23 	markjacobsen.net 	Removed old ColdFusion connection logic
+ * 2013-06-25	markjacobsen.net 	Added containsPool()
  */
 public class ConnectionFactory
 {
@@ -32,6 +37,7 @@ public class ConnectionFactory
 
 	private int factoryType = FACTORY_TYPE_UNKNOWN;
 	private Hashtable<String, ConnectionPool> connectionPools = new Hashtable<String, ConnectionPool>();
+	private Hashtable<String, DbConn> dbConns = new Hashtable<String, DbConn>();
 
 	public ConnectionFactory()
 	{
@@ -54,31 +60,36 @@ public class ConnectionFactory
 		return this.factoryType;
 	}
 
-	private ConnectionPool getConnectionPool(String key)
+	private ConnectionPool getConnectionPool(String poolKey)
 	{
 		String METHOD = "getConnectionPool";
 
-		if (this.connectionPools.containsKey(key) == true)
+		if (this.containsPool(poolKey) == true)
 		{
-			return this.connectionPools.get(key);
+			return this.connectionPools.get(poolKey);
 		}
 		else
 		{
-			logger.logWarn(METHOD, "Connection pool not found: " + key);
+			logger.logWarn(METHOD, "Connection pool not found: " + poolKey);
 			return null;
 		}
 	}
+	
+	public boolean containsPool(String poolKey)
+	{
+		return this.connectionPools.containsKey(poolKey);
+	}
 
 	/**
-	 * Get a Connection (Really a com.cffreedom.db.DbConnection) for the passed
+	 * Get a Connection (Really a com.cffreedom.utils.db.DbConnection) for the passed
 	 * in key.
 	 * 
 	 * @param key
 	 *            DB to get connection for. If an I3K app, the "key" should be
 	 *            the jndi datasource name.
-	 * @return A Connection for the Key (com.cffreedom.db.DbConnection)
+	 * @return A Connection for the Key (com.cffreedom.utils.db.DbConnection)
 	 */
-	public Connection getConnection(String key)
+	public Connection getConnection(String poolKey)
 	{
 		String METHOD = "getConnection";
 
@@ -86,62 +97,126 @@ public class ConnectionFactory
 
 		if (this.getFactoryType() == FACTORY_TYPE_JNDI)
 		{
-			logger.logDebug(METHOD, "Getting jndi connection: " + key);
+			logger.logDebug(METHOD, "Getting jndi connection: " + poolKey);
 			try
 			{
-				conn = new DbConnection(getI3kConn(key));
-				logger.logDebug(METHOD, "Got jndi connection: " + key);
+				conn = new DbConnection(getI3kConn(poolKey));
+				logger.logDebug(METHOD, "Got jndi connection: " + poolKey);
 			}
 			catch (SQLException sqe)
 			{
-				logger.logWarn(METHOD, "JNDI Connection not found for key: " + key);
+				logger.logWarn(METHOD, "JNDI Connection not found for key: " + poolKey);
 			}
 		}
 
 		if ((conn == null) && (this.getFactoryType() != FACTORY_TYPE_JNDI))
 		{
-			logger.logDebug(METHOD, "Getting non-jndi connection: " + key);
+			logger.logDebug(METHOD, "Getting non-jndi connection: " + poolKey);
 			try
 			{
-				if (this.connectionPools.containsKey(key) == true)
+				if (this.containsPool(poolKey) == true)
 				{
-					conn = this.getConnectionPool(key).getConnection();
-					logger.logDebug(METHOD, "Got non-jndi connection: " + key);
+					ConnectionPool pool = this.getConnectionPool(poolKey);
+					
+					if ((pool == null) && (this.dbConns.containsKey(poolKey) == true))
+					{
+						logger.logInfo(METHOD, "Restoring pool from cached DbConn");
+						this.connectionPools.remove(poolKey);
+						this.addPool(poolKey, this.dbConns.get(poolKey));
+					}
+					
+					conn = pool.getConnection();
+					logger.logDebug(METHOD, "Got non-jndi connection: " + poolKey);
 				}
 				else
 				{
-					logger.logWarn(METHOD, "ConnectionPool not found for key: " + key);
+					logger.logWarn(METHOD, "ConnectionPool not found for key: " + poolKey);
 				}
 			}
 			catch (SQLException sqe)
 			{
-				logger.logError(METHOD, "SQLException getting non-jndi connection: " + key, sqe);
+				logger.logError(METHOD, "SQLException getting non-jndi connection: " + poolKey, sqe);
 				conn = null;
 			}
 			catch (ClassNotFoundException cnfe)
 			{
-				logger.logError(METHOD, "ClassNotFoundException getting non-jndi connection: " + key, cnfe);
+				logger.logError(METHOD, "ClassNotFoundException getting non-jndi connection: " + poolKey, cnfe);
 				conn = null;
 			}
 		}
 
+		if ((conn == null) && (this.containsPool(poolKey) == true))
+		{
+			logger.logInfo(METHOD, "Removing invalid pool: " + poolKey);
+			this.connectionPools.remove(poolKey);
+		}
+		
 		return conn;
 	}
 
-	public boolean setDbConnectionInfo(String key, String driver, String url, String username, String password)
+	public boolean addPool(String poolKey, String driver, String url, String username, String password)
 	{
-		final String METHOD = "setDbConnectionInfo";
+		final String METHOD = "addPool";
 
-		if (this.getConnectionPool(key) == null)
+		if (this.getConnectionPool(poolKey) == null)
 		{
-			logger.logDebug(METHOD, "Creating pool: " + key);
-			this.connectionPools.put(key, new ConnectionPool(key, driver, url, username, password));
+			logger.logDebug(METHOD, "Creating pool: " + poolKey);
+			this.connectionPools.put(poolKey, new ConnectionPool(poolKey, driver, url, username, password));
+			
+			if (this.dbConns.containsKey(poolKey) == false)
+			{
+				this.dbConns.put(poolKey, new DbConn(driver, url, username, password));
+			}
+			
 			return true;
 		}
 		else
 		{
-			logger.logWarn(METHOD, "Connection already exists with name: " + key);
+			logger.logWarn(METHOD, "Pool already exists with name: " + poolKey);
 			return false;
+		}
+	}
+
+	public boolean addPool(String poolKey, DbConn dbconn, String username, String password)
+	{
+		String driver = BaseDAO.getDriver(dbconn.getType());
+		String url = BaseDAO.getUrl(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort());
+		
+		return this.addPool(poolKey, driver, url, username, password);
+	}
+	
+	public boolean addPool(String poolKey, DbConn dbconn)
+	{
+		String driver = BaseDAO.getDriver(dbconn.getType());
+		String url = BaseDAO.getUrl(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort());
+		
+		return this.addPool(poolKey, driver, url, dbconn.getUser(), dbconn.getPassword());
+	}
+	
+	public void closePool(String poolKey)
+	{
+		final String METHOD = "closePool";
+
+		logger.logDebug(METHOD, "Closing ConnectionFactory pool: " + poolKey);
+		
+		if (this.containsPool(poolKey) == true)
+		{
+			try
+			{
+				ConnectionPool pool = this.getConnectionPool(poolKey);
+				pool.close();
+			}
+			catch (Exception e)
+			{
+				logger.logError(METHOD, e.getMessage(), e);
+			}
+			
+			this.connectionPools.remove(poolKey);
+		}
+		
+		if (this.dbConns.containsKey(poolKey) == true)
+		{
+			this.dbConns.remove(poolKey);
 		}
 	}
 
@@ -153,17 +228,11 @@ public class ConnectionFactory
 
 		try
 		{
-			if ((this.connectionPools != null) && (this.connectionPools.size() > 0))
+			if (this.connectionPools != null)
 			{
-				Enumeration<String> keys = this.connectionPools.keys();
-
-				while (keys.hasMoreElements() == true)
+				for (String poolKey : this.connectionPools.keySet())
 				{
-					String key = keys.nextElement();
-					logger.logDebug(METHOD, "Closing connections in pool: " + key);
-					ConnectionPool pool = this.getConnectionPool(key);
-					pool.close();
-					this.connectionPools.remove(key);
+					this.closePool(poolKey);
 				}
 			}
 		}
@@ -173,13 +242,7 @@ public class ConnectionFactory
 		}
 		finally
 		{
-			try
-			{
-				this.connectionPools = null;
-			}
-			catch (Exception e)
-			{
-			}
+			try{ this.connectionPools = null; } catch (Exception e){}
 		}
 
 	}

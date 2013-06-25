@@ -1,6 +1,8 @@
 package com.cffreedom.utils.db;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
 
 import com.cffreedom.beans.DbConn;
 import com.cffreedom.exceptions.DbException;
@@ -12,6 +14,9 @@ import com.cffreedom.utils.Utils;
 import com.cffreedom.utils.file.FileUtils;
 
 /**
+ * Automated layer for accessing DB Connections that should guarantee that
+ * the user is not prompted for any information.
+ * 
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -25,6 +30,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 
  * Changes:
  * 2013-05-06 	markjacobsen.net 	Created
+ * 2013-06-25 	markjacobsen.net 	Added connection pooling to getConnection()
  */
 public class ConnectionManager
 {
@@ -32,6 +38,7 @@ public class ConnectionManager
 	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
 	private KeyValueFileMgr kvfm = null;
 	private String file = null;
+	private ConnectionFactory connFactory = new ConnectionFactory();
 	
 	public ConnectionManager() throws DbException
 	{
@@ -59,6 +66,11 @@ public class ConnectionManager
 		}
 	}
 	
+	public void close()
+	{
+		try{ this.connFactory.close(); } catch (Exception e){}
+	}
+	
 	public String getConnectionFile() { return this.file; }
 	
 	public boolean keyExists(String key)
@@ -83,7 +95,13 @@ public class ConnectionManager
 	
 	public Connection getConnection(String key, String user, String pass)
 	{
-		return BaseDAO.getConn(getDbConn(key), user, pass);
+		if (this.connFactory.containsPool(key) == false)
+		{
+			DbConn dbconn = this.getDbConn(key);
+			this.connFactory.addPool(key, dbconn, user, pass);
+		}
+		
+		return this.connFactory.getConnection(key);
 	}
 	
 	private String buildValString(DbConn dbconn)

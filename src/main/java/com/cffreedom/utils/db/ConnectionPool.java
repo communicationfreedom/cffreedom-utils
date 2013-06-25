@@ -23,7 +23,7 @@ class ConnectionReaper extends Thread
 	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
 		
     private ConnectionPool 	pool;
-    private final long 		delay = 300000;
+    private final long 		delaySeconds = 2*60;
     private boolean 		shutdown = false;
 
     ConnectionReaper(ConnectionPool pool)
@@ -39,7 +39,7 @@ class ConnectionReaper extends Thread
         {
            try
            {
-              sleep(this.delay);
+              sleep(this.delaySeconds * 1000);
            }
            catch( InterruptedException e) { }
            
@@ -67,7 +67,7 @@ public class ConnectionPool
 	private String 					url;
 	private String 					user;
 	private String 					password;
-	final private long 				timeout = 60000;
+	final private long 				secondsUntilStale = 60;
 	private ConnectionReaper 		reaper;
 	final private int 				poolsize = 10;
 
@@ -87,7 +87,9 @@ public class ConnectionPool
 
 	public synchronized void reapConnections()
 	{
-		long stale = System.currentTimeMillis() - timeout;
+		final String METHOD = "reapConnections";
+		
+		long stale = System.currentTimeMillis() - (secondsUntilStale * 1000);
 		
 		if ( (this.connections != null) && (this.connections.size() > 0) )
 		{
@@ -97,15 +99,27 @@ public class ConnectionPool
 			{
 				DbConnection conn = (DbConnection)connlist.nextElement();
 	
+				//logger.logDebug(METHOD, "In Use: " + conn.inUse());
+				//logger.logDebug(METHOD, "Last Use: " + conn.getLastUse());
+				//logger.logDebug(METHOD, "Stale: " + stale);
+				
 				if  (
-					(conn.inUse()) && 
-					(stale >conn.getLastUse()) && 
-	        		(!conn.validate())
+					(conn.inUse() == false) && 
+					(stale > conn.getLastUse())
 	        		)
 				{
+					//logger.logDebug(METHOD, "Removing stale connection");
 					removeConnection(conn);
 				}
 			}
+			
+			//logger.logDebug(METHOD, "Current connections: " + this.connections.size());
+		}
+		
+		if ((this.connections == null) || (this.connections.size() == 0))
+		{
+			logger.logInfo(METHOD, "Closing the pool because there are no connections to reap");
+			this.close();
 		}
 	}
 
@@ -174,7 +188,7 @@ public class ConnectionPool
 	} 
 
    public synchronized void returnConnection(DbConnection conn) {
-      conn.expireLease();
+	   conn.expireLease();
    }
    
    public String getPoolName()
