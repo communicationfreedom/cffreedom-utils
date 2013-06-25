@@ -38,6 +38,7 @@ public class ConnectionManager
 	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
 	private KeyValueFileMgr kvfm = null;
 	private String file = null;
+	private boolean cacheConnections = false;
 	private ConnectionFactory connFactory = new ConnectionFactory();
 	
 	public ConnectionManager() throws DbException
@@ -47,7 +48,18 @@ public class ConnectionManager
 	
 	public ConnectionManager(String file) throws DbException
 	{
+		this(file, false);
+	}
+	
+	public ConnectionManager(boolean cacheConnections) throws DbException
+	{
+		this(ConnectionManager.DEFAULT_FILE, cacheConnections);
+	}
+	
+	public ConnectionManager(String file, boolean cacheConnections) throws DbException
+	{
 		this.loadConnectionFile(file);
+		this.cacheConnections = cacheConnections;
 	}
 	
 	public void loadConnectionFile(String file) throws DbException
@@ -93,14 +105,11 @@ public class ConnectionManager
 		return dbconn;
 	}
 	
+	public boolean cacheConnections() { return this.cacheConnections; }
+		
 	public Connection getConnection(String key, String user, String pass)
 	{
-		return getConnection(key, user, pass, true);
-	}
-	
-	public Connection getConnection(String key, String user, String pass, boolean cache)
-	{
-		if (cache == true)
+		if (this.cacheConnections() == true)
 		{
 			if (this.connFactory.containsPool(key) == false)
 			{
