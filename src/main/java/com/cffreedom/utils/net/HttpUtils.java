@@ -79,8 +79,11 @@ public class HttpUtils
 		return urlStr;
 	}
 	
+	@Deprecated
 	public static String httpGet(String urlStr) throws IOException { return httpGet(urlStr, null); }
+	@Deprecated
 	public static String httpGet(String urlStr, Map<String, String> queryParams) throws IOException { return httpGet(urlStr, queryParams, true); }
+	@Deprecated
 	public static String httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws IOException
 	{
 		Response response = httpGetResponse(urlStr, queryParams, setupProxy);
