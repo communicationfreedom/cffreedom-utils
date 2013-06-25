@@ -95,13 +95,25 @@ public class ConnectionManager
 	
 	public Connection getConnection(String key, String user, String pass)
 	{
-		if (this.connFactory.containsPool(key) == false)
+		return getConnection(key, user, pass, true);
+	}
+	
+	public Connection getConnection(String key, String user, String pass, boolean cache)
+	{
+		if (cache == true)
 		{
-			DbConn dbconn = this.getDbConn(key);
-			this.connFactory.addPool(key, dbconn, user, pass);
+			if (this.connFactory.containsPool(key) == false)
+			{
+				DbConn dbconn = this.getDbConn(key);
+				this.connFactory.addPool(key, dbconn, user, pass);
+			}
+			
+			return this.connFactory.getConnection(key);
 		}
-		
-		return this.connFactory.getConnection(key);
+		else
+		{
+			return BaseDAO.getConn(this.getDbConn(key), user, pass);
+		}
 	}
 	
 	private String buildValString(DbConn dbconn)
