@@ -33,6 +33,7 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 
 import com.cffreedom.beans.EmailMessage;
+import com.cffreedom.beans.Response;
 import com.cffreedom.exceptions.GeneralException;
 import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.SystemUtils;
@@ -56,6 +57,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-05-09 	markjacobsen.net 	Fixed encoding of params containing an ampersand in getMailtoLink()
  * 2013-05-20 	markjacobsen.net 	Added httpGetWithReqProp(String urlStr, HashMap<String, String> reqProps) for sending req w/ multiple request headers
  * 2013-05-21 	markjacobsen.net 	Added reqProps param to httpPost()
+ * 2013-06-25 	markjacobsen.net 	Added httpGetResponse() for returning a Response object
  */
 public class HttpUtils
 {
@@ -81,29 +83,58 @@ public class HttpUtils
 	public static String httpGet(String urlStr, Map<String, String> queryParams) throws IOException { return httpGet(urlStr, queryParams, true); }
 	public static String httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws IOException
 	{
-		final String METHOD = "httpGet";
+		Response response = httpGetResponse(urlStr, queryParams, setupProxy);
+		
+		if (response.getIntCode() != 200)
+		{
+			throw new IOException(response.getMessage());
+		}
+
+		return response.getDetail();
+	}
+	
+	public static Response httpGetResponse(String urlStr) throws IOException { return httpGetResponse(urlStr, null); }
+	public static Response httpGetResponse(String urlStr, Map<String, String> queryParams) throws IOException { return httpGetResponse(urlStr, queryParams, true); }
+	public static Response httpGetResponse(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws IOException
+	{
+		final String METHOD = "httpGetResponse";
+		Response response = new Response(true, 0, "", "", "");
 		urlStr = buildUrl(urlStr, queryParams);
 		
 		if (setupProxy == true) { setupProxy(); }
 		
 		URL url = new URL(urlStr);
 		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+		response.setIntCode(conn.getResponseCode());
 
-		if (conn.getResponseCode() != 200) {
-			throw new IOException(conn.getResponseMessage());
+		if (conn.getResponseCode() != 200) 
+		{
+			response.setErrorLevel(Response.ErrorLevel.ERROR);
+			response.setBooleanCode(false);
+			response.setMessage(conn.getResponseMessage());
+			response.setStringCode("FAIL");
 		}
-
-		// Buffer the result into a string
-		BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		StringBuilder sb = new StringBuilder();
-		String line;
-		while ((line = rd.readLine()) != null) {
-			sb.append(line);
+		else
+		{
+			response.setErrorLevel(Response.ErrorLevel.INFO);
+			response.setBooleanCode(true);
+			response.setMessage("");
+			response.setStringCode("SUCCESS");
+			
+			// Buffer the result into a string
+			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = rd.readLine()) != null) {
+				sb.append(line);
+			}
+			rd.close();
+			response.setDetail(sb.toString());
 		}
-		rd.close();
-
+		
 		conn.disconnect();
-		return sb.toString();
+		
+		return response;
 	}
 
 	public static String httpGetWithReqProp(String urlStr, HashMap<String, String> reqProps) throws IOException
