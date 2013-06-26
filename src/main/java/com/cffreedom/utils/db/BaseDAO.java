@@ -174,11 +174,11 @@ public class BaseDAO
 	
 	public static Connection getConn(String driver, String url, String user, String pass)
 	{
-		final String METHOD = "getConn";
+		final String METHOD = "com.cffreedom.utils.db.getConn";
 		
 		try
 		{
-			LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "Creating new connection\n   Driver: " + driver + "\n   Url:" + url);
+			LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "Creating new connection\n   Driver: " + driver + "\n   Url: " + url);
 			Class.forName(driver);
 			return DriverManager.getConnection(url, user, pass);
 		}
