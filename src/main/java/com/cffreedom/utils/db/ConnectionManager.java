@@ -102,7 +102,7 @@ public class ConnectionManager
 			port = ConversionUtils.toInt(entryVals[3]);
 		}
 		DbConn dbconn = new DbConn(BaseDAO.getDriver(type),
-									BaseDAO.getUrl(type, host, db),
+									BaseDAO.getUrl(type, host, db, port),
 									type,
 									host,
 									db,
