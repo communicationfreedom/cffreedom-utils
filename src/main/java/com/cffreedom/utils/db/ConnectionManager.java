@@ -93,14 +93,19 @@ public class ConnectionManager
 	public DbConn getDbConn(String key)
 	{
 		String[] entryVals = this.kvfm.getEntryAsString(key).split("\\|");
+		String type = entryVals[0];
+		String host = entryVals[1];
+		String db = entryVals[2];
 		int port = 0;
 		if (Utils.isInt(entryVals[3]) == true)
 		{
 			port = ConversionUtils.toInt(entryVals[3]);
 		}
-		DbConn dbconn = new DbConn(entryVals[0],
-									entryVals[2],
-									entryVals[1],
+		DbConn dbconn = new DbConn(BaseDAO.getDriver(type),
+									BaseDAO.getUrl(type, host, db),
+									type,
+									host,
+									db,
 									port);
 		return dbconn;
 	}
@@ -114,7 +119,9 @@ public class ConnectionManager
 			if (this.connFactory.containsPool(key) == false)
 			{
 				DbConn dbconn = this.getDbConn(key);
-				this.connFactory.addPool(key, dbconn, user, pass);
+				dbconn.setUser(user);
+				dbconn.setPassword(pass);
+				this.connFactory.addPool(key, dbconn);
 			}
 			
 			return this.connFactory.getConnection(key);

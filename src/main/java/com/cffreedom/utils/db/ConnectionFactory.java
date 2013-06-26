@@ -176,21 +176,10 @@ public class ConnectionFactory
 			return false;
 		}
 	}
-
-	public boolean addPool(String poolKey, DbConn dbconn, String username, String password)
-	{
-		String driver = BaseDAO.getDriver(dbconn.getType());
-		String url = BaseDAO.getUrl(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort());
-		
-		return this.addPool(poolKey, driver, url, username, password);
-	}
 	
 	public boolean addPool(String poolKey, DbConn dbconn)
 	{
-		String driver = BaseDAO.getDriver(dbconn.getType());
-		String url = BaseDAO.getUrl(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort());
-		
-		return this.addPool(poolKey, driver, url, dbconn.getUser(), dbconn.getPassword());
+		return this.addPool(poolKey, dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword());
 	}
 	
 	public void closePool(String poolKey)
