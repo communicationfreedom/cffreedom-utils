@@ -167,6 +167,13 @@ public class ConnectionPool
 		DbConnection c;
 		
 		logger.logDebug(METHOD, "Getting connection from pool: " + this.getPoolName());
+		
+		if (this.connections == null)
+		{
+			logger.logDebug(METHOD, "Reinitializing pool connections: " + this.getPoolName());
+			this.connections = new Vector<DbConnection>(poolsize);
+		}
+		
 		for(int i = 0; i < this.connections.size(); i++)
 		{
 			c = (DbConnection)this.connections.elementAt(i);
