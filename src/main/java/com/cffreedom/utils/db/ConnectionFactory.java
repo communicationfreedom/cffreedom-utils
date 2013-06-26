@@ -7,6 +7,7 @@ import java.util.Hashtable;
 
 import com.cffreedom.beans.DbConn;
 import com.cffreedom.utils.LoggerUtil;
+import com.cffreedom.utils.db.pool.ConnectionPool;
 
 /**
  * Provides a key/value set of connection pools (essentially a pool of pools)
@@ -100,7 +101,7 @@ public class ConnectionFactory
 			logger.logDebug(METHOD, "Getting jndi connection: " + poolKey);
 			try
 			{
-				conn = new DbConnection(getI3kConn(poolKey));
+				conn = getJndiConn(poolKey);
 				logger.logDebug(METHOD, "Got jndi connection: " + poolKey);
 			}
 			catch (SQLException sqe)
@@ -248,9 +249,9 @@ public class ConnectionFactory
 
 	}
 
-	private Connection getI3kConn(String dsn) throws SQLException
+	private Connection getJndiConn(String dsn) throws SQLException
 	{
-		final String METHOD = "getI3kConn";
+		final String METHOD = "getJndiConn";
 
 		logger.logDebug(METHOD, "Getting connection: " + dsn);
 		return null; // DataSource.getConnection(dsn);

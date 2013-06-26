@@ -1,4 +1,4 @@
-package com.cffreedom.utils.db;
+package com.cffreedom.utils.db.pool;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -74,8 +74,8 @@ public class DbConnection implements Connection
        }
        else
        {
-          inuse=true;
-          timestamp=System.currentTimeMillis();
+          this.inuse = true;
+          this.timestamp = System.currentTimeMillis();
           return true;
        }
     }

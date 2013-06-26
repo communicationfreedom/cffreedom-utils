@@ -1,5 +1,4 @@
-package com.cffreedom.utils.db;
-
+package com.cffreedom.utils.db.pool;
 
 import java.sql.*;
 import java.util.*;
@@ -18,45 +17,6 @@ import com.cffreedom.utils.LoggerUtil;
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
  */
-class ConnectionReaper extends Thread
-{
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
-		
-    private ConnectionPool 	pool;
-    private final long 		delaySeconds = 2*60;
-    private boolean 		shutdown = false;
-
-    ConnectionReaper(ConnectionPool pool)
-    {
-        this.pool=pool;
-    }
-
-    public void run()
-    {
-    	final String METHOD = "run";
-    	
-        while(this.shutdown == false)
-        {
-           try
-           {
-              sleep(this.delaySeconds * 1000);
-           }
-           catch( InterruptedException e) { }
-           
-           logger.logDebug(METHOD, "Calling reapConnections");
-           this.pool.reapConnections();
-        }
-        
-        logger.logDebug(METHOD, "Exiting");
-    }
-    
-    protected void shutdown()
-    {
-    	this.shutdown = true;
-    	this.interrupt();
-    }
-}
-
 public class ConnectionPool
 {
 	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
@@ -69,7 +29,7 @@ public class ConnectionPool
 	private String 					password;
 	final private long 				secondsUntilStale = 60;
 	private ConnectionReaper 		reaper;
-	final private int 				poolsize = 10;
+	final private int 				poolsize = 20;
 
 	public ConnectionPool(String poolName, String driver, String url, String user, String password)
 	{
@@ -156,7 +116,10 @@ public class ConnectionPool
 		}
 	}
 
-	private synchronized void removeConnection(DbConnection conn) {
+	private synchronized void removeConnection(DbConnection conn)
+	{
+		final String METHOD = "removeConnection";
+		logger.logDebug(METHOD, "Removing Connection from pool: " + this.getPoolName());
 		this.connections.removeElement(conn);
 	}
 
@@ -164,7 +127,7 @@ public class ConnectionPool
 	public synchronized DbConnection getConnection() throws SQLException, ClassNotFoundException
 	{
 		final String METHOD = "getConnection";
-		DbConnection c;
+		DbConnection dbConnection;
 		
 		logger.logDebug(METHOD, "Getting connection from pool: " + this.getPoolName());
 		
@@ -176,11 +139,18 @@ public class ConnectionPool
 		
 		for(int i = 0; i < this.connections.size(); i++)
 		{
-			c = (DbConnection)this.connections.elementAt(i);
-			if (c.lease() == true)
+			dbConnection = (DbConnection)this.connections.elementAt(i);
+			if (dbConnection.lease() == true)
 			{
-				logger.logDebug(METHOD, "Returning cached Connection from pool: " + this.getPoolName());
-				return c;
+				if (dbConnection.validate() == true)
+				{
+					logger.logDebug(METHOD, "Returning cached Connection from pool: " + this.getPoolName());
+					return dbConnection;
+				}
+				else
+				{
+					this.removeConnection(dbConnection);
+				}
 			}
 		}
 
@@ -188,16 +158,16 @@ public class ConnectionPool
 		logger.logDebug(METHOD, "Creating new connection in pool: " + this.getPoolName());
 		Class.forName(this.driver);
 		Connection conn = DriverManager.getConnection(this.url, this.user, this.password);
-		c = new DbConnection(conn, this);
+		dbConnection = new DbConnection(conn, this);
 		logger.logDebug(METHOD, "New Connection created in pool: " + this.getPoolName());
-		c.lease();
-		this.connections.addElement(c);
+		dbConnection.lease();
+		this.connections.addElement(dbConnection);
 		logger.logDebug(METHOD, "Returning new Connection from pool: " + this.getPoolName());
-		return c;
+		return dbConnection;
 	} 
 
    public synchronized void returnConnection(DbConnection conn) {
-	   conn.expireLease();
+	   conn.expireLease();  // Mark the connection as not in use, but leave in the pool for reuse
    }
    
    public String getPoolName()
