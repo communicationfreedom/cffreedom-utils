@@ -94,8 +94,8 @@ public class ConnectionManager
 	{
 		String[] entryVals = this.kvfm.getEntryAsString(key).split("\\|");
 		String type = entryVals[0];
-		String host = entryVals[1];
-		String db = entryVals[2];
+		String db = entryVals[1];
+		String host = entryVals[2];
 		int port = 0;
 		if (Utils.isInt(entryVals[3]) == true)
 		{
