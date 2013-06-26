@@ -53,7 +53,7 @@ public class DbUtils
 		Connection conn = null;
 		try
 		{
-			conn = BaseDAO.getConn(dbconn, dbconn.getUser(), dbconn.getPassword());
+			conn = BaseDAO.getConn(dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword());
 			String testSql = BaseDAO.getListTablesSql(dbconn.getType());
 			if (testSql != null)
 			{

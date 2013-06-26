@@ -128,7 +128,8 @@ public class ConnectionManager
 		}
 		else
 		{
-			return BaseDAO.getConn(this.getDbConn(key), user, pass);
+			DbConn dbconn = this.getDbConn(key);
+			return BaseDAO.getConn(dbconn.getDriver(), dbconn.getUrl(), user, pass);
 		}
 	}
 	

@@ -171,17 +171,10 @@ public class BaseDAO
 			return 0;
 		}
 	}
-
-	public static Connection getConn(DbConn dbconn, String user, String pass)
-	{
-		String driver = BaseDAO.getDriver(dbconn.getType());
-		String url = BaseDAO.getUrl(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort());
-		return getConn(driver, url, user, pass);
-	}
 	
 	public static Connection getConn(String driver, String url, String user, String pass)
 	{
-		final String METHOD = "com.cffreedom.db.BaseDAO.getConn(driver, url, user, pass)";
+		final String METHOD = "getConn";
 		
 		try
 		{
