@@ -114,23 +114,28 @@ public class ConnectionFactory
 			logger.logDebug(METHOD, "Getting non-jndi connection: " + poolKey);
 			try
 			{
-				if (this.containsPool(poolKey) == true)
+				ConnectionPool pool = null;
+				
+				if ( (this.containsPool(poolKey) == true) && (this.getConnectionPool(poolKey) != null) )
 				{
-					ConnectionPool pool = this.getConnectionPool(poolKey);
-					
-					if ((pool == null) && (this.dbConns.containsKey(poolKey) == true))
-					{
-						logger.logInfo(METHOD, "Restoring pool from cached DbConn");
-						this.connectionPools.remove(poolKey);
-						this.addPool(poolKey, this.dbConns.get(poolKey));
-					}
-					
-					conn = pool.getConnection();
-					logger.logDebug(METHOD, "Got non-jndi connection: " + poolKey);
+					pool = this.getConnectionPool(poolKey);
+				}
+				else if (this.dbConns.containsKey(poolKey) == true)
+				{
+					logger.logInfo(METHOD, "Restoring pool from cached DbConn");
+					this.removePool(poolKey);
+					this.addPool(poolKey, this.dbConns.get(poolKey));
+					pool = this.getConnectionPool(poolKey);
 				}
 				else
 				{
 					logger.logWarn(METHOD, "ConnectionPool not found for key: " + poolKey);
+				}
+				
+				if (pool != null)
+				{
+					conn = pool.getConnection();
+					logger.logDebug(METHOD, "Got non-jndi connection: " + poolKey);
 				}
 			}
 			catch (SQLException sqe)
@@ -148,7 +153,7 @@ public class ConnectionFactory
 		if ((conn == null) && (this.containsPool(poolKey) == true))
 		{
 			logger.logInfo(METHOD, "Removing invalid pool: " + poolKey);
-			this.connectionPools.remove(poolKey);
+			this.removePool(poolKey);
 		}
 		
 		return conn;
@@ -156,16 +161,23 @@ public class ConnectionFactory
 
 	public boolean addPool(String poolKey, String driver, String url, String username, String password)
 	{
+		DbConn dbconn = new DbConn(driver, url, username, password);
+		return addPool(poolKey, dbconn);
+	}
+	
+	public boolean addPool(String poolKey, DbConn dbconn)
+	{
 		final String METHOD = "addPool";
 
 		if (this.getConnectionPool(poolKey) == null)
 		{
 			logger.logDebug(METHOD, "Creating pool: " + poolKey);
-			this.connectionPools.put(poolKey, new ConnectionPool(poolKey, driver, url, username, password));
+			this.connectionPools.put(poolKey, new ConnectionPool(poolKey, dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword()));
 			
 			if (this.dbConns.containsKey(poolKey) == false)
 			{
-				this.dbConns.put(poolKey, new DbConn(driver, url, username, password));
+				logger.logDebug(METHOD, "Caching DbConn: " + poolKey);
+				this.dbConns.put(poolKey, dbconn);
 			}
 			
 			return true;
@@ -177,9 +189,9 @@ public class ConnectionFactory
 		}
 	}
 	
-	public boolean addPool(String poolKey, DbConn dbconn)
+	private void removePool(String poolKey)
 	{
-		return this.addPool(poolKey, dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword());
+		this.connectionPools.remove(poolKey);
 	}
 	
 	public void closePool(String poolKey)
@@ -200,7 +212,7 @@ public class ConnectionFactory
 				logger.logError(METHOD, e.getMessage(), e);
 			}
 			
-			this.connectionPools.remove(poolKey);
+			this.removePool(poolKey);
 		}
 		
 		if (this.dbConns.containsKey(poolKey) == true)

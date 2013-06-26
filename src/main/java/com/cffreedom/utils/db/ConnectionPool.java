@@ -118,7 +118,7 @@ public class ConnectionPool
 		
 		if ((this.connections == null) || (this.connections.size() == 0))
 		{
-			logger.logInfo(METHOD, "Closing the pool because there are no connections to reap");
+			logger.logInfo(METHOD, "No connections to reap. Closing pool: " + this.getPoolName());
 			this.close();
 		}
 	}
@@ -131,7 +131,7 @@ public class ConnectionPool
 		{
 			if ( (this.connections != null) && (this.connections.size() > 0) )
 			{
-				logger.logDebug(METHOD, "Closing all connections " + this.getPoolName());
+				logger.logDebug(METHOD, "Closing all connections in pool: " + this.getPoolName());
 				Enumeration<DbConnection> connlist = this.connections.elements();
 		
 				while((connlist != null) && (connlist.hasMoreElements()))
@@ -142,7 +142,7 @@ public class ConnectionPool
 			}
 			else
 			{
-				logger.logDebug(METHOD, "No connections to close");
+				logger.logDebug(METHOD, "No connections to close in pool: " + this.getPoolName());
 			}
 		}
 		catch (Exception e)
@@ -166,24 +166,26 @@ public class ConnectionPool
 		final String METHOD = "getConnection";
 		DbConnection c;
 		
-		logger.logDebug(METHOD, "Getting connection " + this.getPoolName());
+		logger.logDebug(METHOD, "Getting connection from pool: " + this.getPoolName());
 		for(int i = 0; i < this.connections.size(); i++)
 		{
 			c = (DbConnection)this.connections.elementAt(i);
 			if (c.lease() == true)
 			{
+				logger.logDebug(METHOD, "Returning cached Connection from pool: " + this.getPoolName());
 				return c;
 			}
 		}
 
-		logger.logDebug(METHOD, "Creating new connection " + this.getDetailName());
+		// A connection was not obtained from the pool so create a new one
+		logger.logDebug(METHOD, "Creating new connection in pool: " + this.getPoolName());
 		Class.forName(this.driver);
 		Connection conn = DriverManager.getConnection(this.url, this.user, this.password);
 		c = new DbConnection(conn, this);
-		logger.logDebug(METHOD, "Connection Created");
+		logger.logDebug(METHOD, "New Connection created in pool: " + this.getPoolName());
 		c.lease();
 		this.connections.addElement(c);
-		logger.logDebug(METHOD, "Returning Connection");
+		logger.logDebug(METHOD, "Returning new Connection from pool: " + this.getPoolName());
 		return c;
 	} 
 
