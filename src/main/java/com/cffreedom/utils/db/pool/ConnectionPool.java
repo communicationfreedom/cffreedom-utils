@@ -181,7 +181,7 @@ public class ConnectionPool
 		return this.connections.size();
 	}
    
-   public String getPoolName()
+   private String getPoolName()
    {
 	   return this.poolName;
    }

@@ -26,30 +26,27 @@ import com.cffreedom.utils.LoggerUtil;
  * Changes:
  * 2013-04-23 	markjacobsen.net 	Removed old ColdFusion connection logic
  * 2013-06-25	markjacobsen.net 	Added containsPool()
- * 2013-06-27	markjacobsen.net 	Made a singleton
+ * 2013-06-27	markjacobsen.net 	Made a singleton (Hat Tip: http://stackoverflow.com/questions/11165852/java-singleton-and-synchronization)
  */
 public class ConnectionFactory
 {
-	private static ConnectionFactory instance = null;
-	
 	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
 
 	private Hashtable<String, ConnectionPool> connectionPools = new Hashtable<String, ConnectionPool>();
 	private Hashtable<String, DbConn> dbConns = new Hashtable<String, DbConn>();
+	
+	private static class Loader {
+		private static final ConnectionFactory INSTANCE = new ConnectionFactory();
+	}
 
-	protected ConnectionFactory()
+	private ConnectionFactory()
 	{
-		//Exists only to defeat instantiation
+		//Exists only to defeat external instantiation
 	}
 
 	public static ConnectionFactory getInstance()
 	{
-		if (instance == null)
-		{
-			LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, "ConnectionFactory: getInstance", "Creating new instance");
-			instance = new ConnectionFactory();
-		}
-		return instance;
+		return Loader.INSTANCE;
 	}
 
 	/**
@@ -92,12 +89,12 @@ public class ConnectionFactory
 		}
 	}
 	
-	public boolean containsPool(String poolKey)
+	public synchronized boolean containsPool(String poolKey)
 	{
 		return this.connectionPools.containsKey(poolKey);
 	}
 	
-	public boolean containsCachedDbConn(String poolKey)
+	private boolean containsCachedDbConn(String poolKey)
 	{
 		return this.dbConns.containsKey(poolKey);
 	}
@@ -110,7 +107,7 @@ public class ConnectionFactory
 	 * 			  the "key" should be the JNDI datasource name.
 	 * @return A Connection for the key
 	 */
-	public Connection getConnection(String poolKey)
+	public synchronized Connection getConnection(String poolKey)
 	{
 		String METHOD = "getConnection";
 
@@ -190,7 +187,7 @@ public class ConnectionFactory
 	 * @param password
 	 * @return
 	 */
-	public boolean addPool(String poolKey, String driver, String url, String username, String password)
+	public synchronized boolean addPool(String poolKey, String driver, String url, String username, String password)
 	{
 		DbConn dbconn = new DbConn(driver, url, username, password);
 		return this.addPool(poolKey, dbconn);
@@ -203,7 +200,7 @@ public class ConnectionFactory
 	 * @param dbconn
 	 * @return
 	 */
-	public boolean addPool(String poolKey, DbConn dbconn)
+	public synchronized boolean addPool(String poolKey, DbConn dbconn)
 	{
 		final String METHOD = "addPool";
 
@@ -237,7 +234,7 @@ public class ConnectionFactory
 		if (this.containsPool(poolKey))	{ this.dbConns.remove(poolKey); }
 	}
 	
-	public void closePool(String poolKey)
+	private void closePool(String poolKey)
 	{
 		final String METHOD = "closePool";
 
@@ -264,7 +261,7 @@ public class ConnectionFactory
 	/**
 	 * Close the factory - i.e. all ConnectionPools
 	 */
-	public void close()
+	public synchronized void close()
 	{
 		final String METHOD = "close";
 
