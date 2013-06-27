@@ -11,6 +11,7 @@ import com.cffreedom.utils.KeyValueFileMgr;
 import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.SystemUtils;
 import com.cffreedom.utils.Utils;
+import com.cffreedom.utils.db.pool.ConnectionFactory;
 import com.cffreedom.utils.file.FileUtils;
 
 /**
@@ -38,8 +39,7 @@ public class ConnectionManager
 	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
 	private KeyValueFileMgr kvfm = null;
 	private String file = null;
-	private boolean cacheConnections = false;
-	private ConnectionFactory connFactory = new ConnectionFactory();
+	private ConnectionFactory connFactory = null;
 	
 	public ConnectionManager() throws DbException
 	{
@@ -58,8 +58,14 @@ public class ConnectionManager
 	
 	public ConnectionManager(String file, boolean cacheConnections) throws DbException
 	{
+		final String METHOD = "<init>";
 		this.loadConnectionFile(file);
-		this.cacheConnections = cacheConnections;
+
+		if (cacheConnections == true)
+		{
+			logger.logDebug(METHOD, "Using ConnectionFactory/Connection Pooling");
+			this.connFactory = ConnectionFactory.getInstance();
+		}
 	}
 	
 	public void loadConnectionFile(String file) throws DbException
@@ -110,7 +116,7 @@ public class ConnectionManager
 		return dbconn;
 	}
 	
-	public boolean cacheConnections() { return this.cacheConnections; }
+	public boolean cacheConnections() { if (this.connFactory == null){ return true; }else{ return false; } }
 		
 	public Connection getConnection(String key, String user, String pass)
 	{

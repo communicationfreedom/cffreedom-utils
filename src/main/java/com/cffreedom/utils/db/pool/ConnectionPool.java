@@ -45,13 +45,13 @@ public class ConnectionPool
 		this.reaper.start();
 	}
 
-	public synchronized void reapConnections()
+	protected synchronized void reapConnections()
 	{
 		final String METHOD = "reapConnections";
 		
 		long stale = System.currentTimeMillis() - (secondsUntilStale * 1000);
 		
-		if ( (this.connections != null) && (this.connections.size() > 0) )
+		if ( (this.connections != null) && (this.getPoolSize() > 0) )
 		{
 			Enumeration<DbConnection> connlist = this.connections.elements();
 	    
@@ -69,14 +69,18 @@ public class ConnectionPool
 	        		)
 				{
 					//logger.logDebug(METHOD, "Removing stale connection");
-					removeConnection(conn);
+					this.removeConnection(conn, "expired");
+				}
+				else if (conn.validate() == false)
+				{
+					this.removeConnection(conn, "invalid");
 				}
 			}
 			
-			//logger.logDebug(METHOD, "Current connections: " + this.connections.size());
+			//logger.logDebug(METHOD, "Current connections: " + this.getPoolSize());
 		}
 		
-		if ((this.connections == null) || (this.connections.size() == 0))
+		if ((this.connections == null) || (this.getPoolSize() == 0))
 		{
 			logger.logInfo(METHOD, "No connections to reap. Closing pool: " + this.getPoolName());
 			this.close();
@@ -89,7 +93,7 @@ public class ConnectionPool
 		
 		try
 		{
-			if ( (this.connections != null) && (this.connections.size() > 0) )
+			if ( (this.connections != null) && (this.getPoolSize() > 0) )
 			{
 				logger.logDebug(METHOD, "Closing all connections in pool: " + this.getPoolName());
 				Enumeration<DbConnection> connlist = this.connections.elements();
@@ -97,7 +101,7 @@ public class ConnectionPool
 				while((connlist != null) && (connlist.hasMoreElements()))
 				{
 					DbConnection conn = (DbConnection)connlist.nextElement();
-					removeConnection(conn);
+					this.removeConnection(conn, "closing pool");
 				}
 			}
 			else
@@ -116,13 +120,18 @@ public class ConnectionPool
 		}
 	}
 
-	private synchronized void removeConnection(DbConnection conn)
+	private synchronized void removeConnection(DbConnection conn, String reason)
 	{
 		final String METHOD = "removeConnection";
-		logger.logDebug(METHOD, "Removing Connection from pool: " + this.getPoolName());
+		logger.logDebug(METHOD, "Removing Connection from pool: " + this.getPoolName() + ", reason: " + reason);
+		try { conn.close(); } catch (Exception e) {}
 		this.connections.removeElement(conn);
+		logger.logDebug(METHOD, this.getPoolSize() + " Connections currently in pool: " + this.getPoolName());
 	}
 
+   public synchronized void returnConnection(DbConnection conn) {
+	   conn.expireLease();  // Mark the connection as not in use, but leave in the pool for reuse
+   }
 
 	public synchronized DbConnection getConnection() throws SQLException, ClassNotFoundException
 	{
@@ -137,7 +146,7 @@ public class ConnectionPool
 			this.connections = new Vector<DbConnection>(poolsize);
 		}
 		
-		for(int i = 0; i < this.connections.size(); i++)
+		for(int i = 0; i < this.getPoolSize(); i++)
 		{
 			dbConnection = (DbConnection)this.connections.elementAt(i);
 			if (dbConnection.lease() == true)
@@ -149,7 +158,7 @@ public class ConnectionPool
 				}
 				else
 				{
-					this.removeConnection(dbConnection);
+					this.removeConnection(dbConnection, "invalid connection");
 				}
 			}
 		}
@@ -159,16 +168,18 @@ public class ConnectionPool
 		Class.forName(this.driver);
 		Connection conn = DriverManager.getConnection(this.url, this.user, this.password);
 		dbConnection = new DbConnection(conn, this);
-		logger.logDebug(METHOD, "New Connection created in pool: " + this.getPoolName());
+		//logger.logDebug(METHOD, "New Connection created in pool: " + this.getPoolName());
 		dbConnection.lease();
 		this.connections.addElement(dbConnection);
-		logger.logDebug(METHOD, "Returning new Connection from pool: " + this.getPoolName());
+		//logger.logDebug(METHOD, "Returning new Connection from pool: " + this.getPoolName());
+		logger.logDebug(METHOD, this.getPoolSize() + " Connections currently in pool: " + this.getPoolName());
 		return dbConnection;
-	} 
-
-   public synchronized void returnConnection(DbConnection conn) {
-	   conn.expireLease();  // Mark the connection as not in use, but leave in the pool for reuse
-   }
+	}
+	
+	public synchronized int getPoolSize()
+	{
+		return this.connections.size();
+	}
    
    public String getPoolName()
    {

@@ -10,6 +10,7 @@ import java.util.Date;
 import com.cffreedom.beans.DbConn;
 import com.cffreedom.utils.ConversionUtils;
 import com.cffreedom.utils.LoggerUtil;
+import com.cffreedom.utils.db.pool.ConnectionFactory;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
