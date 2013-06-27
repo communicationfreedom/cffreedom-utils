@@ -116,7 +116,7 @@ public class ConnectionManager
 		return dbconn;
 	}
 	
-	public boolean cacheConnections() { if (this.connFactory == null){ return true; }else{ return false; } }
+	public boolean cacheConnections() { if (this.connFactory != null){ return true; }else{ return false; } }
 		
 	public Connection getConnection(String key, String user, String pass)
 	{
