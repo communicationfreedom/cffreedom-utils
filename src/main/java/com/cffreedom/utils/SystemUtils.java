@@ -67,7 +67,7 @@ public class SystemUtils
 	{
 		if (isWindows() == true)
 		{
-			return getHomeDir() + "\\My Documents";
+			return getHomeDir() + getPathSeparator() + "My Documents";
 		}
 		else
 		{
