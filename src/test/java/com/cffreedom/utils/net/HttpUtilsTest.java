@@ -10,17 +10,9 @@ import com.cffreedom.beans.Response;
 public class HttpUtilsTest
 {
 	@Test
-	public void testHttpGetDepricated() throws IOException
+	public void testHttpGet() throws IOException
 	{
-		String response = HttpUtils.httpGet("http://www.google.com");
-		Assert.assertNotNull(response);
-		Assert.assertFalse(response.equalsIgnoreCase(""));
-	}
-	
-	@Test
-	public void testHttpGetResponse() throws IOException
-	{
-		Response response = HttpUtils.httpGetResponse("http://www.google.com");
+		Response response = HttpUtils.httpGet("http://www.google.com");
 		Assert.assertNotNull(response);
 		Assert.assertEquals(200, response.getIntCode());
 	}

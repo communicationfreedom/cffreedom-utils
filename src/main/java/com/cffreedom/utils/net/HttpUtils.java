@@ -58,6 +58,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-05-20 	markjacobsen.net 	Added httpGetWithReqProp(String urlStr, HashMap<String, String> reqProps) for sending req w/ multiple request headers
  * 2013-05-21 	markjacobsen.net 	Added reqProps param to httpPost()
  * 2013-06-25 	markjacobsen.net 	Added httpGetResponse() for returning a Response object
+ * 2013-07-04 	markjacobsen.net 	httpGetResponse() is now httpGet()
  */
 public class HttpUtils
 {
@@ -79,28 +80,11 @@ public class HttpUtils
 		return urlStr;
 	}
 	
-	@Deprecated
-	public static String httpGet(String urlStr) throws IOException { return httpGet(urlStr, null); }
-	@Deprecated
-	public static String httpGet(String urlStr, Map<String, String> queryParams) throws IOException { return httpGet(urlStr, queryParams, true); }
-	@Deprecated
-	public static String httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws IOException
+	public static Response httpGet(String urlStr) throws IOException { return httpGet(urlStr, null); }
+	public static Response httpGet(String urlStr, Map<String, String> queryParams) throws IOException { return httpGet(urlStr, queryParams, true); }
+	public static Response httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws IOException
 	{
-		Response response = httpGetResponse(urlStr, queryParams, setupProxy);
-		
-		if (response.getIntCode() != 200)
-		{
-			throw new IOException(response.getMessage());
-		}
-
-		return response.getDetail();
-	}
-	
-	public static Response httpGetResponse(String urlStr) throws IOException { return httpGetResponse(urlStr, null); }
-	public static Response httpGetResponse(String urlStr, Map<String, String> queryParams) throws IOException { return httpGetResponse(urlStr, queryParams, true); }
-	public static Response httpGetResponse(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws IOException
-	{
-		final String METHOD = "httpGetResponse";
+		final String METHOD = "httpGet";
 		Response response = new Response(true, 0, "", "", "");
 		urlStr = buildUrl(urlStr, queryParams);
 		
