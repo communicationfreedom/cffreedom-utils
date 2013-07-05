@@ -10,8 +10,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingEnumeration;
 
 import com.cffreedom.beans.DbConn;
 import com.cffreedom.exceptions.DbException;
@@ -41,12 +47,36 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-04-27 	markjacobsen.net 	Added getResultSet()
  * 2013-05-18 	markjacobsen.net 	Added listTables()
  * 2013-05-23	markjacobsen.net 	Updated outputResultSet() to handle RAW format better
+ * 2013-07-05	markjacobsen.net 	Added getJndiDataSourceNames()
  */
 public class DbUtils
 {
 	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
 	
 	public static enum FORMAT {CSV,TAB,XML,RAW,NO_OUTPUT};
+	
+	public static List<String> getJndiDataSourceNames()
+	{
+		List<String> dataSources = new ArrayList<>();
+		try
+		{
+			Context ctx = new InitialContext();
+			NamingEnumeration<?> bindings = ctx.listBindings("java:comp/env/jdbc");
+
+			while (bindings.hasMore())
+			{
+				Binding binding = (Binding) bindings.next();
+				dataSources.add(binding.getName());
+			}
+
+		}
+		catch (Exception e)
+		{
+			dataSources = null;
+		}
+		
+		return dataSources;
+	}
 	
 	public static void listTables(DbConn dbconn)
 	{
