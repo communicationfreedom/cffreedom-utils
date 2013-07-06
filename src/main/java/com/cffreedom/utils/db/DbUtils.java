@@ -57,7 +57,7 @@ public class DbUtils
 	
 	public static List<String> getJndiDataSourceNames()
 	{
-		List<String> dataSources = new ArrayList<>();
+		List<String> dataSources = new ArrayList<String>();
 		try
 		{
 			Context ctx = new InitialContext();
