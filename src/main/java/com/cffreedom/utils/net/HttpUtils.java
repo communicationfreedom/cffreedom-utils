@@ -73,7 +73,7 @@ public class HttpUtils
 		
 		if (setupProxy == true) { setupProxy(); }
 		
-		logger.debug("Getting: " + urlStr);
+		logger.debug("Getting: {}", urlStr);
 		URL url = new URL(urlStr);
 		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 		response.setIntCode(conn.getResponseCode());
@@ -230,7 +230,7 @@ public class HttpUtils
 			
 			if (envVar != null)
 			{
-				logger.debug("Setting up proxy from env var = " + envVar);
+				logger.debug("Setting up proxy from env var = {}", envVar);
 				proxy = SystemUtils.getEnvVal(envVar);
 				String[] parts = proxy.split("@");
 				if (parts.length == 1)
@@ -270,15 +270,15 @@ public class HttpUtils
 					}
 				}
 				
-				logger.debug("http.proxyHost = " + System.getProperties().get("http.proxyHost"));
-				logger.debug("http.proxyPort = " + System.getProperties().get("http.proxyPort"));
-				logger.debug("http.proxyUser = " + System.getProperties().get("http.proxyUser"));
-				//logger.debug("http.proxyPassword = " + System.getProperties().get("http.proxyPassword"));
+				logger.debug("http.proxyHost = {}", System.getProperties().get("http.proxyHost"));
+				logger.debug("http.proxyPort = {}", System.getProperties().get("http.proxyPort"));
+				logger.debug("http.proxyUser = {}", System.getProperties().get("http.proxyUser"));
+				logger.trace("http.proxyPassword = {}", System.getProperties().get("http.proxyPassword"));
 				
-				logger.debug("https.proxyHost = " + System.getProperties().get("https.proxyHost"));
-				logger.debug("https.proxyPort = " + System.getProperties().get("https.proxyPort"));
-				logger.debug("https.proxyUser = " + System.getProperties().get("https.proxyUser"));
-				//LoggerUtil.log(METHOD, "https.proxyPassword = " + System.getProperties().get("https.proxyPassword"));
+				logger.debug("https.proxyHost = {}", System.getProperties().get("https.proxyHost"));
+				logger.debug("https.proxyPort = {}", System.getProperties().get("https.proxyPort"));
+				logger.debug("https.proxyUser = {}", System.getProperties().get("https.proxyUser"));
+				logger.trace("https.proxyPassword = {}", System.getProperties().get("https.proxyPassword"));
 			}
 		}
 	}

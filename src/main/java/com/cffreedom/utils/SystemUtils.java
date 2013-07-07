@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cffreedom.utils.file.FileUtils;
 
 /**
@@ -29,6 +32,8 @@ import com.cffreedom.utils.file.FileUtils;
  */
 public class SystemUtils
 {
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.SystemUtils");
+	
 	public static String getUsername()
 	{
 		if (isWindows() == true){
@@ -129,12 +134,10 @@ public class SystemUtils
 	
 	public static void sleep(double seconds)
     {
-        final String METHOD = "sleep";
-
         try {
             Thread.sleep(ConversionUtils.toInt(seconds * 1000));
         } catch (InterruptedException e) {
-            LoggerUtil.log(LoggerUtil.LEVEL_ERROR, METHOD, "ERROR: Sleeping");
+            logger.error("ERROR: Sleeping");
         }
     }
 	

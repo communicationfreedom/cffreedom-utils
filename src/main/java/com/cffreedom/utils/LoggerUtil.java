@@ -8,6 +8,9 @@ import java.util.Hashtable;
 import com.cffreedom.utils.file.FileUtils;
 
 /**
+ * Don't use unless for some crazy reason you don't have access to a logging
+ * framework like logback/slf4j
+ * 
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -23,6 +26,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-05-06 	markjacobsen.net 	Using Utils.output instead of System.out.println
  * 2013-05-16 	markjacobsen.net	Adding DateTime stamp to messages
  */
+@Deprecated
 public class LoggerUtil
 {
 	public static final String FAMILY_ACCOUNT = "ACCOUNT";

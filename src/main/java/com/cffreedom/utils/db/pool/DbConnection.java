@@ -19,7 +19,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-import com.cffreedom.utils.LoggerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -35,7 +36,7 @@ import com.cffreedom.utils.LoggerUtil;
  */
 public class DbConnection implements Connection
 {
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.pool.DbConnection");
     private ConnectionPool pool;
     private Connection conn;
     private boolean inuse;
@@ -111,16 +112,14 @@ public class DbConnection implements Connection
 
     public void close() throws SQLException
     {
-    	final String METHOD = "close";
-    	
     	if (this.jndiConnection == true)
     	{
-    		this.logger.logDebug(METHOD, "Returning connection to app server pool");
+    		logger.debug("Returning connection to app server pool");
     		this.conn.close();
     	}
     	else
     	{
-    		this.logger.logDebug(METHOD, "Returning connection to internal pool");
+    		logger.debug("Returning connection to internal pool");
     		pool.returnConnection(this);
     	}
     }

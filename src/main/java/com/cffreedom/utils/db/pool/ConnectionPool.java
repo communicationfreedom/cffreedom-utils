@@ -3,7 +3,8 @@ package com.cffreedom.utils.db.pool;
 import java.sql.*;
 import java.util.*;
 
-import com.cffreedom.utils.LoggerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -19,7 +20,7 @@ import com.cffreedom.utils.LoggerUtil;
  */
 public class ConnectionPool
 {
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.pool.ConnectionPool");
 	
 	private String 					poolName;
 	private Vector<DbConnection> 	connections;
@@ -39,7 +40,7 @@ public class ConnectionPool
 		this.user = user;
 		this.password = password;
 		this.connections = new Vector<DbConnection>(poolsize);
-		logger.logDebug("constructor", "Creating pool " + this.getDetailName());
+		logger.debug("Creating pool {}", this.getDetailName());
 		
 		this.reaper = new ConnectionReaper(this);
 		this.reaper.start();
@@ -47,8 +48,6 @@ public class ConnectionPool
 
 	protected synchronized void reapConnections()
 	{
-		final String METHOD = "reapConnections";
-		
 		long stale = System.currentTimeMillis() - (secondsUntilStale * 1000);
 		
 		if ( (this.connections != null) && (this.getPoolSize() > 0) )
@@ -82,20 +81,18 @@ public class ConnectionPool
 		
 		if ((this.connections == null) || (this.getPoolSize() == 0))
 		{
-			logger.logInfo(METHOD, "No connections to reap. Closing pool: " + this.getPoolName());
+			logger.info("No connections to reap. Closing pool: {}", this.getPoolName());
 			this.close();
 		}
 	}
 
 	public synchronized void close()
 	{        
-		final String METHOD = "close";
-		
 		try
 		{
 			if ( (this.connections != null) && (this.getPoolSize() > 0) )
 			{
-				logger.logDebug(METHOD, "Closing all connections in pool: " + this.getPoolName());
+				logger.debug("Closing all connections in pool: {}", this.getPoolName());
 				Enumeration<DbConnection> connlist = this.connections.elements();
 		
 				while((connlist != null) && (connlist.hasMoreElements()))
@@ -106,12 +103,12 @@ public class ConnectionPool
 			}
 			else
 			{
-				logger.logDebug(METHOD, "No connections to close in pool: " + this.getPoolName());
+				logger.debug("No connections to close in pool: {}", this.getPoolName());
 			}
 		}
 		catch (Exception e)
 		{
-			logger.logError(METHOD, e.getMessage(), e);
+			logger.error(e.getMessage());
 		}
 		finally
 		{
@@ -122,11 +119,10 @@ public class ConnectionPool
 
 	private synchronized void removeConnection(DbConnection conn, String reason)
 	{
-		final String METHOD = "removeConnection";
-		logger.logDebug(METHOD, "Removing Connection from pool: " + this.getPoolName() + ", reason: " + reason);
+		logger.debug("Removing Connection from pool: {}, reason: {}", this.getPoolName(), reason);
 		try { conn.close(); } catch (Exception e) {}
 		this.connections.removeElement(conn);
-		logger.logDebug(METHOD, this.getPoolSize() + " Connections currently in pool: " + this.getPoolName());
+		logger.debug("{} Connections currently in pool: {}", this.getPoolSize(), this.getPoolName());
 	}
 
    public synchronized void returnConnection(DbConnection conn) {
@@ -135,14 +131,13 @@ public class ConnectionPool
 
 	public synchronized DbConnection getConnection() throws SQLException, ClassNotFoundException
 	{
-		final String METHOD = "getConnection";
 		DbConnection dbConnection;
 		
-		logger.logDebug(METHOD, "Getting connection from pool: " + this.getPoolName());
+		logger.debug("Getting connection from pool: {}", this.getPoolName());
 		
 		if (this.connections == null)
 		{
-			logger.logDebug(METHOD, "Reinitializing pool connections: " + this.getPoolName());
+			logger.debug("Reinitializing pool connections: {}", this.getPoolName());
 			this.connections = new Vector<DbConnection>(poolsize);
 		}
 		
@@ -153,7 +148,7 @@ public class ConnectionPool
 			{
 				if (dbConnection.validate() == true)
 				{
-					logger.logDebug(METHOD, "Returning cached Connection from pool: " + this.getPoolName());
+					logger.debug("Returning cached Connection from pool: {}", this.getPoolName());
 					return dbConnection;
 				}
 				else
@@ -164,7 +159,7 @@ public class ConnectionPool
 		}
 
 		// A connection was not obtained from the pool so create a new one
-		logger.logDebug(METHOD, "Creating new connection in pool: " + this.getPoolName());
+		logger.debug("Creating new connection in pool: {}", this.getPoolName());
 		Class.forName(this.driver);
 		Connection conn = DriverManager.getConnection(this.url, this.user, this.password);
 		dbConnection = new DbConnection(conn, this);
@@ -172,7 +167,7 @@ public class ConnectionPool
 		dbConnection.lease();
 		this.connections.addElement(dbConnection);
 		//logger.logDebug(METHOD, "Returning new Connection from pool: " + this.getPoolName());
-		logger.logDebug(METHOD, this.getPoolSize() + " Connections currently in pool: " + this.getPoolName());
+		logger.debug("{} Connections currently in pool: {}", this.getPoolSize(), this.getPoolName());
 		return dbConnection;
 	}
 	

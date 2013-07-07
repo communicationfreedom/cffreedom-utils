@@ -1,6 +1,7 @@
 package com.cffreedom.utils.db.pool;
 
-import com.cffreedom.utils.LoggerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -16,7 +17,7 @@ import com.cffreedom.utils.LoggerUtil;
  */
 public class ConnectionReaper extends Thread
 {
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.pool.ConnectionReaper");
 	
     private ConnectionPool 	pool;
     private final long 		delaySeconds = 2*60;
@@ -29,9 +30,7 @@ public class ConnectionReaper extends Thread
 
     public void run()
     {
-    	final String METHOD = "run";
-    	
-        while(this.shutdown == false)
+    	while(this.shutdown == false)
         {
            try
            {
@@ -39,11 +38,11 @@ public class ConnectionReaper extends Thread
            }
            catch( InterruptedException e) { }
            
-           logger.logDebug(METHOD, "Calling reapConnections");
+           logger.debug("Calling reapConnections");
            this.pool.reapConnections();
         }
         
-        logger.logDebug(METHOD, "Exiting pool");
+        logger.debug("Exiting pool");
     }
     
     protected void shutdown()

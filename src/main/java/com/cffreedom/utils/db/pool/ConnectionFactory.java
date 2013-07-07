@@ -2,11 +2,12 @@ package com.cffreedom.utils.db.pool;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cffreedom.beans.DbConn;
-import com.cffreedom.utils.LoggerUtil;
 
 /**
  * Provides a key/value set of connection pools (essentially a pool of pools)
@@ -30,7 +31,7 @@ import com.cffreedom.utils.LoggerUtil;
  */
 public class ConnectionFactory
 {
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.pool.ConnectionFactory");
 
 	private Hashtable<String, ConnectionPool> connectionPools = new Hashtable<String, ConnectionPool>();
 	private Hashtable<String, DbConn> dbConns = new Hashtable<String, DbConn>();
@@ -56,15 +57,13 @@ public class ConnectionFactory
 	 */
 	private DbConn getCachedDbConn(String poolKey)
 	{
-		String METHOD = "getCachedDbConn";
-
 		if (this.containsCachedDbConn(poolKey) == true)
 		{
 			return this.dbConns.get(poolKey);
 		}
 		else
 		{
-			logger.logWarn(METHOD, "Cached DbConn not found: " + poolKey);
+			logger.warn("Cached DbConn not found: {}", poolKey);
 			return null;
 		}
 	}
@@ -76,15 +75,13 @@ public class ConnectionFactory
 	 */
 	private ConnectionPool getConnectionPool(String poolKey)
 	{
-		String METHOD = "getConnectionPool";
-
 		if (this.containsPool(poolKey) == true)
 		{
 			return this.connectionPools.get(poolKey);
 		}
 		else
 		{
-			logger.logWarn(METHOD, "Connection pool not found: " + poolKey);
+			logger.warn("Connection pool not found: {}", poolKey);
 			return null;
 		}
 	}
@@ -109,28 +106,26 @@ public class ConnectionFactory
 	 */
 	public synchronized Connection getConnection(String poolKey)
 	{
-		String METHOD = "getConnection";
-
 		Connection conn = null;
 
 		if (this.containsPool(poolKey) == false)
 		{
 			// Assume JNDI since we don't have a record of this pool
-			logger.logDebug(METHOD, "Getting jndi connection: " + poolKey);
+			logger.debug("Getting jndi connection: {}", poolKey);
 			try
 			{
 				conn = this.getJndiConn(poolKey);
-				logger.logDebug(METHOD, "Got jndi connection: " + poolKey);
+				logger.debug("Got jndi connection: {}", poolKey);
 			}
 			catch (SQLException sqe)
 			{
-				logger.logWarn(METHOD, "JNDI Connection not found for key: " + poolKey);
+				logger.warn("JNDI Connection not found for key: {}", poolKey);
 			}
 		}
 		else
 		{
 			// Non-JNDI
-			logger.logDebug(METHOD, "Getting non-jndi connection: " + poolKey);
+			logger.debug("Getting non-jndi connection: {}", poolKey);
 			try
 			{
 				ConnectionPool pool = null;
@@ -141,36 +136,36 @@ public class ConnectionFactory
 				}
 				else if (this.containsCachedDbConn(poolKey) == true)
 				{
-					logger.logInfo(METHOD, "Restoring pool from cached DbConn");
+					logger.info("Restoring pool from cached DbConn");
 					this.removePool(poolKey);
 					this.addPool(poolKey, this.getCachedDbConn(poolKey));
 					pool = this.getConnectionPool(poolKey);
 				}
 				else
 				{
-					logger.logWarn(METHOD, "ConnectionPool not found for key: " + poolKey);
+					logger.warn("ConnectionPool not found for key: {}", poolKey);
 				}
 				
 				if (pool != null)
 				{
 					conn = pool.getConnection();
-					logger.logDebug(METHOD, "Got non-jndi connection: " + poolKey);
+					logger.debug("Got non-jndi connection: {}", poolKey);
 				}
 				else
 				{
-					logger.logInfo(METHOD, "Removing invalid pool: " + poolKey);
+					logger.info("Removing invalid pool: {}", poolKey);
 					this.removePool(poolKey);
 					this.removeCachedDbConn(poolKey);
 				}
 			}
 			catch (SQLException sqe)
 			{
-				logger.logError(METHOD, "SQLException getting non-jndi connection: " + poolKey, sqe);
+				logger.error("SQLException getting non-jndi connection: {}", poolKey);
 				conn = null;
 			}
 			catch (ClassNotFoundException cnfe)
 			{
-				logger.logError(METHOD, "ClassNotFoundException getting non-jndi connection: " + poolKey, cnfe);
+				logger.error("ClassNotFoundException getting non-jndi connection: {}", poolKey);
 				conn = null;
 			}
 		}
@@ -202,16 +197,14 @@ public class ConnectionFactory
 	 */
 	public synchronized boolean addPool(String poolKey, DbConn dbconn)
 	{
-		final String METHOD = "addPool";
-
 		if (this.containsPool(poolKey) == false)
 		{
-			logger.logDebug(METHOD, "Creating pool: " + poolKey);
+			logger.debug("Creating pool: {}", poolKey);
 			this.connectionPools.put(poolKey, new ConnectionPool(poolKey, dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword()));
 			
 			if (this.containsCachedDbConn(poolKey) == false)
 			{
-				logger.logDebug(METHOD, "Caching DbConn: " + poolKey);
+				logger.debug("Caching DbConn: {}", poolKey);
 				this.dbConns.put(poolKey, dbconn);
 			}
 			
@@ -219,7 +212,7 @@ public class ConnectionFactory
 		}
 		else
 		{
-			logger.logWarn(METHOD, "Pool already exists with name: " + poolKey);
+			logger.warn("Pool already exists with name: {}", poolKey);
 			return false;
 		}
 	}
@@ -236,9 +229,7 @@ public class ConnectionFactory
 	
 	private void closePool(String poolKey)
 	{
-		final String METHOD = "closePool";
-
-		logger.logDebug(METHOD, "Closing ConnectionFactory pool: " + poolKey);
+		logger.debug("Closing ConnectionFactory pool: {}", poolKey);
 		
 		if (this.containsPool(poolKey) == true)
 		{
@@ -249,7 +240,7 @@ public class ConnectionFactory
 			}
 			catch (Exception e)
 			{
-				logger.logError(METHOD, e.getMessage(), e);
+				logger.error(e.getMessage());
 			}
 			
 			this.removePool(poolKey);
@@ -263,9 +254,7 @@ public class ConnectionFactory
 	 */
 	public synchronized void close()
 	{
-		final String METHOD = "close";
-
-		logger.logDebug(METHOD, "Closing ConnectionFactory");
+		logger.debug("Closing ConnectionFactory");
 
 		try
 		{
@@ -279,7 +268,7 @@ public class ConnectionFactory
 		}
 		catch (Exception e)
 		{
-			logger.logError(METHOD, e.getMessage(), e);
+			logger.error(e.getMessage());
 		}
 		finally
 		{
@@ -290,9 +279,7 @@ public class ConnectionFactory
 
 	private Connection getJndiConn(String dsn) throws SQLException
 	{
-		final String METHOD = "getJndiConn";
-
-		logger.logDebug(METHOD, "Getting connection: " + dsn);
+		logger.debug("Getting connection: {}", dsn);
 		return null; // DataSource.getConnection(dsn);
 	}
 }

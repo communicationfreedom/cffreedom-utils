@@ -38,10 +38,11 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.Container;
 import com.cffreedom.utils.ConversionUtils;
-import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.Utils;
 
 /**
@@ -64,7 +65,7 @@ import com.cffreedom.utils.Utils;
  */
 public class HttpSessionService
 {
-	private LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getSimpleName());
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.net.HttpSessionService");
 	private DefaultHttpClient httpClient = null;
 	private CookieStore cookieStore = null;
 	private HttpContext httpContext = null;
@@ -129,11 +130,9 @@ public class HttpSessionService
 	
 	public String getRequest(String url) throws ClientProtocolException, IOException
 	{
-		final String METHOD = "getRequest";
 		this.lastRequestUrl = url;
-		//logger.logDebug(METHOD, "URL: " + url);
+		logger.debug("URL: {}", url);
 		HttpGet httpGet = new HttpGet(url);
-		//logger.logDebug(METHOD, "Calling execute");
 		HttpResponse response = this.httpClient.execute(httpGet, this.httpContext);
 		processResponse(response);
 		return this.lastResult;
@@ -142,6 +141,7 @@ public class HttpSessionService
 	public String postRequest(String url, HashMap<String, String> queryParams) throws IOException
 	{
 		this.lastRequestUrl = url;
+		logger.debug("URL: {}", url);
 		HttpPost httpPost = new HttpPost(url);
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		for (String key : queryParams.keySet())
@@ -156,14 +156,12 @@ public class HttpSessionService
 	
 	private void processResponse(HttpResponse response) throws IllegalStateException, IOException
 	{
-		final String METHOD = "processResponse";
-		
-		//logger.logDebug(METHOD, "Processing response");
+		logger.debug("Processing response");
 		
 		this.lastRedirectUrl = null;
 		this.lastResponse = response;
 		
-		//logger.logDebug(METHOD, "Getting lastResult");
+		logger.trace("Getting lastResult");
 		if ((response.getEntity() != null) && (response.getEntity().getContent() != null))
 		{
 			this.lastResult = ConversionUtils.toString(response.getEntity().getContent());
@@ -173,13 +171,13 @@ public class HttpSessionService
 			this.lastResult = response.toString();
 		}
 		
-		//logger.logDebug(METHOD, "Getting lastRedirectUrl");
+		logger.trace("Getting lastRedirectUrl");
 		if (response.containsHeader("Location") == true)
 		{
 			this.lastRedirectUrl = response.getLastHeader("Location").getValue();
 		}
 		
-		//logger.logDebug(METHOD, "Consuming response");
+		logger.trace("Consuming response");
 		if (response.getEntity() != null) {
 			EntityUtils.consume(response.getEntity());
 	    }

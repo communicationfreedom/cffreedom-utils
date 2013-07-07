@@ -4,8 +4,10 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cffreedom.utils.DateTimeUtils;
-import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.SystemUtils;
 
 /**
@@ -29,6 +31,8 @@ import com.cffreedom.utils.SystemUtils;
  */
 public class FileUtils
 {
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.file.FileUtils");
+	
 	/**
 	 * Get the file extension
 	 * 
@@ -715,19 +719,18 @@ public class FileUtils
 	
 	public static boolean replaceInFile(String file, String find, String replace)
 	{
-		final String METHOD = "replaceInFile";
 		boolean success = false;
 
 		File theFile = new File(file);
 		if (theFile.exists() == false)
 		{
-			LoggerUtil.log(METHOD, "ERROR: The file does not exist: " + file);
+			logger.warn("The file does not exist: {}", file);
 			return false;
 		}
 
 		try
 		{
-			LoggerUtil.log(METHOD, "Replacing \""+find+"\" with \""+replace+"\" in: "+file);
+			logger.debug("Replacing \"{}\" with \"{}\" in: {}", find, replace, file);
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			ArrayList<String> lines = new ArrayList<String>();
 			String line;
@@ -764,13 +767,12 @@ public class FileUtils
 	
 	public static boolean stripLinesInFileContaining(String file, String find)
 	{
-		final String METHOD = "stripLinesInFileContaining";
 		boolean success = false;
 
 		File theFile = new File(file);
 		if (theFile.exists() == false)
 		{
-			LoggerUtil.log(METHOD, "ERROR: The file does not exist: " + file);
+			logger.warn("The file does not exist: {}", file);
 			return false;
 		}
 

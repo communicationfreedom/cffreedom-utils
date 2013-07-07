@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.cffreedom.utils.LoggerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cffreedom.utils.file.FileUtils;
 import com.cffreedom.utils.security.EncryptDecryptProxy;
 
@@ -25,7 +27,7 @@ import com.cffreedom.utils.security.EncryptDecryptProxy;
  */
 public class KeyValueFileMgr
 {
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.KeyValueFileMgr");
 	
 	private String file = null;
 	TreeMap<String, Object> map = null;
@@ -162,18 +164,16 @@ public class KeyValueFileMgr
 	
 	private void saveFile()
 	{
-		final String METHOD = "saveFile";
-		logger.logDebug(METHOD, "Saving to file: "+this.file);
+		logger.debug("Saving to file: {}", this.file);
 		FileUtils.writeObjectToFile(this.file, this.map);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private TreeMap<String, Object> loadFile(String infile) throws IOException, ClassNotFoundException
 	{
-		final String METHOD = "getProperties";
 		if (FileUtils.fileExists(infile) == true)
 		{
-			logger.logDebug(METHOD, "Loading: " + infile);
+			logger.debug("Loading: {}", infile);
 			return (TreeMap<String, Object>)FileUtils.readObjectFromFile(infile);
 		}
 		else

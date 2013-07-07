@@ -18,9 +18,11 @@ import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cffreedom.beans.EmailMessage;
 import com.cffreedom.utils.ConversionUtils;
-import com.cffreedom.utils.LoggerUtil;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -42,7 +44,7 @@ public class EmailProxy
 	private static final String G_ORDER_NEW2OLD = "NEW2OLD";
 	private static final String G_ORDER_OLD2NEW = "OLD2NEW";
 	
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.net.EmailProxy");
 	
 	private String protocol = null;
 	private String user = null;
@@ -153,17 +155,16 @@ public class EmailProxy
      */
     public Folder getFolder(Store a_oStore, String a_sFolder) throws Exception
     {
-    	final String METHOD = "getFolder";
     	Folder l_oFolder = a_oStore.getDefaultFolder();
 	    if (l_oFolder == null) {
-	    	this.logger.logDebug(METHOD, "No default folder");
+	    	logger.error("No default folder");
 	        System.exit(1);
 	    }
 	    
 	    if (a_sFolder == null) a_sFolder = "INBOX";
 	    l_oFolder = l_oFolder.getFolder(a_sFolder);
 		if (l_oFolder == null) {
-			this.logger.logDebug(METHOD, "Invalid folder");
+			logger.error("Invalid folder");
 		    System.exit(1);
 		}
 		
@@ -173,7 +174,6 @@ public class EmailProxy
     public ArrayList<EmailMessage> getMail(String a_sName, String a_sAction, String folderName, 
     	int[] a_iMessageNumbers, int a_iStartRow, int a_iMaxRows, String a_sOrder) throws Exception
     {
-    	final String METHOD = "getMail";
     	ArrayList<EmailMessage> mail = new ArrayList<EmailMessage>();
     	String l_sBody = null;
     	Folder folder = this.getFolder(this.store, folderName);
@@ -275,10 +275,10 @@ public class EmailProxy
 					
 					Message l_oMsg = l_oMail[x];
 				
-					this.logger.logDebug(METHOD, "Message: " + l_oMsg.getMessageNumber());
+					logger.debug("Message: {}", l_oMsg.getMessageNumber());
 					msgId = l_oMsg.getMessageNumber();
 					subject = l_oMsg.getSubject();
-					this.logger.logDebug(METHOD, "Subject: " + l_oMsg.getSubject());
+					logger.debug("Subject: {}", l_oMsg.getSubject());
 					
 					if (l_oMsg.getSentDate() != null)
 					{
@@ -372,7 +372,7 @@ public class EmailProxy
 						String l_sTextBody = "";
 						String l_sHtmlBody = "";
 						
-						this.logger.logDebug(METHOD, "Type: " + l_oMsg.getContentType());
+						logger.debug("Type: {}", l_oMsg.getContentType());
 						if ( (l_oMsg.isMimeType("text/plain")) || (l_oMsg.isMimeType("message/rfc822")) )
 						{
 							l_sBody = l_oMsg.getContent().toString();
@@ -393,10 +393,10 @@ public class EmailProxy
 								BodyPart l_oBodyPart = l_oMp.getBodyPart(i);
 								l_sBody = l_oBodyPart.getContent().toString();
 								
-								this.logger.logDebug(METHOD, "Part " + i + " type: " + l_oBodyPart.getContentType());
+								logger.debug("Part {} type: {}", i, l_oBodyPart.getContentType());
 								if ( (l_oBodyPart.isMimeType("multipart/*")) || (l_oBodyPart.isMimeType("multipart/alternative")) )
 								{
-									this.logger.logDebug(METHOD, "Getting inner multipart");
+									logger.debug("Getting inner multipart");
 									l_oInnerMp = (Multipart)l_oBodyPart.getContent();
 									l_oBodyPart = l_oInnerMp.getBodyPart(0);
 									l_sBody = l_oBodyPart.getContent().toString();
@@ -444,7 +444,6 @@ public class EmailProxy
     
     public void deleteMail(Folder a_oFolder, int[] a_iMessageNumbers, int a_iStartRow, int a_iMaxRows) throws Exception
     {
-    	final String METHOD = "deleteMail";
     	int l_iMsgCount = a_oFolder.getMessageCount();
     	
     	Message[] l_oMail = null;
@@ -462,14 +461,14 @@ public class EmailProxy
     	}
     	else
     	{
-    		this.logger.logDebug(METHOD, "Invalid options for delete");
+    		logger.debug("Invalid options for delete");
     		System.exit(1);
     	}
     	
     	for (int x = 0; x < l_oMail.length; x++)
 		{
     		Message l_oMsg = l_oMail[x];
-    		this.logger.logDebug(METHOD, "Deleting message: " + l_oMsg.getMessageNumber());
+    		logger.debug("Deleting message: {}", l_oMsg.getMessageNumber());
     		l_oMsg.setFlag(Flags.Flag.DELETED, true);
 		}
     }

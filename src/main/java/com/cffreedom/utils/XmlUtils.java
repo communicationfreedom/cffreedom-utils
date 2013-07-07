@@ -19,6 +19,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,6 +46,8 @@ import org.xml.sax.SAXException;
  */
 public class XmlUtils
 {
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.XmlUtils");
+	
 	public static Document getDomDocument(String source) { return getDomDocument(source, true); }
 	public static Document getDomDocument(String source, boolean sourceIsFile)
 	{
@@ -140,7 +144,7 @@ public class XmlUtils
 			NodeList nodes = getXPathNodes(search, domDocument);
 			for (int i=0 ; i < nodes.getLength() ; i++)
 			{
-				//LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, "replaceXPath", "Replacing");
+				//logger.debug("Replacing");
 				Node node = nodes.item(i);
 				node.setTextContent(replace);
 			}
