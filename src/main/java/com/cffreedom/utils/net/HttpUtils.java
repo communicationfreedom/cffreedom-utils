@@ -8,34 +8,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
-
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HTTP;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.EmailMessage;
 import com.cffreedom.beans.Response;
 import com.cffreedom.exceptions.GeneralException;
-import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.SystemUtils;
 
 /**
@@ -59,9 +40,12 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-05-21 	markjacobsen.net 	Added reqProps param to httpPost()
  * 2013-06-25 	markjacobsen.net 	Added httpGetResponse() for returning a Response object
  * 2013-07-04 	markjacobsen.net 	httpGetResponse() is now httpGet()
+ * 2013-07-06 	markjacobsen.net 	Using slf4j
  */
 public class HttpUtils
 {
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.net.HttpUtils");
+	
 	public static String buildUrl(String urlStr, Map<String, String> queryParams)
 	{
 		try
@@ -84,12 +68,12 @@ public class HttpUtils
 	public static Response httpGet(String urlStr, Map<String, String> queryParams) throws IOException { return httpGet(urlStr, queryParams, true); }
 	public static Response httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws IOException
 	{
-		final String METHOD = "httpGet";
 		Response response = new Response(true, 0, "", "", "");
 		urlStr = buildUrl(urlStr, queryParams);
 		
 		if (setupProxy == true) { setupProxy(); }
 		
+		logger.debug("Getting: " + urlStr);
 		URL url = new URL(urlStr);
 		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 		response.setIntCode(conn.getResponseCode());
@@ -230,12 +214,10 @@ public class HttpUtils
 	}
 	
 	public static void setupProxy()
-	{
-		final String METHOD = "setupProxy";
-		
+	{		
 		if (System.getProperties().get("http.proxyHost") != null)
 		{
-			LoggerUtil.log(METHOD, "Proxy already setup via system properties");
+			logger.debug("Proxy already setup via system properties");
 		}
 		else
 		{
@@ -248,7 +230,7 @@ public class HttpUtils
 			
 			if (envVar != null)
 			{
-				LoggerUtil.log(METHOD, "Setting up proxy from env var = " + envVar);
+				logger.debug("Setting up proxy from env var = " + envVar);
 				proxy = SystemUtils.getEnvVal(envVar);
 				String[] parts = proxy.split("@");
 				if (parts.length == 1)
@@ -288,14 +270,14 @@ public class HttpUtils
 					}
 				}
 				
-				LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "http.proxyHost = " + System.getProperties().get("http.proxyHost"));
-				LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "http.proxyPort = " + System.getProperties().get("http.proxyPort"));
-				LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "http.proxyUser = " + System.getProperties().get("http.proxyUser"));
-				//LoggerUtil.log(METHOD, "http.proxyPassword = " + System.getProperties().get("http.proxyPassword"));
+				logger.debug("http.proxyHost = " + System.getProperties().get("http.proxyHost"));
+				logger.debug("http.proxyPort = " + System.getProperties().get("http.proxyPort"));
+				logger.debug("http.proxyUser = " + System.getProperties().get("http.proxyUser"));
+				//logger.debug("http.proxyPassword = " + System.getProperties().get("http.proxyPassword"));
 				
-				LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "https.proxyHost = " + System.getProperties().get("https.proxyHost"));
-				LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "https.proxyPort = " + System.getProperties().get("https.proxyPort"));
-				LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "https.proxyUser = " + System.getProperties().get("https.proxyUser"));
+				logger.debug("https.proxyHost = " + System.getProperties().get("https.proxyHost"));
+				logger.debug("https.proxyPort = " + System.getProperties().get("https.proxyPort"));
+				logger.debug("https.proxyUser = " + System.getProperties().get("https.proxyUser"));
 				//LoggerUtil.log(METHOD, "https.proxyPassword = " + System.getProperties().get("https.proxyPassword"));
 			}
 		}

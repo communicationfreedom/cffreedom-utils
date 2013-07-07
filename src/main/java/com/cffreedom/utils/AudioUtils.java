@@ -2,6 +2,9 @@ package com.cffreedom.utils;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cffreedom.utils.file.FileUtils;
 import com.cffreedom.utils.file.FilterNameEnd;
 
@@ -22,6 +25,8 @@ import com.cffreedom.utils.file.FilterNameEnd;
  */
 public class AudioUtils
 {
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.AudioUtils");
+	
 	public static int batchMp3Append(String srcDir, String appendFile, String outputDir) {return batchMp3Append(srcDir, appendFile, outputDir, "");}
 	/**
 	 * Append appendFile to all the mp3 files in srcDir one at a time, and output the 
@@ -34,7 +39,6 @@ public class AudioUtils
 	 */
 	public static int batchMp3Append(String srcDir, String appendFile, String outputDir, String joinedFileNamePrefix)
 	{
-		final String METHOD = "batchMp3Append";
 		int count = 0;
 		File dir = new File(srcDir);
 		File[] files = dir.listFiles(new FilterNameEnd(".mp3"));
@@ -48,10 +52,10 @@ public class AudioUtils
 			String outputFile = outputDir + SystemUtils.getPathSeparator() + joinedFileNamePrefix + file.getName().replaceFirst(".mp3", "-joined.mp3");
 			if (FileUtils.fileExists(outputFile) == true)
 			{
-				LoggerUtil.log(METHOD, "WARN: Deleting: " + outputFile);
+				logger.warn("Deleting: {}", outputFile);
 				FileUtils.deleteFile(outputFile);
 			}
-			LoggerUtil.log(METHOD, "Prepending " + prependFile + " to " + appendFile + " --> " + outputFile);
+			logger.debug("Prepending {} to {} --> {}", prependFile, appendFile, outputFile);
 			String[] concatFiles = {prependFile, appendFile};
 			FileUtils.concatFiles(concatFiles, outputFile);
 		}
@@ -72,7 +76,6 @@ public class AudioUtils
 	 */
 	public static int batchMp3Prepend(String srcDir, String prependFile, String outputDir, String joinedFileNamePrefix)
 	{
-		final String METHOD = "batchMp3Prepend";
 		int count = 0;
 		File dir = new File(srcDir);
 		File[] files = dir.listFiles(new FilterNameEnd(".mp3"));
@@ -86,10 +89,10 @@ public class AudioUtils
 			String outputFile = outputDir + SystemUtils.getPathSeparator() + joinedFileNamePrefix + file.getName().replaceFirst(".mp3", "-joined.mp3");
 			if (FileUtils.fileExists(outputFile) == true)
 			{
-				LoggerUtil.log(METHOD, "WARN: Deleting: " + outputFile);
+				logger.warn("WARN: Deleting: {}", outputFile);
 				FileUtils.deleteFile(outputFile);
 			}
-			LoggerUtil.log(METHOD, "Prepending " + prependFile + " to " + appendFile + " --> " + outputFile);
+			logger.debug("Prepending {} to {} --> {}", prependFile, appendFile, outputFile);
 			String[] concatFiles = {prependFile, appendFile};
 			FileUtils.concatFiles(concatFiles, outputFile);
 		}

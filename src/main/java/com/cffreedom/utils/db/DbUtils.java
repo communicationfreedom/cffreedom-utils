@@ -19,9 +19,11 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cffreedom.beans.DbConn;
 import com.cffreedom.exceptions.DbException;
-import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.Utils;
 import com.cffreedom.utils.file.FileUtils;
 
@@ -48,10 +50,11 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-05-18 	markjacobsen.net 	Added listTables()
  * 2013-05-23	markjacobsen.net 	Updated outputResultSet() to handle RAW format better
  * 2013-07-05	markjacobsen.net 	Added getJndiDataSourceNames()
+ * 2013-07-06 	markjacobsen.net 	Using slf4j
  */
 public class DbUtils
 {
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.DbUtils");
 	
 	public static enum FORMAT {CSV,TAB,XML,RAW,NO_OUTPUT};
 	
@@ -159,13 +162,12 @@ public class DbUtils
 	public static int runSqlScript(Connection conn, String file, FORMAT format, String delimiter) { return runSqlScript(conn, file, format, delimiter, true); }
 	public static int runSqlScript(Connection conn, String file, FORMAT format, String delimiter, boolean outputResults)
 	{
-		final String METHOD = "runSqlScript";
 		final String PROMPT_KEY = "[prompt:";
 		HashMap<String, String> replaceVals = new HashMap<String, String>();
 		int errors = 0;
 		int worked = 0;
 		
-		LoggerUtil.log(METHOD, "Running: " + file);
+		logger.debug("Running: " + file);
 		
 		ArrayList<String> content = FileUtils.getFileLines(file, " ");
 		String temp = "";
@@ -252,15 +254,14 @@ public class DbUtils
 	public static boolean runSql(Connection conn, String sql, FORMAT format) { return runSql(conn, sql, format, null); }
 	public static boolean runSql(Connection conn, String sql, FORMAT format, String outputTo)
 	{
-		final String METHOD = "runSql";
 		boolean success = false;
 		
 		try
 		{
 			Statement stmt = conn.createStatement();
-			LoggerUtil.log(METHOD, "Running: " + sql);
+			logger.debug("Running: " + sql);
 			boolean hasResults = stmt.execute(sql);
-			LoggerUtil.log(METHOD, "Ran sql");
+			logger.debug("Ran sql");
 			
 			if ((format.compareTo(DbUtils.FORMAT.NO_OUTPUT) != 0) && (hasResults == true))
 			{
@@ -295,13 +296,12 @@ public class DbUtils
 	 */
 	public static ResultSet getResultSet(Connection conn, String sql)
 	{
-		final String METHOD = "getResultSet";
 		ResultSet rs = null;
 		
 		try
 		{
 			Statement stmt = conn.createStatement();
-			LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "Running: " + sql);
+			logger.debug("Running: " + sql);
 			rs = stmt.executeQuery(sql);
 		}
 		catch (SQLException e)

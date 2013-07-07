@@ -7,9 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
-import com.cffreedom.beans.DbConn;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cffreedom.utils.ConversionUtils;
-import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.db.pool.ConnectionFactory;
 
 /**
@@ -32,8 +33,8 @@ import com.cffreedom.utils.db.pool.ConnectionFactory;
  */
 public class BaseDAO
 {
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
-
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.BaseDAO");
+	
 	ConnectionFactory factory = null;
 
 	public final static Date DATE_01_01_1900 = ConversionUtils.toDate("01/01/1900");
@@ -174,12 +175,10 @@ public class BaseDAO
 	}
 	
 	public static Connection getConn(String driver, String url, String user, String pass)
-	{
-		final String METHOD = "com.cffreedom.utils.db.getConn";
-		
+	{	
 		try
 		{
-			LoggerUtil.log(LoggerUtil.LEVEL_DEBUG, METHOD, "Creating new connection\n   Driver: " + driver + "\n   Url: " + url);
+			logger.debug("Creating new connection\n   Driver: " + driver + "\n   Url: " + url);
 			Class.forName(driver);
 			return DriverManager.getConnection(url, user, pass);
 		}
@@ -190,7 +189,7 @@ public class BaseDAO
 		}
 		catch (ClassNotFoundException e)
 		{
-			LoggerUtil.log(LoggerUtil.LEVEL_ERROR, METHOD, "ERROR: " + url + ": ClassNotFoundException (check that the driver is on the CLASSPATH): " + e.getMessage());
+			logger.error("ERROR: " + url + ": ClassNotFoundException (check that the driver is on the CLASSPATH): " + e.getMessage());
 			e.printStackTrace(); 
 			return null;
 		}

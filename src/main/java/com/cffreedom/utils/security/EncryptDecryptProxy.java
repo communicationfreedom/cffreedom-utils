@@ -5,13 +5,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
-import com.cffreedom.exceptions.GeneralException;
 import com.cffreedom.utils.ConversionUtils;
-import com.cffreedom.utils.LoggerUtil;
 
-//import sun.misc.BASE64Decoder;
-//import sun.misc.BASE64Encoder;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -27,7 +25,7 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class EncryptDecryptProxy
 {
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.security.EncryptDecryptProxy");
 	private String secretKey = null;
 	//private BASE64Encoder base64encoder = new BASE64Encoder();
 	//private BASE64Decoder base64decoder = new BASE64Decoder();
@@ -37,7 +35,6 @@ public class EncryptDecryptProxy
 	
 	public EncryptDecryptProxy(String secretKey)
 	{
-		final String METHOD = "<init>";
 		try
 		{
 			if (secretKey.length() < 16)
@@ -52,13 +49,12 @@ public class EncryptDecryptProxy
 		}
 		catch (Exception e)
 		{
-			logger.logError(METHOD, e.getMessage(), e);
+			logger.error(e.getMessage());
 		}
 	}
 	
 	public String encrypt(String value)
 	{
-		final String METHOD = "encrypt";
 		try
 		{
 			byte[] cleartext = value.getBytes("UTF8");
@@ -69,14 +65,13 @@ public class EncryptDecryptProxy
 		}
 		catch (Exception e)
 		{
-			logger.logError(METHOD, e.getMessage(), e);
+			logger.error(e.getMessage());
 			return null;
 		}
 	}
 	
 	public String decrypt(String value)
 	{
-		final String METHOD = "decrypt";
 		try
 		{
 			//byte[] encrypedPwdBytes = this.base64decoder.decodeBuffer(value);
@@ -88,7 +83,7 @@ public class EncryptDecryptProxy
 		}
 		catch (Exception e)
 		{
-			logger.logError(METHOD, e.getMessage(), e);
+			logger.error(e.getMessage());
 			return null;
 		}
 	}

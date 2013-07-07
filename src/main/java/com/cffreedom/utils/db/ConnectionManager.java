@@ -1,14 +1,14 @@
 package com.cffreedom.utils.db;
 
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.DbConn;
 import com.cffreedom.exceptions.DbException;
 import com.cffreedom.utils.ConversionUtils;
 import com.cffreedom.utils.KeyValueFileMgr;
-import com.cffreedom.utils.LoggerUtil;
 import com.cffreedom.utils.SystemUtils;
 import com.cffreedom.utils.Utils;
 import com.cffreedom.utils.db.pool.ConnectionFactory;
@@ -36,7 +36,7 @@ import com.cffreedom.utils.file.FileUtils;
 public class ConnectionManager
 {
 	public static final String DEFAULT_FILE = SystemUtils.getMyCFConfigDir() + SystemUtils.getPathSeparator() + "dbconn.dat";
-	private final LoggerUtil logger = new LoggerUtil(LoggerUtil.FAMILY_UTIL, this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName());
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.ConnectionManager");
 	private KeyValueFileMgr kvfm = null;
 	private String file = null;
 	private ConnectionFactory connFactory = null;
@@ -58,12 +58,11 @@ public class ConnectionManager
 	
 	public ConnectionManager(String file, boolean cacheConnections) throws DbException
 	{
-		final String METHOD = "<init>";
 		this.loadConnectionFile(file);
 
 		if (cacheConnections == true)
 		{
-			logger.logDebug(METHOD, "Using ConnectionFactory/Connection Pooling");
+			logger.info("Using ConnectionFactory/Connection Pooling");
 			this.connFactory = ConnectionFactory.getInstance();
 		}
 	}
@@ -74,7 +73,7 @@ public class ConnectionManager
 		
 		if (FileUtils.fileExists(file) == true)
 		{
-			logger.logDebug(METHOD, "Loading file: " + file);
+			logger.debug("Loading file: {}", file);
 			this.file = file;
 			this.kvfm = new KeyValueFileMgr(this.file);  // init so we can use it from other apps
 		}
