@@ -372,8 +372,7 @@ public class FileUtils
 
 		try
 		{
-			System.out.println(source);
-			System.out.println(destination);
+			logger.debug("Copying \"{}\" to \"{}\"", source, destination);
 			if (new File(destination).exists() == false)
 			{
 				success = new File(destination).createNewFile();

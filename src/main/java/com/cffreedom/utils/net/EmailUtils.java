@@ -4,6 +4,9 @@ import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cffreedom.utils.ConversionUtils;
 
 /**
@@ -25,6 +28,8 @@ import com.cffreedom.utils.ConversionUtils;
  */
 public class EmailUtils
 {
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.net.EmailUtils");
+	
 	public static final String SMTP_SERVER_GMAIL = "smtp.gmail.com";
 	public static final String SMTP_PORT_GMAIL = "465";
 	public static final String PROTOCOL_SMTP = "smtp";
@@ -76,7 +81,7 @@ public class EmailUtils
 			message.setText(body);
 		}
         
-		System.out.println("EmailUtils: Sending message to " + to + " from " + from + " w/ subject: " + subject);
+		logger.info("Sending message to {} from {} w/ subject: {}", to, from, subject);
 		
 		if (authenticatedSession == true){
 			Transport transport = session.getTransport();

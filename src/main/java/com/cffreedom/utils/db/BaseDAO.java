@@ -178,7 +178,7 @@ public class BaseDAO
 	{	
 		try
 		{
-			logger.debug("Creating new connection\n   Driver: " + driver + "\n   Url: " + url);
+			logger.debug("Creating new connection\n   Driver: {}\n   Url: {}\n   user: {}", driver, url, user);
 			Class.forName(driver);
 			return DriverManager.getConnection(url, user, pass);
 		}

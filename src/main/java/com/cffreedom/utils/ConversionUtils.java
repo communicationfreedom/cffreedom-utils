@@ -14,6 +14,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -38,6 +40,8 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class ConversionUtils
 {
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.ConversionUtils");
+	
 	public static String toBase64(String val)
 	{
 		return new String(Base64.encodeBase64(val.getBytes()));
@@ -56,7 +60,7 @@ public class ConversionUtils
 			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
 		}
 
-		System.out.println("Digest(in hex format):: " + sb.toString());
+		logger.debug("Digest(in hex format):: {}", sb.toString());
 
 		// convert the byte to hex format method 2
 		StringBuffer hexString = new StringBuffer();

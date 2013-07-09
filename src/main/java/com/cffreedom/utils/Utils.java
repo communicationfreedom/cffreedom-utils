@@ -5,6 +5,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
@@ -24,6 +27,8 @@ import java.util.Arrays;
  */
 public class Utils
 {
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.Utils");
+	
 	/**
      * @param val The number to evaluate
      * @return True if we can convert the value to an integer, otherwise false

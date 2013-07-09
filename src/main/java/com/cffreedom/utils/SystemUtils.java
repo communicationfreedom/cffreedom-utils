@@ -204,7 +204,7 @@ public class SystemUtils
 				stdout.start();
 				
 				returnCode = process.waitFor();
-				System.out.println("ExitValue: " + returnCode);
+				logger.debug("ExitValue: " + returnCode);
 				if (fos != null)
 				{
 					fos.flush();

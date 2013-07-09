@@ -125,12 +125,12 @@ public class DbUtils
 				}
 			}
 			conn.close();
-			Utils.output("SUCCESS: " + url);
+			logger.debug("SUCCESS: " + url);
 			return true;
 		}
 		catch (DbException e)
 		{
-			Utils.output("ERROR: " + e.getMessage());
+			logger.error("{}", e.getMessage());
 			return false;
 		}
 		catch (SQLException e)
@@ -146,7 +146,7 @@ public class DbUtils
 			{
 				readable = user + " does not have CONNECT permission: ";
 			}
-			Utils.output("ERROR: SQLException: " + readable + url + ": " + e.getMessage() + " (" + errorCode + "/" + sqlState + ")");
+			logger.error("ERROR: SQLException: {} {}: {} ({}/{})", readable, url, e.getMessage(), errorCode, sqlState);
 			return false;
 		}
 	}
