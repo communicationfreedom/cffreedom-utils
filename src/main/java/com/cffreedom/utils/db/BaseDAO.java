@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.cffreedom.utils.db.pool.ConnectionFactory;
 
 /**
+ * Original Class: com.cffreedom.utils.db.BaseDAO
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 

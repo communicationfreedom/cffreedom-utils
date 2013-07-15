@@ -29,6 +29,7 @@ import com.cffreedom.utils.Utils;
 import com.cffreedom.utils.file.FileUtils;
 
 /**
+ * Original Class: com.cffreedom.utils.db.DbUtils
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
