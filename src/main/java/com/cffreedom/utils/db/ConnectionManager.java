@@ -17,7 +17,7 @@ import com.cffreedom.utils.SystemUtils;
 import com.cffreedom.utils.Utils;
 import com.cffreedom.utils.db.pool.ConnectionFactory;
 import com.cffreedom.utils.file.FileUtils;
-import com.cffreedom.utils.security.SecurityUtils;
+import com.cffreedom.utils.security.EncryptDecryptProxy;
 
 /**
  * Automated layer for accessing DB Connections that should guarantee that
@@ -42,11 +42,12 @@ import com.cffreedom.utils.security.SecurityUtils;
  */
 public class ConnectionManager
 {
-	public static final String DEFAULT_FILE = SystemUtils.getMyCFConfigDir() + SystemUtils.getPathSeparator() + "dbconn.properties";
+	public static final String DEFAULT_FILE = SystemUtils.getDirConfig() + SystemUtils.getPathSeparator() + "dbconn.properties";
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.ConnectionManager");
 	private HashMap<String, DbConn> conns = new HashMap<String, DbConn>();
 	private String file = null;
 	private ConnectionFactory connFactory = null;
+	private EncryptDecryptProxy security = new EncryptDecryptProxy("abasickeyyoushouldnotchange");
 	
 	public ConnectionManager() throws InfrastructureException, IOException
 	{
@@ -98,7 +99,7 @@ public class ConnectionManager
 			lines.add(entry + ".host=" + conn.getHost());
 			lines.add(entry + ".port=" + conn.getPort());
 			lines.add(entry + ".user=" + conn.getUser());
-			lines.add(entry + ".password=" + SecurityUtils.encryptDecrypt(conn.getPassword()));
+			lines.add(entry + ".password=" + security.encrypt(conn.getPassword()));
 			lines.add("");
 		}
 		
@@ -139,7 +140,7 @@ public class ConnectionManager
 										ConversionUtils.toInt(port));
 				
 				if (user != null) { dbconn.setUser(user); }
-				if (password != null) { dbconn.setPassword(SecurityUtils.encryptDecrypt(password)); }
+				if (password != null) { dbconn.setPassword(security.decrypt(password)); }
 
 				this.conns.put(key, dbconn);
 			}

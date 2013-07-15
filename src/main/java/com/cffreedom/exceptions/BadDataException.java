@@ -1,6 +1,7 @@
 package com.cffreedom.exceptions;
 
 /**
+ * Original Class: com.cffreedom.exceptions.BadDataException
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -14,6 +15,7 @@ package com.cffreedom.exceptions;
  * 
  * Changes:
  * 2013-04-16	markjacobsen.net 	Added additional Constructors
+ * 2013-07-15	markjacobsen.net 	Removed constructors
  */
 public class BadDataException extends Exception
 {
@@ -32,15 +34,5 @@ public class BadDataException extends Exception
 	public BadDataException(String message)
 	{
 		super(message);
-	}
-	
-	public BadDataException(String source, String message)
-	{
-		super(source + ": " + message);
-	}
-	
-	public BadDataException(String source, String message, Throwable exception)
-	{
-		super(source + ": " + message, exception);
 	}
 }

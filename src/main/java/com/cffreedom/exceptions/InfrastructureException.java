@@ -1,6 +1,7 @@
 package com.cffreedom.exceptions;
 
 /**
+ * Original Class: com.cffreedom.exceptions.InfrastructureException
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 

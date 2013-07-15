@@ -1,6 +1,7 @@
 package com.cffreedom.exceptions;
 
 /**
+ * Original Class: com.cffreedom.exceptions.ApplicationStateException
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -14,6 +15,7 @@ package com.cffreedom.exceptions;
  * 
  * Changes:
  * 2013-04-16	markjacobsen.net 	Created
+ * 2013-07-15	markjacobsen.net 	Removed constructors
  */
 public class ApplicationStateException extends Exception
 {
@@ -32,15 +34,5 @@ public class ApplicationStateException extends Exception
 	public ApplicationStateException(String message)
 	{
 		super(message);
-	}
-
-	public ApplicationStateException(String source, String message)
-	{
-		super(source + ": " + message);
-	}
-	
-	public ApplicationStateException(String source, String message, Throwable exception)
-	{
-		super(source + ": " + message, exception);
 	}
 }

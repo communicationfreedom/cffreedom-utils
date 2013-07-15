@@ -1,6 +1,7 @@
 package com.cffreedom.exceptions;
 
 /**
+ * Original Class: com.cffreedom.exceptions.ValidationException
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -14,6 +15,7 @@ package com.cffreedom.exceptions;
  * 
  * Changes:
  * 2013-07-10	markjacobsen.net 	Created
+ * 2013-07-15	markjacobsen.net 	Removed constructors
  */
 public class ValidationException extends Exception
 {
@@ -32,15 +34,5 @@ public class ValidationException extends Exception
 	public ValidationException(String message)
 	{
 		super(message);
-	}
-	
-	public ValidationException(String source, String message)
-	{
-		super(source + ": " + message);
-	}
-	
-	public ValidationException(String source, String message, Throwable exception)
-	{
-		super(source + ": " + message, exception);
 	}
 }

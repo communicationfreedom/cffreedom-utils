@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.cffreedom.utils.file.FileUtils;
 
 /**
+ * Original Class: com.cffreedom.utils.SystemUtils
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -29,6 +30,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-05-02 	markjacobsen.net 	Added sleep()
  * 2013-06-07 	markjacobsen.net 	Added exception handling to getHomeDir()
  * 2013-06-21 	markjacobsen.net 	Added sleep(double) so that you can pass in fractions of a second
+ * 2013-07-15	markjacobsen.net 	Changed method names around
  */
 public class SystemUtils
 {
@@ -43,7 +45,7 @@ public class SystemUtils
 		}
 	}
 	
-	public static String getHomeDir()
+	public static String getDirHome()
 	{
 		String ret = null;
 		try
@@ -68,28 +70,28 @@ public class SystemUtils
 		return ret;
 	}
 	
-	public static String getMyDocDir()
+	public static String getDirDocs()
 	{
 		if (isWindows() == true)
 		{
-			return getHomeDir() + getPathSeparator() + "My Documents";
+			return getDirHome() + getPathSeparator() + "My Documents";
 		}
 		else
 		{
-			return getHomeDir();
+			return getDirHome();
 		}
 	}
 	
-	public static String getMyCFConfigDir()
+	public static String getDirConfig()
 	{
-		String dir = getHomeDir() + getPathSeparator() + "CFConfig";
+		String dir = getDirHome() + getPathSeparator() + "CFConfig";
 		FileUtils.createFolder(dir);
 		return dir;
 	}
 	
-	public static String getMyCFWorkDir()
+	public static String getDirWork()
 	{
-		String dir = getHomeDir() + getPathSeparator() + "CFWork";
+		String dir = getDirHome() + getPathSeparator() + "CFWork";
 		FileUtils.createFolder(dir);
 		return dir;
 	}
@@ -100,9 +102,9 @@ public class SystemUtils
 	 * @param dirs Array of directories off the working dir
 	 * @return The full path
 	 */
-	public static String getMyCFWorkDir(String[] dirs)
+	public static String getDirWork(String[] dirs)
 	{
-		String dir = getMyCFWorkDir();
+		String dir = getDirWork();
 		
 		for (int x = 0; x < dirs.length; x++)
 		{
@@ -113,16 +115,16 @@ public class SystemUtils
 		return dir;
 	}
 	
-	public static String getTempDir()
+	public static String getDirTemp()
 	{
-		String dir = getMyCFWorkDir() + getPathSeparator() + "temp";
+		String dir = getDirWork() + getPathSeparator() + "temp";
 		FileUtils.createFolder(dir);
 		return dir;
 	}
 	
-	public static String getDefaultOutputFile()
+	public static String getFileDefaultOutput()
 	{
-		String file = getMyCFWorkDir() + getPathSeparator() + "default.out";
+		String file = getDirWork() + getPathSeparator() + "default.out";
 		FileUtils.createFile(file, true);
  		return file;
 	}
@@ -191,7 +193,7 @@ public class SystemUtils
 			if(returnImmediately == false)
 			{
 				if (outputRedirectFile == null){
-					outputRedirectFile = getDefaultOutputFile();
+					outputRedirectFile = getFileDefaultOutput();
 				}
 				FileOutputStream fos = null;
 				if (FileUtils.fileExists(outputRedirectFile) == true){

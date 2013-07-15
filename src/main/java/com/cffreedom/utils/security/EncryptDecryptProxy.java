@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Original Class: com.cffreedom.utils.security.EncryptDecryptProxy
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -27,8 +28,6 @@ public class EncryptDecryptProxy
 {
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.security.EncryptDecryptProxy");
 	private String secretKey = null;
-	//private BASE64Encoder base64encoder = new BASE64Encoder();
-	//private BASE64Decoder base64decoder = new BASE64Decoder();
 	private DESKeySpec keySpec = null;
 	private SecretKeyFactory keyFactory = null;
 	private SecretKey key = null;

@@ -42,8 +42,8 @@ public class FileUtils
 	 */
 	public static String getFileExtension(String file)
 	{
-		int iPeriod = file.lastIndexOf(".");
-		return file.substring(iPeriod + 1, file.length());
+		int period = file.lastIndexOf(".");
+		return file.substring(period + 1, file.length());
 	}
 
 	/**
@@ -55,8 +55,8 @@ public class FileUtils
 	 */
 	public static String getFileName(String fullPath)
 	{
-		File l_oFile = new File(fullPath);
-		return l_oFile.getName();
+		File file = new File(fullPath);
+		return file.getName();
 	}
 
 	/**
@@ -67,11 +67,11 @@ public class FileUtils
 	 */
 	public static String getFileNameWithoutExtension(String fullPath)
 	{
-		String l_sReturn;
-		File l_oFile = new File(fullPath);
-		l_sReturn = l_oFile.getName();
-		l_sReturn = l_sReturn.substring(0, l_sReturn.length() - (getFileExtension(fullPath).length() + 1));
-		return l_sReturn;
+		String ret;
+		File file = new File(fullPath);
+		ret = file.getName();
+		ret = ret.substring(0, ret.length() - (getFileExtension(fullPath).length() + 1));
+		return ret;
 	}
 
 	/**
@@ -214,16 +214,15 @@ public class FileUtils
 	public static boolean writeLinesToFile(String file, ArrayList<String> lines, boolean append)
 	{
 		boolean success = false;
-		ArrayList<String> l_oLines = lines;
 		String term = SystemUtils.getNewline();
 		
 		try
 		{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file, append));
 
-			for (int i = 0; i < l_oLines.size(); i++)
+			for (int i = 0; i < lines.size(); i++)
 			{
-				bw.write((String) l_oLines.get(i) + term);
+				bw.write((String) lines.get(i) + term);
 			}
 			bw.close();
 
@@ -535,8 +534,8 @@ public class FileUtils
 	 */
 	public static String[] list(String folder) throws Exception
 	{
-		File l_oFolder = new File(folder);
-		return l_oFolder.list();
+		File dir = new File(folder);
+		return dir.list();
 	}
 
 	/**
@@ -549,65 +548,59 @@ public class FileUtils
 	 */
 	public static String[] listFullPath(String folder) throws Exception
 	{
-		File l_oFile;
-		String[] l_aFiles = list(folder);
+		File file;
+		String[] files = list(folder);
 
-		for (int x = 0; x < l_aFiles.length; x++)
+		for (int x = 0; x < files.length; x++)
 		{
-			l_oFile = new File(folder, l_aFiles[x]);
-			l_aFiles[x] = l_oFile.getAbsolutePath();
+			file = new File(folder, files[x]);
+			files[x] = file.getAbsolutePath();
 		}
 
-		return l_aFiles;
+		return files;
 	}
 
 	/**
 	 * Get a directory listing of file names (file name only)
 	 * 
-	 * @param folder
-	 *            Folder to get listing for
-	 * @param filter
-	 *            Filter for files (ex: .log)
+	 * @param folder Folder to get listing for
+	 * @param filter Filter for files (ex: .log)
 	 * @return Array of file names in the folder matching the filter
 	 * @throws Exception
 	 */
 	public static String[] list(String folder, String filter) throws Exception
 	{
-		File l_oFolder = new File(folder);
-		return l_oFolder.list(new DirFilter(filter));
+		File dir = new File(folder);
+		return dir.list(new DirFilter(filter));
 	}
 
 	/**
 	 * Get a directory listing w/ full paths (folder and file)
 	 * 
-	 * @param folder
-	 *            Folder to get listing for
-	 * @param filter
-	 *            Filter for files (ex: .log)
+	 * @param folder Folder to get listing for
+	 * @param filter Filter for files (ex: .log)
 	 * @return Array of file paths in the folder matching the filter
 	 * @throws Exception
 	 */
 	public static String[] listFullPath(String folder, String filter) throws Exception
 	{
-		File l_oFile;
-		String[] l_aFiles = list(folder, filter);
+		File file;
+		String[] files = list(folder, filter);
 
-		for (int x = 0; x < l_aFiles.length; x++)
+		for (int x = 0; x < files.length; x++)
 		{
-			l_oFile = new File(folder, l_aFiles[x]);
-			l_aFiles[x] = l_oFile.getAbsolutePath();
+			file = new File(folder, files[x]);
+			files[x] = file.getAbsolutePath();
 		}
 
-		return l_aFiles;
+		return files;
 	}
 
 	/**
 	 * Create a folder
 	 * 
-	 * @param path
-	 *            Full path name for the folder to create
-	 * @param overwrite
-	 *            If true -> delete folder if it already exists
+	 * @param path Full path name for the folder to create
+	 * @param overwrite If true -> delete folder if it already exists
 	 * @return True on success, false otherwise
 	 * @throws Exception
 	 */
@@ -615,16 +608,16 @@ public class FileUtils
 	{
 		try
 		{
-			File l_oFolder = new File(path);
+			File folder = new File(path);
 	
-			if ((overwrite == true) && (l_oFolder.exists() == true))
+			if ((overwrite == true) && (folder.exists() == true))
 			{
-				l_oFolder.delete();
+				folder.delete();
 			}
 	
-			if (l_oFolder.exists() == false)
+			if (folder.exists() == false)
 			{
-				return l_oFolder.mkdir();
+				return folder.mkdir();
 			}
 			else
 			{
@@ -640,8 +633,7 @@ public class FileUtils
 	/**
 	 * Create a folder
 	 * 
-	 * @param path
-	 *            Full path name for the folder to create
+	 * @param path Full path name for the folder to create
 	 * @return True on success, false otherwise
 	 * @throws Exception
 	 */
@@ -685,20 +677,18 @@ public class FileUtils
 	/**
 	 * Extract the contents of a zip/jar file to a directory
 	 * 
-	 * @param zipFile
-	 *            File to unzip
-	 * @param destDir
-	 *            Directory to unzip to
+	 * @param zipFile File to unzip
+	 * @param destDir Directory to unzip to
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
 	public static void extractZip(String zipFile, String destDir) throws Exception
 	{
 		JarFile jar = new java.util.jar.JarFile(zipFile);
-		Enumeration l_oEnum = jar.entries();
-		while (l_oEnum.hasMoreElements())
+		Enumeration entries = jar.entries();
+		while (entries.hasMoreElements())
 		{
-			JarEntry file = (JarEntry) l_oEnum.nextElement();
+			JarEntry file = (JarEntry) entries.nextElement();
 			File f = new File(destDir + File.separator + file.getName());
 			if (file.isDirectory()) // if its a directory, create it
 			{

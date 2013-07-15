@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 
 /**
+ * Original Class: com.cffreedom.utils.StreamGobbler
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 

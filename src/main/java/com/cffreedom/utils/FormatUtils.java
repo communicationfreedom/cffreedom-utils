@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 
 /**
+ * Original Class: com.cffreedom.utils.FormatUtils
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -44,8 +45,8 @@ public class FormatUtils
 	
 	public static String formatDate(String format, Date date)
 	{
-		DateFormat l_oFormat = new SimpleDateFormat(format);
-		return l_oFormat.format(date);
+		DateFormat dateformat = new SimpleDateFormat(format);
+		return dateformat.format(date);
 	}
 	
 	public static String formatPhoneNumber(String format, String phoneNumber)
@@ -181,8 +182,7 @@ public class FormatUtils
 				}
 				else
 				{
-					found = source.toLowerCase()
-							.indexOf(find.toLowerCase(), start);
+					found = source.toLowerCase().indexOf(find.toLowerCase(), start);
 				}
 			}
 
@@ -204,23 +204,18 @@ public class FormatUtils
 	/**
 	 * Replace a span of text with the replace value. Useful for stripping html.
 	 * 
-	 * @param source
-	 *            The string to strip from
-	 * @param findStart
-	 *            What you want to replace starts with
-	 * @param findEnd
-	 *            What you want to replace ends with
-	 * @param replace
-	 *            What to replace the span with
-	 * @param caseSensative
-	 *            True if we want to perform a case sensative search
+	 * @param source The string to strip from
+	 * @param findStart What you want to replace starts with
+	 * @param findEnd What you want to replace ends with
+	 * @param replace What to replace the span with
+	 * @param caseSensative True if we want to perform a case sensative search
 	 * @return String with all instances of the span stripped out
 	 */
 	public static String replaceSpan(String source, String findStart, String findEnd, String replace, boolean caseSensative)
 	{
 		if (source != null)
 		{
-			int l_iFindEndLen = findEnd.length();
+			int findEndLen = findEnd.length();
 			StringBuffer sb = new StringBuffer();
 			int foundStart = -1;
 			int foundEnd = -1;
@@ -233,17 +228,15 @@ public class FormatUtils
 			}
 			else
 			{
-				foundStart = source.toLowerCase()
-						.indexOf(findStart.toLowerCase(), start);
-				foundEnd = source.toLowerCase()
-						.indexOf(findEnd.toLowerCase(), start);
+				foundStart = source.toLowerCase().indexOf(findStart.toLowerCase(), start);
+				foundEnd = source.toLowerCase().indexOf(findEnd.toLowerCase(), start);
 			}
 
 			while ((foundStart != -1) && (foundEnd != -1))
 			{
 				sb.append(source.substring(start, foundStart));
 				sb.append(replace);
-				foundStart = foundEnd + l_iFindEndLen;
+				foundStart = foundEnd + findEndLen;
 				start = foundStart;
 
 				if (caseSensative == true)
@@ -253,10 +246,8 @@ public class FormatUtils
 				}
 				else
 				{
-					foundStart = source.toLowerCase()
-							.indexOf(findStart.toLowerCase(), start);
-					foundEnd = source.toLowerCase()
-							.indexOf(findEnd.toLowerCase(), start);
+					foundStart = source.toLowerCase().indexOf(findStart.toLowerCase(), start);
+					foundEnd = source.toLowerCase().indexOf(findEnd.toLowerCase(), start);
 				}
 			}
 
