@@ -694,8 +694,8 @@ public class FileUtils
 	@SuppressWarnings("rawtypes")
 	public static void extractZip(String zipFile, String destDir) throws Exception
 	{
-		JarFile l_oJar = new java.util.jar.JarFile(zipFile);
-		Enumeration l_oEnum = l_oJar.entries();
+		JarFile jar = new java.util.jar.JarFile(zipFile);
+		Enumeration l_oEnum = jar.entries();
 		while (l_oEnum.hasMoreElements())
 		{
 			JarEntry file = (JarEntry) l_oEnum.nextElement();
@@ -705,7 +705,7 @@ public class FileUtils
 				f.mkdir();
 				continue;
 			}
-			InputStream is = l_oJar.getInputStream(file); // get the input
+			InputStream is = jar.getInputStream(file); // get the input
 															// stream
 			FileOutputStream fos = new FileOutputStream(f);
 			while (is.available() > 0) // write contents of 'is' to 'fos'
@@ -715,6 +715,7 @@ public class FileUtils
 			fos.close();
 			is.close();
 		}
+		jar.close();
 	}
 	
 	public static boolean replaceInFile(String file, String find, String replace)
@@ -778,7 +779,7 @@ public class FileUtils
 
 		try
 		{
-			//LoggerUtil.log(METHOD, "Stripping lines containing \""+find+"\" in: "+file);
+			logger.debug("Stripping lines containing \"{}\" in: {}", find, file);
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			ArrayList<String> lines = new ArrayList<String>();
 			String line;
