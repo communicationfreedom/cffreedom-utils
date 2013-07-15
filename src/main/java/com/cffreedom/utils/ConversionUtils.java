@@ -12,12 +12,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Original Class: com.cffreedom.utils.ConversionUtils
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -37,6 +39,7 @@ import org.slf4j.LoggerFactory;
  * 2013-06-05 	markjacobsen.net 	Added toBoolean() methods
  * 2013-06-12	markjacobsen.net 	Handling string dates in the form yyyy-MM-dd HH:mm:ss better in toDate(val, mask)
  * 									Added toLong(String) and toString(Date)
+ * 2013-07-15	markjacobsen.net 	Added toDelimitedString()
  */
 public class ConversionUtils
 {
@@ -73,6 +76,26 @@ public class ConversionUtils
 		}
 
 		return hexString.toString();
+	}
+	
+	public static String toDelimitedString(String[] vals, String delimiter)
+	{
+		String ret = "";
+		for (String val : vals)
+		{
+			ret += val + delimiter;
+		}
+		return ret.substring(0, ret.length() - 1);
+	}
+	
+	public static String toDelimitedString(Set<String> vals, String delimiter)
+	{
+		String ret = "";
+		for (String val : vals)
+		{
+			ret += val + delimiter;
+		}
+		return ret.substring(0, ret.length() - 1);
 	}
 	
 	public static String toString(Date val) { return toString(val, FormatUtils.MASK_FULL_TIMESTAMP); }

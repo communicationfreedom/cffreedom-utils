@@ -2,6 +2,7 @@ package com.cffreedom.utils;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import com.cffreedom.utils.security.EncryptDecryptProxy;
  * Simple java based serializable key/value pair manager with the option to
  * encrypt the values.
  * 
+ * Original Class: com.cffreedom.utils.KeyValueFileMgr
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -24,6 +26,9 @@ import com.cffreedom.utils.security.EncryptDecryptProxy;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-07-15	markjacobsen.net 	Added getKeys()
  */
 public class KeyValueFileMgr
 {
@@ -82,6 +87,11 @@ public class KeyValueFileMgr
 	public boolean keyExists(String key)
 	{
 		return this.map.containsKey(key);
+	}
+	
+	public Set<String> getKeys()
+	{
+		return this.map.keySet();
 	}
 	
 	public Object getEntry(String key)
