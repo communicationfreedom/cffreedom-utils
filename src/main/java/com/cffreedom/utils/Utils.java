@@ -136,6 +136,7 @@ public class Utils
 		// When running inside of Eclipse you won't be able to get access to the Console object
 		if (System.console() != null)
 		{
+			logger.trace("Got a console object");
 			if (isPassword == true)
 			{
 				enteredVal = ConversionUtils.toString(System.console().readPassword(prompt));

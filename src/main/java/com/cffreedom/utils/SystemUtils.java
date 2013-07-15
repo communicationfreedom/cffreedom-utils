@@ -152,11 +152,16 @@ public class SystemUtils
 	 * Run a random command and don't care if it succeeds.  Useful for popping a file in notepad or something
 	 * @param command The command to run (ex: "\"C:\\Program Files\\Notepad++\\notepad++.exe\" \"" + file + "\"")
 	 */
-	public static void execIt(String command)
+	public static int execIt(String command)
 	{
+		int returnVal = -1;
+		
 		try{
 			Process process = Runtime.getRuntime().exec(command);
+			returnVal = process.exitValue();
 		}catch (Exception e){}
+		
+		return returnVal;
 	}
 	
 	public static int exec(String command) { return exec(command, null); }

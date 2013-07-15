@@ -122,6 +122,8 @@ public class XmlUtils
 			e.printStackTrace();
 			nodes = null;
 		}
+		
+		logger.trace("Returning {} nodes", nodes.getLength());
 		return nodes;
 	}
 	
