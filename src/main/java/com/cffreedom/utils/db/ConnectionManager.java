@@ -133,8 +133,8 @@ public class ConnectionManager
 				
 				if (port == null) { port = "0"; }
 				
-				DbConn dbconn = new DbConn(BaseDAO.getDriver(type),
-										BaseDAO.getUrl(type, host, db), 
+				DbConn dbconn = new DbConn(DbUtils.getDriver(type),
+										DbUtils.getUrl(type, host, db), 
 										type,
 										host,
 										db,
@@ -188,7 +188,7 @@ public class ConnectionManager
 		else
 		{
 			DbConn dbconn = this.getDbConn(key);
-			return BaseDAO.getConn(dbconn.getDriver(), dbconn.getUrl(), user, pass);
+			return DbUtils.getConn(dbconn.getDriver(), dbconn.getUrl(), user, pass);
 		}
 	}
 	

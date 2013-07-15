@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -58,6 +59,29 @@ public class DbUtils
 	
 	public static enum FORMAT {CSV,TAB,XML,RAW,NO_OUTPUT};
 	
+	public final static String DRIVER_MYSQL = "com.mysql.jdbc.Driver";
+	public final static String DRIVER_DB2_JCC = "com.ibm.db2.jcc.DB2Driver";
+	public final static String DRIVER_DB2_APP = "COM.ibm.db2.jdbc.app.DB2Driver";
+	public final static String DRIVER_DB2_NET = "COM.ibm.db2.jdbc.net.DB2Driver";
+	public final static String DRIVER_SQL_SERVER_2005 = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+	public final static String DRIVER_ODBC = "sun.jdbc.odbc.JdbcOdbcDriver";
+	public final static String DRIVER_SQLITE = "org.sqlite.JDBC";
+
+	public final static String TYPE_MYSQL = "MYSQL";
+	public final static String TYPE_DB2_JCC = "DB2_JCC";
+	public final static String TYPE_DB2_APP = "DB2_APP";
+	public final static String TYPE_DB2 = TYPE_DB2_JCC;
+	public final static String TYPE_SQL_SERVER = "SQL_SERVER";
+	public final static String TYPE_ODBC = "ODBC";
+	public final static String TYPE_SQLITE = "SQLITE";
+
+	public final static String SQL_TEST_SQLSERVER = "SELECT getDate()";
+	public final static String SQL_TEST_DB2 = "SELECT CURRENT_TIMESTAMP FROM SYSIBM.SYSDUMMY1";
+	
+	public final static String SQL_LIST_TABLES_DB2 = "SELECT TRIM(CREATOR)||\'.\'||TRIM(NAME) AS TABLE_NM FROM SYSIBM.SYSTABLES WHERE TYPE = \'T\' AND CREATOR NOT IN (\'SYSIBM\', \'SYSPROC\') ORDER BY CREATOR, NAME";
+	public final static String SQL_LIST_TABLES_SQLSERVER = "SELECT TABLE_SCHEMA+\'.\'+TABLE_NAME AS TABLE_NM FROM information_schema.tables WHERE TABLE_TYPE = \'BASE TABLE\' ORDER BY TABLE_SCHEMA, TABLE_NAME";
+	public final static String SQL_LIST_TABLES_MYSQL = "SELECT CONCAT(TABLE_SCHEMA, \'.\', TABLE_NAME) AS TABLE_NM FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = \'BASE TABLE\' ORDER BY TABLE_SCHEMA, TABLE_NAME";
+	
 	public static List<String> getJndiDataSourceNames()
 	{
 		List<String> dataSources = new ArrayList<String>();
@@ -86,8 +110,8 @@ public class DbUtils
 		Connection conn = null;
 		try
 		{
-			conn = BaseDAO.getConn(dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword());
-			String testSql = BaseDAO.getListTablesSql(dbconn.getType());
+			conn = DbUtils.getConn(dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword());
+			String testSql = DbUtils.getListTablesSql(dbconn.getType());
 			if (testSql != null)
 			{
 				runSql(conn, testSql, FORMAT.RAW);
@@ -111,15 +135,15 @@ public class DbUtils
 	public static boolean testConnection(String type, String host, String db, int port, String user, String pass)
 	{
 		final String METHOD = "testConnection";
-		String driver = BaseDAO.getDriver(type);
-		String url = BaseDAO.getUrl(type, host, db, port);
+		String driver = DbUtils.getDriver(type);
+		String url = DbUtils.getUrl(type, host, db, port);
 		try
 		{
-			Connection conn = BaseDAO.getConn(driver, url, user, pass);
-			String testSql = BaseDAO.getTestSql(type);
+			Connection conn = DbUtils.getConn(driver, url, user, pass);
+			String testSql = DbUtils.getTestSql(type);
 			if (testSql != null)
 			{
-				if (runSql(conn, BaseDAO.getTestSql(type)) == false)
+				if (runSql(conn, DbUtils.getTestSql(type)) == false)
 				{
 					throw new DbException(METHOD, "Error running test SQL", null);
 				}
@@ -139,7 +163,7 @@ public class DbUtils
 			String sqlState = e.getSQLState();
 			String readable = "";
 			if  (
-				(BaseDAO.isDb2(type) == true) && 
+				(DbUtils.isDb2(type) == true) && 
 				(errorCode == -1060) && 
 				(sqlState.equalsIgnoreCase("08004") == true)
 				)
@@ -476,5 +500,261 @@ public class DbUtils
 		}
 		
 		return retVal.toString();
+	}
+	
+	public static String getDriver(String type)
+	{
+		if (isMySql(type) == true)
+		{
+			return DbUtils.DRIVER_MYSQL;
+		}
+		else if (isDb2JCC(type) == true)
+		{
+			return DbUtils.DRIVER_DB2_JCC;
+		}
+		else if (isDb2App(type) == true)
+		{
+			return DbUtils.DRIVER_DB2_APP;
+		}
+		else if (isSqlServer(type) == true)
+		{
+			return DbUtils.DRIVER_SQL_SERVER_2005;
+		}
+		else if (isOdbc(type) == true)
+		{
+			return DbUtils.DRIVER_ODBC;
+		}
+		else if (isSqlLite(type) == true)
+		{
+			return DbUtils.DRIVER_SQLITE;
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	public static String getUrl(String type, String host, String db)
+	{
+		return getUrl(type, host, db, 0);
+	}
+
+	public static String getUrl(String type, String host, String db, int port)
+	{
+		if (isMySql(type) == true)
+		{
+			if (port <= 0)
+			{
+				port = getDefaultPort(type);
+			}
+			return "jdbc:mysql://" + host + ":" + port + "/" + db;
+		}
+		else if (isDb2JCC(type) == true)
+		{
+			return "jdbc:db2://" + host + ":" + port + "/" + db;
+		}
+		else if (isDb2App(type) == true)
+		{
+			return "jdbc:db2:" + db;
+		}
+		else if (isSqlServer(type) == true)
+		{
+			if (port <= 0)
+			{
+				port = getDefaultPort(type);
+			}
+			return "jdbc:microsoft:sqlserver://" + host + ":" + port + ";databaseName=" + db;
+		}
+		else if (isOdbc(type) == true)
+		{
+			return "jdbc:odbc:" + db;
+		}
+		else if (isSqlLite(type) == true)
+		{
+			return "jdbc:sqlite:" + db;
+		}
+		else
+		{
+			return "";
+		}
+	}
+	
+	public static int getDefaultPort(String dbType)
+	{
+		if (dbType == null)
+		{
+			return 0;
+		}
+		else if (isMySql(dbType) == true)
+		{
+			return 3306;
+		}
+		else if (isSqlServer(dbType) == true)
+		{
+			return 1443;
+		}
+		else if (isDb2(dbType) == true)
+		{
+			return 50000;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
+	public static Connection getConn(String driver, String url, String user, String pass)
+	{	
+		try
+		{
+			logger.debug("Creating new connection\n   Driver: {}\n   Url: {}\n   user: {}", driver, url, user);
+			Class.forName(driver);
+			return DriverManager.getConnection(url, user, pass);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace(); 
+			return null;
+		}
+		catch (ClassNotFoundException e)
+		{
+			logger.error("ERROR: " + url + ": ClassNotFoundException (check that the driver is on the CLASSPATH): " + e.getMessage());
+			e.printStackTrace(); 
+			return null;
+		}
+	}
+
+	public static ResultSet execQuery(Connection conn, String sql) throws SQLException
+	{
+		Statement stmt = conn.createStatement();
+		return stmt.executeQuery(sql);
+	}
+
+	public static int getRecordCount(ResultSet rs) throws SQLException
+	{
+		int count = 0;
+
+		while (rs.next())
+		{
+			count++;
+		}
+
+		return count;
+	}
+	
+	public static String getListTablesSql(String dbType)
+	{
+		if (isDb2(dbType) == true)
+		{
+			 return DbUtils.SQL_LIST_TABLES_DB2;
+		}
+		else if (isSqlServer(dbType) == true)
+		{
+			return DbUtils.SQL_LIST_TABLES_SQLSERVER;
+		}
+		else if (isMySql(dbType) == true)
+		{
+			return DbUtils.SQL_LIST_TABLES_MYSQL;
+		}
+		else
+		{
+			return null;
+		}
+	}	
+	
+	public static String getTestSql(String dbType)
+	{
+		if (isDb2(dbType) == true)
+		{
+			 return DbUtils.SQL_TEST_DB2;
+		}
+		else if (isSqlServer(dbType) == true)
+		{
+			return DbUtils.SQL_TEST_SQLSERVER;
+		}
+		else
+		{
+			return null;
+		}
+	}	
+	
+	public static boolean isOdbc(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(DbUtils.TYPE_ODBC) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}	
+	
+	public static boolean isMySql(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(DbUtils.TYPE_MYSQL) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}	
+	
+	public static boolean isSqlServer(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(DbUtils.TYPE_SQL_SERVER) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}	
+	
+	public static boolean isSqlLite(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(DbUtils.TYPE_SQLITE) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}	
+	
+	public static boolean isDb2(String dbType)
+	{
+		if 
+		(
+			(isDb2Misc(dbType) == true) ||
+			(isDb2App(dbType) == true) ||
+			(isDb2JCC(dbType) == true)
+		)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}	
+	
+	public static boolean isDb2Misc(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(DbUtils.TYPE_DB2) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}	
+	
+	public static boolean isDb2JCC(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(DbUtils.TYPE_DB2_JCC) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public static boolean isDb2App(String dbType)
+	{
+		if (dbType.equalsIgnoreCase(DbUtils.TYPE_DB2_APP) == true){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }
