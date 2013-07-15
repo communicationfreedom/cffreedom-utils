@@ -1,16 +1,8 @@
 package com.cffreedom.utils.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cffreedom.utils.ConversionUtils;
 import com.cffreedom.utils.db.pool.ConnectionFactory;
 
 /**
@@ -36,11 +28,12 @@ public class BaseDAO
 
 	public BaseDAO()
 	{
-		// do nothing
+		logger.debug("Initialized with no factory");
 	}
 
 	public BaseDAO(ConnectionFactory factory)
 	{
 		this.factory = factory;
+		logger.debug("Initialized with passed in factory");
 	}
 }
