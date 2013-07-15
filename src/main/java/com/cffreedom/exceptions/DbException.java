@@ -13,7 +13,8 @@ package com.cffreedom.exceptions;
  * 3) Linking to: http://visit.markjacobsen.net
  * 
  * Changes:
- * 2013-04-16	markjacobsen.net 	Added additional Constructorsf
+ * 2013-04-16	markjacobsen.net 	Added additional Constructors
+ * 2013-07-15	markjacobsen.net 	Removed constructors
  */
 public class DbException extends Exception
 {
@@ -32,15 +33,5 @@ public class DbException extends Exception
 	public DbException(String message)
 	{
 		super(message);
-	}
-	
-	public DbException(String source, String message)
-	{
-		super(source + ": " + message);
-	}
-	
-	public DbException(String source, String message, Throwable exception)
-	{
-		super(source + ": " + message, exception);
 	}
 }

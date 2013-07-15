@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.DbConn;
-import com.cffreedom.exceptions.DbException;
+import com.cffreedom.exceptions.InfrastructureException;
 import com.cffreedom.utils.ConversionUtils;
 import com.cffreedom.utils.SystemUtils;
 import com.cffreedom.utils.Utils;
@@ -48,22 +48,22 @@ public class ConnectionManager
 	private String file = null;
 	private ConnectionFactory connFactory = null;
 	
-	public ConnectionManager() throws DbException, IOException
+	public ConnectionManager() throws InfrastructureException, IOException
 	{
 		this(ConnectionManager.DEFAULT_FILE);
 	}
 	
-	public ConnectionManager(String file) throws DbException, IOException
+	public ConnectionManager(String file) throws InfrastructureException, IOException
 	{
 		this(file, false);
 	}
 	
-	public ConnectionManager(boolean cacheConnections) throws DbException, IOException
+	public ConnectionManager(boolean cacheConnections) throws InfrastructureException, IOException
 	{
 		this(ConnectionManager.DEFAULT_FILE, cacheConnections);
 	}
 	
-	public ConnectionManager(String file, boolean cacheConnections) throws DbException, IOException
+	public ConnectionManager(String file, boolean cacheConnections) throws InfrastructureException, IOException
 	{		
 		this.loadConnectionFile(file);
 
@@ -105,10 +105,8 @@ public class ConnectionManager
 		FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
 	}
 	
-	public void loadConnectionFile(String file) throws DbException, IOException
+	public void loadConnectionFile(String file) throws InfrastructureException, IOException
 	{
-		final String METHOD = "loadFile";
-		
 		if (FileUtils.fileExists(file) == true)
 		{
 			logger.debug("Loading file: {}", file);
@@ -148,7 +146,7 @@ public class ConnectionManager
 		}
 		else
 		{
-			throw new DbException(METHOD, "File does not exist: " + file);
+			throw new InfrastructureException("File does not exist: " + file);
 		}
 	}
 	

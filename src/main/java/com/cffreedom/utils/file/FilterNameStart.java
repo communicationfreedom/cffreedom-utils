@@ -8,6 +8,7 @@ import java.io.FilenameFilter;
  * 
  * Credit: http://www.java-samples.com/showtutorial.php?tutorialid=384
  * 
+ * Original Class: com.cffreedom.utils.file.FilterNameStart
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 

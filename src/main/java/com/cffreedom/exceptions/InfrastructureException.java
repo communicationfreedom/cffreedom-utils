@@ -14,6 +14,7 @@ package com.cffreedom.exceptions;
  * 
  * Changes:
  * 2013-07-10	markjacobsen.net 	Created
+ * 2013-07-15	markjacobsen.net 	Removed constructors
  */
 public class InfrastructureException extends Exception
 {
@@ -32,15 +33,5 @@ public class InfrastructureException extends Exception
 	public InfrastructureException(String message)
 	{
 		super(message);
-	}
-	
-	public InfrastructureException(String source, String message)
-	{
-		super(source + ": " + message);
-	}
-	
-	public InfrastructureException(String source, String message, Throwable exception)
-	{
-		super(source + ": " + message, exception);
 	}
 }

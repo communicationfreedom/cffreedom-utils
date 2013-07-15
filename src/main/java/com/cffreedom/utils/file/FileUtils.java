@@ -11,6 +11,7 @@ import com.cffreedom.utils.DateTimeUtils;
 import com.cffreedom.utils.SystemUtils;
 
 /**
+ * Original Class: com.cffreedom.utils.file.FileUtils
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 

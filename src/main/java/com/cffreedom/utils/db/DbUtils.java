@@ -135,7 +135,6 @@ public class DbUtils
 	
 	public static boolean testConnection(String type, String host, String db, int port, String user, String pass)
 	{
-		final String METHOD = "testConnection";
 		String driver = DbUtils.getDriver(type);
 		String url = DbUtils.getUrl(type, host, db, port);
 		try
@@ -146,7 +145,7 @@ public class DbUtils
 			{
 				if (runSql(conn, DbUtils.getTestSql(type)) == false)
 				{
-					throw new DbException(METHOD, "Error running test SQL", null);
+					throw new DbException("Error running test SQL");
 				}
 			}
 			conn.close();
@@ -246,7 +245,7 @@ public class DbUtils
 					
 					for(Map.Entry<String,String> entry : replaceVals.entrySet())
 					{
-						//LoggerUtil.log(METHOD, "Replacing \"" + entry.getKey() + "\" with \"" + entry.getValue() + "\"");
+						logger.debug("Replacing \"{}\" with \"{}\"", entry.getKey(), entry.getValue());
 						sql = sql.replace(entry.getKey(), entry.getValue());
 					}
 					
@@ -420,7 +419,6 @@ public class DbUtils
 	 */
 	public static Object getObjectSerializedInBlob(Connection conn, String sql) throws DbException
 	{
-		final String METHOD = "getObjectSerializedInBlob";
 		Object returnVal = null;
 		try
 		{
@@ -443,15 +441,15 @@ public class DbUtils
 		}
 		catch (SQLException e)
 		{
-			throw new DbException(METHOD, "SQLException - " + e.getMessage(), e);
+			throw new DbException("SQLException - " + e.getMessage(), e);
 		}
 		catch (IOException e)
 		{
-			throw new DbException(METHOD, "IOException - " + e.getMessage(), e);
+			throw new DbException("IOException - " + e.getMessage());
 		}
 		catch (ClassNotFoundException e)
 		{
-			throw new DbException(METHOD, "ClassNotFoundException - " + e.getMessage(), e);
+			throw new DbException("ClassNotFoundException - " + e.getMessage());
 		}
 		return returnVal;
 	}
