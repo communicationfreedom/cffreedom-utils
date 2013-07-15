@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.DbConn;
-import com.cffreedom.exceptions.InfrastructureException;
+import com.cffreedom.exceptions.FileSystemException;
 import com.cffreedom.utils.ConversionUtils;
 import com.cffreedom.utils.SystemUtils;
 import com.cffreedom.utils.Utils;
@@ -49,22 +49,22 @@ public class ConnectionManager
 	private ConnectionFactory connFactory = null;
 	private EncryptDecryptProxy security = new EncryptDecryptProxy("abasickeyyoushouldnotchange");
 	
-	public ConnectionManager() throws InfrastructureException, IOException
+	public ConnectionManager() throws FileSystemException, IOException
 	{
 		this(ConnectionManager.DEFAULT_FILE);
 	}
 	
-	public ConnectionManager(String file) throws InfrastructureException, IOException
+	public ConnectionManager(String file) throws FileSystemException, IOException
 	{
 		this(file, false);
 	}
 	
-	public ConnectionManager(boolean cacheConnections) throws InfrastructureException, IOException
+	public ConnectionManager(boolean cacheConnections) throws FileSystemException, IOException
 	{
 		this(ConnectionManager.DEFAULT_FILE, cacheConnections);
 	}
 	
-	public ConnectionManager(String file, boolean cacheConnections) throws InfrastructureException, IOException
+	public ConnectionManager(String file, boolean cacheConnections) throws FileSystemException, IOException
 	{		
 		this.loadConnectionFile(file);
 
@@ -75,38 +75,7 @@ public class ConnectionManager
 		}
 	}
 	
-	private void save()
-	{
-		ArrayList<String> lines = new ArrayList<String>();
-		logger.debug("Saving to file {}", this.getConnectionFile());
-		
-		lines.add("#--------------------------------------------------------------------------------------");
-		lines.add("# While it is not recommended, you can put usernames and passwords into this file.");
-		lines.add("# Passwords do need to be encrypted using the SecurityUtils class.");
-		lines.add("# It is suggested that you use the DbConnManager app in cffreedom-cl-apps to maintain");
-		lines.add("# this file.");
-		lines.add("#--------------------------------------------------------------------------------------");
-		lines.add("");
-		lines.add("keys=" + ConversionUtils.toDelimitedString(this.conns.keySet(), ","));
-		lines.add("");
-		
-		for (String entry : this.conns.keySet())
-		{
-			logger.trace(entry);
-			DbConn conn = this.getDbConn(entry);
-			lines.add(entry + ".db=" + conn.getDb());
-			lines.add(entry + ".type=" + conn.getType());
-			lines.add(entry + ".host=" + conn.getHost());
-			lines.add(entry + ".port=" + conn.getPort());
-			lines.add(entry + ".user=" + conn.getUser());
-			lines.add(entry + ".password=" + security.encrypt(conn.getPassword()));
-			lines.add("");
-		}
-		
-		FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
-	}
-	
-	public void loadConnectionFile(String file) throws InfrastructureException, IOException
+	public void loadConnectionFile(String file) throws FileSystemException, IOException
 	{
 		if (FileUtils.fileExists(file) == true)
 		{
@@ -147,8 +116,39 @@ public class ConnectionManager
 		}
 		else
 		{
-			throw new InfrastructureException("File does not exist: " + file);
+			throw new FileSystemException("File does not exist: " + file);
 		}
+	}
+	
+	private void save()
+	{
+		ArrayList<String> lines = new ArrayList<String>();
+		logger.debug("Saving to file {}", this.getConnectionFile());
+		
+		lines.add("#--------------------------------------------------------------------------------------");
+		lines.add("# While it is not recommended, you can put usernames and passwords into this file.");
+		lines.add("# Passwords do need to be encrypted using the SecurityUtils class.");
+		lines.add("# It is suggested that you use the DbConnManager app in cffreedom-cl-apps to maintain");
+		lines.add("# this file.");
+		lines.add("#--------------------------------------------------------------------------------------");
+		lines.add("");
+		lines.add("keys=" + ConversionUtils.toDelimitedString(this.conns.keySet(), ","));
+		lines.add("");
+		
+		for (String entry : this.conns.keySet())
+		{
+			logger.trace(entry);
+			DbConn conn = this.getDbConn(entry);
+			lines.add(entry + ".db=" + conn.getDb());
+			lines.add(entry + ".type=" + conn.getType());
+			lines.add(entry + ".host=" + conn.getHost());
+			lines.add(entry + ".port=" + conn.getPort());
+			lines.add(entry + ".user=" + conn.getUser());
+			lines.add(entry + ".password=" + security.encrypt(conn.getPassword()));
+			lines.add("");
+		}
+		
+		FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
 	}
 	
 	public void close()

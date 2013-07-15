@@ -145,7 +145,6 @@ public class HttpUtils
 	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps) throws GeneralException, IOException { return httpPost(urlStr, queryParams, reqProps, true); }
 	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps, boolean setupProxy) throws GeneralException, IOException
 	{
-		final String METHOD = "httpPost";
 		int responseCode = 0;
 		StringBuilder response = new StringBuilder();
 		String urlParameters = encodeParams(queryParams);
@@ -193,7 +192,7 @@ public class HttpUtils
 		conn.disconnect();
 		
 		if (responseCode != 200) {
-			throw new GeneralException(METHOD, "Bad Response Code: " + responseCode);
+			throw new GeneralException("Bad Response Code: " + responseCode);
 		}
 		return response.toString();
 	}
