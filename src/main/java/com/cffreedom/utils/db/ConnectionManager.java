@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.DbConn;
 import com.cffreedom.exceptions.FileSystemException;
-import com.cffreedom.utils.ConversionUtils;
+import com.cffreedom.utils.Convert;
 import com.cffreedom.utils.SystemUtils;
 import com.cffreedom.utils.Utils;
 import com.cffreedom.utils.db.pool.ConnectionFactory;
@@ -106,7 +106,7 @@ public class ConnectionManager
 										type,
 										host,
 										db,
-										ConversionUtils.toInt(port));
+										Convert.toInt(port));
 				
 				if (user != null) { dbconn.setUser(user); }
 				if (password != null) { dbconn.setPassword(security.decrypt(password)); }
@@ -132,7 +132,7 @@ public class ConnectionManager
 		lines.add("# this file.");
 		lines.add("#--------------------------------------------------------------------------------------");
 		lines.add("");
-		lines.add("keys=" + ConversionUtils.toDelimitedString(this.conns.keySet(), ","));
+		lines.add("keys=" + Convert.toDelimitedString(this.conns.keySet(), ","));
 		lines.add("");
 		
 		for (String entry : this.conns.keySet())

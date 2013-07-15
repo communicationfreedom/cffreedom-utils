@@ -7,7 +7,7 @@ import javax.mail.internet.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cffreedom.utils.ConversionUtils;
+import com.cffreedom.utils.Convert;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -85,7 +85,7 @@ public class EmailUtils
 		
 		if (authenticatedSession == true){
 			Transport transport = session.getTransport();
-			transport.connect(smtpServer, ConversionUtils.toInt(port), user, pass);
+			transport.connect(smtpServer, Convert.toInt(port), user, pass);
 			transport.sendMessage(message, message.getAllRecipients());
 			transport.close();
 		}else{

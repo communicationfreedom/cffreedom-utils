@@ -48,7 +48,7 @@ public class DateTimeUtils extends FormatUtils
            
     public static int second(Date date)
     {
-    	return second(ConversionUtils.toCalendar(date));
+    	return second(Convert.toCalendar(date));
     }
            
     public static int minute(Calendar date)
@@ -58,7 +58,7 @@ public class DateTimeUtils extends FormatUtils
            
     public static int minute(Date date)
     {
-    	return minute(ConversionUtils.toCalendar(date));
+    	return minute(Convert.toCalendar(date));
     }
            
     public static int hour24(Calendar date)
@@ -68,7 +68,7 @@ public class DateTimeUtils extends FormatUtils
            
     public static int hour24(Date date)
     {
-    	return hour(ConversionUtils.toCalendar(date));
+    	return hour(Convert.toCalendar(date));
     }
    
     public static int hour(Calendar date)
@@ -78,7 +78,7 @@ public class DateTimeUtils extends FormatUtils
    
     public static int hour(Date date)
     {
-    	return hour(ConversionUtils.toCalendar(date));
+    	return hour(Convert.toCalendar(date));
     }
    
     public static int day(Calendar date)
@@ -88,7 +88,7 @@ public class DateTimeUtils extends FormatUtils
    
     public static int day(Date date)
     {
-    	return day(ConversionUtils.toCalendar(date));
+    	return day(Convert.toCalendar(date));
     }
    
     public static int dayOfWeek(Calendar date)
@@ -98,7 +98,7 @@ public class DateTimeUtils extends FormatUtils
            
     public static int dayOfWeek(Date date)
     {
-    	return dayOfWeek(ConversionUtils.toCalendar(date));
+    	return dayOfWeek(Convert.toCalendar(date));
     }
            
     /**
@@ -121,13 +121,13 @@ public class DateTimeUtils extends FormatUtils
 	*/
 	public static int minutes(Date date)
 	{
-        return minutes(ConversionUtils.toCalendar(date));
+        return minutes(Convert.toCalendar(date));
 	}
            
 	public static Date minutesToTime(int min) throws Exception
 	{
 		String time;
-        int hours = ConversionUtils.toInt( Math.floor(min / 60) );
+        int hours = Convert.toInt( Math.floor(min / 60) );
         int minutes = min - (60 * hours);
            
         if (minutes < 10){
@@ -136,7 +136,7 @@ public class DateTimeUtils extends FormatUtils
         	time = hours + ":" + minutes;
         }
                
-        return ConversionUtils.toDate(time, MASK_TIME_24_HOUR);
+        return Convert.toDate(time, MASK_TIME_24_HOUR);
     }
    
     public static Date[] minutesToTimeArray(int[] minutes) throws Exception
@@ -156,7 +156,7 @@ public class DateTimeUtils extends FormatUtils
    
     public static int month(Date date)
     {
-    	return month(ConversionUtils.toCalendar(date));
+    	return month(Convert.toCalendar(date));
     }
    
     public static int month()
@@ -171,7 +171,7 @@ public class DateTimeUtils extends FormatUtils
    
     public static int year(Date date)
     {
-    	return year(ConversionUtils.toCalendar(date));
+    	return year(Convert.toCalendar(date));
     }
    
     public static int year()
@@ -223,7 +223,7 @@ public class DateTimeUtils extends FormatUtils
    
     public static Date dateAdd(Date date, int interval, char datePart)
     {
-        return ConversionUtils.toDate(dateAdd(ConversionUtils.toCalendar(date), interval, datePart));
+        return Convert.toDate(dateAdd(Convert.toCalendar(date), interval, datePart));
     }
    
    
@@ -250,19 +250,19 @@ public class DateTimeUtils extends FormatUtils
                 break;                         
                            
             case (DATE_PART_DAY):
-            	ret = ConversionUtils.toInt(days);
+            	ret = Convert.toInt(days);
                 break;
                                        
             case (DATE_PART_HOUR):
-            	ret = ConversionUtils.toInt(hours);
+            	ret = Convert.toInt(hours);
                 break;
                                        
             case (DATE_PART_MINUTE):
-            	ret = ConversionUtils.toInt(minutes);
+            	ret = Convert.toInt(minutes);
                 break;
                                        
             case (DATE_PART_SECOND):
-            	ret = ConversionUtils.toInt(seconds);
+            	ret = Convert.toInt(seconds);
                 break;
         }
                
@@ -271,7 +271,7 @@ public class DateTimeUtils extends FormatUtils
    
     public static int dateDiff(Calendar dayOne, Calendar dayTwo, char datePart)
     {
-        return dateDiff(ConversionUtils.toDate(dayOne), ConversionUtils.toDate(dayTwo), datePart);
+        return dateDiff(Convert.toDate(dayOne), Convert.toDate(dayTwo), datePart);
     }
    
     public static boolean datesEqual(Date dayOne, Date date2)
@@ -295,7 +295,7 @@ public class DateTimeUtils extends FormatUtils
    
     public static String monthAsString(int month) throws Exception
     {
-        Date date = ConversionUtils.toDate(month + "/1/2000");
+        Date date = Convert.toDate(month + "/1/2000");
         return formatDate("MMMM", date);
     }
     
@@ -316,7 +316,7 @@ public class DateTimeUtils extends FormatUtils
     
     public static int dateAsEpoc(Date date)
     {
-    	return ConversionUtils.toInt(date.getTime() / 1000);
+    	return Convert.toInt(date.getTime() / 1000);
     }
    
     public static int weekInYear(Date date)
@@ -326,16 +326,16 @@ public class DateTimeUtils extends FormatUtils
    
     public static int weekInYear(Date date, int firstDayOfWeek)
     {
-        Calendar cal = ConversionUtils.toCalendar(date);
+        Calendar cal = Convert.toCalendar(date);
         cal.setFirstDayOfWeek(firstDayOfWeek);
         return cal.get(Calendar.WEEK_OF_YEAR);
     }
     
     public static Date combineDates(Date dateDate, Date timeDate)
     {
-    	Calendar dateCal = ConversionUtils.toCalendar(dateDate);
+    	Calendar dateCal = Convert.toCalendar(dateDate);
     	dateCal.setTime(timeDate);
-    	return ConversionUtils.toDate(dateCal);
+    	return Convert.toDate(dateCal);
     }
     
     /**

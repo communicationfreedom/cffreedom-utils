@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.Container;
-import com.cffreedom.utils.ConversionUtils;
+import com.cffreedom.utils.Convert;
 import com.cffreedom.utils.Utils;
 
 /**
@@ -111,11 +111,11 @@ public class HttpSessionService
         {
         	if (container.getCode().equalsIgnoreCase("https") == true)
         	{
-        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getValue()), sf));
+        		registry.register(new Scheme(container.getCode(), Convert.toInt(container.getValue()), sf));
         	}
         	else
         	{
-        		registry.register(new Scheme(container.getCode(), ConversionUtils.toInt(container.getValue()), PlainSocketFactory.getSocketFactory()));
+        		registry.register(new Scheme(container.getCode(), Convert.toInt(container.getValue()), PlainSocketFactory.getSocketFactory()));
         	}
         }
 
@@ -164,7 +164,7 @@ public class HttpSessionService
 		logger.trace("Getting lastResult");
 		if ((response.getEntity() != null) && (response.getEntity().getContent() != null))
 		{
-			this.lastResult = ConversionUtils.toString(response.getEntity().getContent());
+			this.lastResult = Convert.toString(response.getEntity().getContent());
 		}
 		else
 		{

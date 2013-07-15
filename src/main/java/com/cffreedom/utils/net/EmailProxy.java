@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.EmailMessage;
-import com.cffreedom.utils.ConversionUtils;
+import com.cffreedom.utils.Convert;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -358,7 +358,7 @@ public class EmailProxy
 							l_sHeaders += l_oHeader.getName() + ": " + l_oHeader.getValue() + " ";
 							if (l_oHeader.getName().startsWith("Message-Id") == true)
 							{
-								msgId = ConversionUtils.toInt(l_oHeader.getValue());
+								msgId = Convert.toInt(l_oHeader.getValue());
 							}
 						}
 					}

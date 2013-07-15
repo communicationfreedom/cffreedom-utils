@@ -5,7 +5,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
-import com.cffreedom.utils.ConversionUtils;
+import com.cffreedom.utils.Convert;
 
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -78,7 +78,7 @@ public class EncryptDecryptProxy
 			Cipher cipher = Cipher.getInstance("DES");// cipher is not thread safe
 			cipher.init(Cipher.DECRYPT_MODE, this.key);
 			byte[] plainTextPwdBytes = (cipher.doFinal(encrypedPwdBytes));
-			return ConversionUtils.toString(plainTextPwdBytes);
+			return Convert.toString(plainTextPwdBytes);
 		}
 		catch (Exception e)
 		{

@@ -137,7 +137,7 @@ public class SystemUtils
 	public static void sleep(double seconds)
     {
         try {
-            Thread.sleep(ConversionUtils.toInt(seconds * 1000));
+            Thread.sleep(Convert.toInt(seconds * 1000));
         } catch (InterruptedException e) {
             logger.error("ERROR: Sleeping");
         }

@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Original Class: com.cffreedom.utils.ConversionUtils
+ * Original Class: com.cffreedom.utils.Convert
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -41,9 +41,9 @@ import org.slf4j.LoggerFactory;
  * 									Added toLong(String) and toString(Date)
  * 2013-07-15	markjacobsen.net 	Added toDelimitedString()
  */
-public class ConversionUtils
+public class Convert
 {
-	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.ConversionUtils");
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.Convert");
 	
 	public static String toBase64(String val)
 	{

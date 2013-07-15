@@ -38,7 +38,7 @@ public class Utils
 	{
 		try
 		{
-			ConversionUtils.toInt(val);
+			Convert.toInt(val);
 			return true;
 		}
 		catch (Exception e)
@@ -76,7 +76,7 @@ public class Utils
     {
         try
         {
-            ConversionUtils.toDate(val);
+            Convert.toDate(val);
             return true;
         }catch (Exception e){
             return false;
@@ -139,7 +139,7 @@ public class Utils
 			logger.trace("Got a console object");
 			if (isPassword == true)
 			{
-				enteredVal = ConversionUtils.toString(System.console().readPassword(prompt));
+				enteredVal = Convert.toString(System.console().readPassword(prompt));
 			}
 			else
 			{
@@ -176,7 +176,7 @@ public class Utils
     {
     	if (val.length() > 0)
     	{
-    		return ConversionUtils.toString(val.charAt(val.length() - 1));
+    		return Convert.toString(val.charAt(val.length() - 1));
     	}
     	else
     	{
@@ -196,7 +196,7 @@ public class Utils
 
 	public static int longestString(String[] vals)
 	{
-		return longestString(ConversionUtils.toArrayListOfStrings(vals));
+		return longestString(Convert.toArrayListOfStrings(vals));
 	}
 	
 	public static String[] appendToStringArray(String[] array, String val)
