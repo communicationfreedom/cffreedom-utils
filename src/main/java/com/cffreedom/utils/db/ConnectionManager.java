@@ -48,6 +48,7 @@ import com.cffreedom.utils.security.EncryptDecryptProxy;
 public class ConnectionManager
 {
 	public static final String DEFAULT_FILE = SystemUtils.getDirConfig() + SystemUtils.getPathSeparator() + "dbconn.properties";
+	public static final boolean CREATE_FILE = true;
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.ConnectionManager");
 	private HashMap<String, DbConn> conns = new HashMap<String, DbConn>();
 	private Hashtable<String, BasicDataSource> pools = null;
@@ -65,8 +66,13 @@ public class ConnectionManager
 	}
 	
 	public ConnectionManager(String file, boolean cacheConnections) throws FileSystemException, IOException
+	{
+		this(file, cacheConnections, CREATE_FILE);
+	}
+	
+	public ConnectionManager(String file, boolean cacheConnections, boolean createPropFileIfNew) throws FileSystemException, IOException
 	{		
-		this.loadConnectionFile(file);
+		this.loadConnectionFile(file, createPropFileIfNew);
 
 		if (cacheConnections == true)
 		{
@@ -75,45 +81,60 @@ public class ConnectionManager
 		}
 	}
 	
-	public void loadConnectionFile(String file) throws FileSystemException, IOException
+	public void loadConnectionFile(String file) throws FileSystemException, IOException { this.loadConnectionFile(file, ConnectionManager.CREATE_FILE); }
+	public void loadConnectionFile(String file, boolean createPropFileIfNew) throws FileSystemException, IOException
 	{
-		if (FileUtils.fileExists(file) == true)
+		this.file = file;
+		
+		if ((FileUtils.fileExists(file) == false) && (createPropFileIfNew == true))
+		{
+			logger.debug("Attempting to create file: {}", file);
+			this.save();
+		}
+		
+		if (FileUtils.fileExists(this.file) == true)
 		{
 			logger.debug("Loading file: {}", file);
-			this.file = file;
 			
 			Properties props = new Properties();
 			FileInputStream in = new FileInputStream(this.file);
 			props.load(in);
 			in.close();
 			
-			String[] keys = props.getProperty("keys").split(",");
-			
-			for (String key : keys)
+			if (props.getProperty("keys") == null)
 			{
-				logger.debug(key);
-				String type = props.getProperty(key + ".type");
-				String host = props.getProperty(key + ".host");
-				String db = props.getProperty(key + ".db");
-				String port = props.getProperty(key + ".port");
-				String user = props.getProperty(key + ".user");
-				String password = props.getProperty(key + ".password");
-				String jndi = props.getProperty(key + ".jndi");
+				logger.warn("No \"keys\" property exists so nothing will be read");
+			}
+			else
+			{
+				String[] keys = props.getProperty("keys").split(",");
 				
-				if (port == null) { port = "0"; }
-				
-				DbConn dbconn = new DbConn(DbUtils.getDriver(type),
-										DbUtils.getUrl(type, host, db), 
-										type,
-										host,
-										db,
-										Convert.toInt(port));
-				
-				if (user != null) { dbconn.setUser(user); }
-				if (password != null) { dbconn.setPassword(security.decrypt(password)); }
-				if (jndi != null) { dbconn.setJndi(jndi); }
-
-				this.conns.put(key, dbconn);
+				for (String key : keys)
+				{
+					logger.debug(key);
+					String type = props.getProperty(key + ".type");
+					String host = props.getProperty(key + ".host");
+					String db = props.getProperty(key + ".db");
+					String port = props.getProperty(key + ".port");
+					String user = props.getProperty(key + ".user");
+					String password = props.getProperty(key + ".password");
+					String jndi = props.getProperty(key + ".jndi");
+					
+					if (port == null) { port = "0"; }
+					
+					DbConn dbconn = new DbConn(DbUtils.getDriver(type),
+											DbUtils.getUrl(type, host, db), 
+											type,
+											host,
+											db,
+											Convert.toInt(port));
+					
+					if (user != null) { dbconn.setUser(user); }
+					if (password != null) { dbconn.setPassword(security.decrypt(password)); }
+					if (jndi != null) { dbconn.setJndi(jndi); }
+	
+					this.conns.put(key, dbconn);
+				}
 			}
 		}
 		else
@@ -142,21 +163,30 @@ public class ConnectionManager
 			lines.add("# this file.");
 			lines.add("#--------------------------------------------------------------------------------------");
 			lines.add("");
-			lines.add("keys=" + Convert.toDelimitedString(this.conns.keySet(), ","));
-			lines.add("");
 			
-			for (String entry : this.conns.keySet())
+			if (this.conns.size() <= 0)
 			{
-				logger.trace(entry);
-				DbConn conn = this.getDbConn(entry);
-				lines.add(entry + ".db=" + conn.getDb());
-				lines.add(entry + ".type=" + conn.getType());
-				lines.add(entry + ".host=" + conn.getHost());
-				lines.add(entry + ".port=" + conn.getPort());
-				lines.add(entry + ".user=" + conn.getUser());
-				lines.add(entry + ".password=" + security.encrypt(conn.getPassword()));
-				lines.add(entry + ".jndi=" + conn.getJndi());
+				logger.warn("No DbConn objects cached so no actual values will be written");
+				lines.add("# No connections to save");
+			}
+			else
+			{
+				lines.add("keys=" + Convert.toDelimitedString(this.conns.keySet(), ","));
 				lines.add("");
+				
+				for (String entry : this.conns.keySet())
+				{
+					logger.trace(entry);
+					DbConn conn = this.getDbConn(entry);
+					lines.add(entry + ".db=" + conn.getDb());
+					lines.add(entry + ".type=" + conn.getType());
+					lines.add(entry + ".host=" + conn.getHost());
+					lines.add(entry + ".port=" + conn.getPort());
+					lines.add(entry + ".user=" + conn.getUser());
+					lines.add(entry + ".password=" + security.encrypt(conn.getPassword()));
+					lines.add(entry + ".jndi=" + conn.getJndi());
+					lines.add("");
+				}
 			}
 			
 			return FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
