@@ -13,7 +13,7 @@ public class ConnectionManagerTest
 	@Test
 	public void testGetConnection() throws FileSystemException, IOException
 	{
-		ConnectionManager cm = new ConnectionManager();
+		ConnectionManager cm = new ConnectionManager("nofile", false, false);
 		Assert.assertNull(cm.getConnection("junkkeythatshouldnotexit", null, null));
 	}
 }
