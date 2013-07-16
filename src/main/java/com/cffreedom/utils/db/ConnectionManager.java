@@ -1,6 +1,7 @@
 package com.cffreedom.utils.db;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -55,22 +56,22 @@ public class ConnectionManager
 	private String file = null;
 	private SecurityManager security = new SecurityManager("abasickeyyoushouldnotchange");
 	
-	public ConnectionManager() throws FileSystemException, IOException
+	public ConnectionManager() throws FileSystemException
 	{
 		this(ConnectionManager.DEFAULT_FILE);
 	}
 	
-	public ConnectionManager(String file) throws FileSystemException, IOException
+	public ConnectionManager(String file) throws FileSystemException
 	{
 		this(file, false);
 	}
 	
-	public ConnectionManager(String file, boolean cacheConnections) throws FileSystemException, IOException
+	public ConnectionManager(String file, boolean cacheConnections) throws FileSystemException
 	{
 		this(file, cacheConnections, CREATE_FILE);
 	}
 	
-	public ConnectionManager(String file, boolean cacheConnections, boolean createPropFileIfNew) throws FileSystemException, IOException
+	public ConnectionManager(String file, boolean cacheConnections, boolean createPropFileIfNew) throws FileSystemException
 	{		
 		this.loadConnectionFile(file, createPropFileIfNew);
 
@@ -81,66 +82,77 @@ public class ConnectionManager
 		}
 	}
 	
-	public void loadConnectionFile(String file) throws FileSystemException, IOException { this.loadConnectionFile(file, ConnectionManager.CREATE_FILE); }
-	public void loadConnectionFile(String file, boolean createPropFileIfNew) throws FileSystemException, IOException
+	public void loadConnectionFile(String file) throws FileSystemException { this.loadConnectionFile(file, ConnectionManager.CREATE_FILE); }
+	public void loadConnectionFile(String file, boolean createPropFileIfNew) throws FileSystemException
 	{
-		this.file = file;
-		
-		if ((FileUtils.fileExists(file) == false) && (createPropFileIfNew == true))
+		try
 		{
-			logger.debug("Attempting to create file: {}", file);
-			this.save();
-		}
-		
-		if (FileUtils.fileExists(this.file) == true)
-		{
-			logger.debug("Loading file: {}", file);
+			this.file = file;
 			
-			Properties props = new Properties();
-			FileInputStream in = new FileInputStream(this.file);
-			props.load(in);
-			in.close();
-			
-			if (props.getProperty("keys") == null)
+			if ((FileUtils.fileExists(file) == false) && (createPropFileIfNew == true))
 			{
-				logger.warn("No \"keys\" property exists so nothing will be read");
+				logger.debug("Attempting to create file: {}", file);
+				this.save();
+			}
+			
+			if (FileUtils.fileExists(this.file) == true)
+			{
+				logger.debug("Loading file: {}", file);
+				
+				Properties props = new Properties();
+				FileInputStream in = new FileInputStream(this.file);
+				props.load(in);
+				in.close();
+				
+				if (props.getProperty("keys") == null)
+				{
+					logger.warn("No \"keys\" property exists so nothing will be read");
+				}
+				else
+				{
+					String[] keys = props.getProperty("keys").split(",");
+					
+					for (String key : keys)
+					{
+						logger.debug(key);
+						String type = props.getProperty(key + ".type");
+						String host = props.getProperty(key + ".host");
+						String db = props.getProperty(key + ".db");
+						String port = props.getProperty(key + ".port");
+						String user = props.getProperty(key + ".user");
+						String password = props.getProperty(key + ".password");
+						String jndi = props.getProperty(key + ".jndi");
+						
+						if (port == null) { port = "0"; }
+						
+						DbConn dbconn = new DbConn(DbUtils.getDriver(type),
+												DbUtils.getUrl(type, host, db), 
+												type,
+												host,
+												db,
+												Convert.toInt(port));
+						
+						if (user != null) { dbconn.setUser(user); }
+						if (password != null) { dbconn.setPassword(security.decrypt(password)); }
+						if (jndi != null) { dbconn.setJndi(jndi); }
+		
+						this.conns.put(key, dbconn);
+					}
+				}
 			}
 			else
 			{
-				String[] keys = props.getProperty("keys").split(",");
-				
-				for (String key : keys)
-				{
-					logger.debug(key);
-					String type = props.getProperty(key + ".type");
-					String host = props.getProperty(key + ".host");
-					String db = props.getProperty(key + ".db");
-					String port = props.getProperty(key + ".port");
-					String user = props.getProperty(key + ".user");
-					String password = props.getProperty(key + ".password");
-					String jndi = props.getProperty(key + ".jndi");
-					
-					if (port == null) { port = "0"; }
-					
-					DbConn dbconn = new DbConn(DbUtils.getDriver(type),
-											DbUtils.getUrl(type, host, db), 
-											type,
-											host,
-											db,
-											Convert.toInt(port));
-					
-					if (user != null) { dbconn.setUser(user); }
-					if (password != null) { dbconn.setPassword(security.decrypt(password)); }
-					if (jndi != null) { dbconn.setJndi(jndi); }
-	
-					this.conns.put(key, dbconn);
-				}
+				logger.warn("File does not exist {}: " + file);
+				this.file = null;
 			}
 		}
-		else
+		catch (FileNotFoundException e)
 		{
-			logger.warn("File does not exist {}: " + file);
-			this.file = null;
+			throw new FileSystemException("FileNotFound", e);
+		}
+		catch (IOException e)
+		{
+			throw new FileSystemException("IOException", e);
 		}
 	}
 	

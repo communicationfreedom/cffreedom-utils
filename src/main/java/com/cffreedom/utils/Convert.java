@@ -184,12 +184,12 @@ public class Convert
 	
 	public static int[] toIntArray(String[] vals)
 	{
-		int[] l_nArray = new int[vals.length];
+		int[] retArray = new int[vals.length];
 		for (int x = 0; x < vals.length; x++)
 		{
-			l_nArray[x] = toInt(vals[x]);
+			retArray[x] = toInt(vals[x]);
 		}
-		return l_nArray;	
+		return retArray;	
 	}
 
 	//------------------------------------------------------------------
