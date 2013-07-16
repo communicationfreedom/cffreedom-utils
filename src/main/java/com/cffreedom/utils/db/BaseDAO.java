@@ -3,8 +3,6 @@ package com.cffreedom.utils.db;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cffreedom.utils.db.pool.ConnectionFactory;
-
 /**
  * Original Class: com.cffreedom.utils.db.BaseDAO
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -20,21 +18,22 @@ import com.cffreedom.utils.db.pool.ConnectionFactory;
  * 
  * Changes:
  * 2013-07-15	markjacobsen.net 	Moved all functionality to DbUtils
+ * 2013-07-15	markjacobsen.net 	Using new and improved ConnectionManager
  */
 public class BaseDAO
 {
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.BaseDAO");
 	
-	ConnectionFactory factory = null;
+	ConnectionManager cm = null;
 
 	public BaseDAO()
 	{
-		logger.debug("Initialized with no factory");
+		logger.debug("Initialized with no ConnectionManager");
 	}
 
-	public BaseDAO(ConnectionFactory factory)
+	public BaseDAO(ConnectionManager cm)
 	{
-		this.factory = factory;
-		logger.debug("Initialized with passed in factory");
+		logger.debug("Initializing with passed in ConnectionManager");
+		this.cm = cm;
 	}
 }

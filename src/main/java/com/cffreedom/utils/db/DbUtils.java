@@ -19,12 +19,15 @@ import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.DbConn;
 import com.cffreedom.exceptions.DbException;
+import com.cffreedom.exceptions.InfrastructureException;
 import com.cffreedom.utils.Utils;
 import com.cffreedom.utils.file.FileUtils;
 
@@ -111,7 +114,7 @@ public class DbUtils
 		Connection conn = null;
 		try
 		{
-			conn = DbUtils.getConn(dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword());
+			conn = DbUtils.getConnection(dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword());
 			String testSql = DbUtils.getListTablesSql(dbconn.getType());
 			if (testSql != null)
 			{
@@ -139,7 +142,7 @@ public class DbUtils
 		String url = DbUtils.getUrl(type, host, db, port);
 		try
 		{
-			Connection conn = DbUtils.getConn(driver, url, user, pass);
+			Connection conn = DbUtils.getConnection(driver, url, user, pass);
 			String testSql = DbUtils.getTestSql(type);
 			if (testSql != null)
 			{
@@ -153,6 +156,11 @@ public class DbUtils
 			return true;
 		}
 		catch (DbException e)
+		{
+			logger.error("{}", e.getMessage());
+			return false;
+		}
+		catch (InfrastructureException e)
 		{
 			logger.error("{}", e.getMessage());
 			return false;
@@ -602,7 +610,7 @@ public class DbUtils
 		}
 	}
 	
-	public static Connection getConn(String driver, String url, String user, String pass)
+	public static Connection getConnection(String driver, String url, String user, String pass) throws DbException, InfrastructureException
 	{	
 		try
 		{
@@ -612,14 +620,37 @@ public class DbUtils
 		}
 		catch (SQLException e)
 		{
-			e.printStackTrace(); 
-			return null;
+			throw new DbException(e);
 		}
 		catch (ClassNotFoundException e)
 		{
-			logger.error("ERROR: " + url + ": ClassNotFoundException (check that the driver is on the CLASSPATH): " + e.getMessage());
-			e.printStackTrace(); 
-			return null;
+			throw new InfrastructureException("ERROR: " + url + ": ClassNotFoundException (check that the driver is on the CLASSPATH): " + e.getMessage(), e);
+		}
+	}
+	
+	public static Connection getConnectionJNDI(String dsn) throws InfrastructureException, DbException
+	{
+		logger.debug("Getting connection: {}", dsn);
+		
+		try
+		{
+			Context initialContext = new InitialContext();
+			DataSource datasource = (DataSource)initialContext.lookup(dsn);
+			if (datasource != null) {
+		        return datasource.getConnection();
+			}
+			else
+			{
+				throw new InfrastructureException("Unable to get JNDI connection: " + dsn);
+			}
+		}
+		catch (NamingException e)
+		{
+			throw new InfrastructureException("NamingException looking up JNDI connection: " + dsn);
+		}
+		catch (SQLException e)
+		{
+			throw new DbException("SQLException getting JNDI connection: " + dsn);
 		}
 	}
 

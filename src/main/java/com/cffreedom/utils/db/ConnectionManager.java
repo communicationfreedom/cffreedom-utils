@@ -3,19 +3,23 @@ package com.cffreedom.utils.db;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Properties;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.DbConn;
+import com.cffreedom.exceptions.DbException;
 import com.cffreedom.exceptions.FileSystemException;
+import com.cffreedom.exceptions.InfrastructureException;
 import com.cffreedom.utils.Convert;
 import com.cffreedom.utils.SystemUtils;
 import com.cffreedom.utils.Utils;
-import com.cffreedom.utils.db.pool.ConnectionFactory;
 import com.cffreedom.utils.file.FileUtils;
 import com.cffreedom.utils.security.EncryptDecryptProxy;
 
@@ -39,14 +43,15 @@ import com.cffreedom.utils.security.EncryptDecryptProxy;
  * 2013-05-06 	markjacobsen.net 	Created
  * 2013-06-25 	markjacobsen.net 	Added connection pooling to getConnection()
  * 2013-07-15	markjacobsne.net 	Replaced the use of KeyValueFileMgr with a properties file
+ * 2013-07-15 	markjacobsen.net 	Added support for commons-dbcp
  */
 public class ConnectionManager
 {
 	public static final String DEFAULT_FILE = SystemUtils.getDirConfig() + SystemUtils.getPathSeparator() + "dbconn.properties";
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.ConnectionManager");
 	private HashMap<String, DbConn> conns = new HashMap<String, DbConn>();
+	private Hashtable<String, BasicDataSource> pools = null;
 	private String file = null;
-	private ConnectionFactory connFactory = null;
 	private EncryptDecryptProxy security = new EncryptDecryptProxy("abasickeyyoushouldnotchange");
 	
 	public ConnectionManager() throws FileSystemException, IOException
@@ -59,11 +64,6 @@ public class ConnectionManager
 		this(file, false);
 	}
 	
-	public ConnectionManager(boolean cacheConnections) throws FileSystemException, IOException
-	{
-		this(ConnectionManager.DEFAULT_FILE, cacheConnections);
-	}
-	
 	public ConnectionManager(String file, boolean cacheConnections) throws FileSystemException, IOException
 	{		
 		this.loadConnectionFile(file);
@@ -71,7 +71,7 @@ public class ConnectionManager
 		if (cacheConnections == true)
 		{
 			logger.info("Using ConnectionFactory/Connection Pooling");
-			this.connFactory = ConnectionFactory.getInstance();
+			this.pools = new Hashtable<String, BasicDataSource>();;
 		}
 	}
 	
@@ -98,6 +98,7 @@ public class ConnectionManager
 				String port = props.getProperty(key + ".port");
 				String user = props.getProperty(key + ".user");
 				String password = props.getProperty(key + ".password");
+				String jndi = props.getProperty(key + ".jndi");
 				
 				if (port == null) { port = "0"; }
 				
@@ -110,6 +111,7 @@ public class ConnectionManager
 				
 				if (user != null) { dbconn.setUser(user); }
 				if (password != null) { dbconn.setPassword(security.decrypt(password)); }
+				if (jndi != null) { dbconn.setJndi(jndi); }
 
 				this.conns.put(key, dbconn);
 			}
@@ -120,7 +122,7 @@ public class ConnectionManager
 		}
 	}
 	
-	private void save()
+	private boolean save()
 	{
 		ArrayList<String> lines = new ArrayList<String>();
 		logger.debug("Saving to file {}", this.getConnectionFile());
@@ -145,15 +147,32 @@ public class ConnectionManager
 			lines.add(entry + ".port=" + conn.getPort());
 			lines.add(entry + ".user=" + conn.getUser());
 			lines.add(entry + ".password=" + security.encrypt(conn.getPassword()));
+			lines.add(entry + ".jndi=" + conn.getJndi());
 			lines.add("");
 		}
 		
-		FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
+		return FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
 	}
 	
 	public void close()
 	{
-		try{ this.connFactory.close(); } catch (Exception e){}
+		if (this.cacheConnections() == true)
+		{
+			for (String key : this.pools.keySet())
+			{
+				BasicDataSource bds = this.pools.get(key);
+				try
+				{
+					logger.debug("Closing pool: ", key);
+					bds.close();
+					this.pools.remove(key);
+				}
+				catch (SQLException e)
+				{
+					logger.error("Error closing pool: ", e.getMessage());
+				}
+			}
+		}
 	}
 	
 	public String getConnectionFile() { return this.file; }
@@ -168,27 +187,89 @@ public class ConnectionManager
 		return this.conns.get(key);
 	}
 	
-	public boolean cacheConnections() { if (this.connFactory != null){ return true; }else{ return false; } }
+	public boolean cacheConnections() { if (this.pools != null){ return true; }else{ return false; } }
 		
 	public Connection getConnection(String key, String user, String pass)
 	{
-		if (this.cacheConnections() == true)
+		Connection conn = null;
+		DbConn dbconn = this.getDbConn(key);
+		
+		if (dbconn != null)
 		{
-			if (this.connFactory.containsPool(key) == false)
+			// Set / override username and password if passed in
+			if (user != null) { dbconn.setUser(user); }
+			if (pass != null) { dbconn.setPassword(pass); }
+		}
+		
+		// Default to a JNDI connection if one exists
+		if ((dbconn != null) && (dbconn.getJndi().length() > 0))
+		{
+			logger.debug("Getting JNDI connection: {}", key);
+			try
 			{
-				DbConn dbconn = this.getDbConn(key);
-				dbconn.setUser(user);
-				dbconn.setPassword(pass);
-				this.connFactory.addPool(key, dbconn);
+				conn = DbUtils.getConnectionJNDI(dbconn.getJndi());
+			}
+			catch (DbException | InfrastructureException e)
+			{
+				logger.warn("Unable to get JNDI connection");
+			}
+		}
+		
+		// Next use connection pooling if configured
+		if ((conn == null) && (this.cacheConnections() == true))
+		{
+			if (this.pools.containsKey(key) == false)
+			{
+				logger.debug("Initializing connection pool: {}", key);				
+				BasicDataSource bds = new BasicDataSource();
+			    bds.setDriverClassName(dbconn.getDriver());
+			    bds.setUrl(dbconn.getUrl());
+			    bds.setUsername(dbconn.getUser());
+			    bds.setPassword(dbconn.getPassword());
+				
+				this.pools.put(key, bds);
 			}
 			
-			return this.connFactory.getConnection(key);
+			try
+			{
+				logger.debug("Getting pooled connection: {}", key);
+				conn = this.pools.get(key).getConnection();
+			}
+			catch (SQLException e)
+			{
+				logger.error("Error getting pooled connection");
+			}
 		}
-		else
+		
+		// Then try getting a non-pooled connection
+		if ((conn == null) && (dbconn != null))
 		{
-			DbConn dbconn = this.getDbConn(key);
-			return DbUtils.getConn(dbconn.getDriver(), dbconn.getUrl(), user, pass);
+			logger.debug("Getting non-pooled connection: {}", key);
+			try
+			{
+				conn = DbUtils.getConnection(dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword());
+			}
+			catch (DbException | InfrastructureException e)
+			{
+				logger.error("Error getting non-pooled connection");
+			}
 		}
+		
+		// Finally make a last ditch attempt to just get a jndi connection
+		if (conn == null)
+		{
+			logger.warn("Making last ditch attempt to get JNDI connection: {}", key);
+			try
+			{
+				conn = DbUtils.getConnectionJNDI(key);
+			}
+			catch (DbException | InfrastructureException e)
+			{
+				logger.error("Error attempting to get last ditch JNDI connection");
+			}
+		}
+		
+		return conn;
 	}
 	
 	public boolean addConnection(String key, DbConn dbconn)

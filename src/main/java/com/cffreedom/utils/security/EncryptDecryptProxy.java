@@ -23,6 +23,9 @@ import org.slf4j.LoggerFactory;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes
+ * 2013-07-15	markjacobsen.net 	Slight mods for greater backword compatibility with org.apache.commons.codec.binary.Base64
  */
 public class EncryptDecryptProxy
 {
@@ -60,7 +63,8 @@ public class EncryptDecryptProxy
 			Cipher cipher = Cipher.getInstance("DES"); // cipher is not thread safe
 			cipher.init(Cipher.ENCRYPT_MODE, this.key);
 			//return this.base64encoder.encode(cipher.doFinal(cleartext));
-			return Base64.encodeBase64String(cipher.doFinal(cleartext));
+			//return Base64.encodeBase64String(cipher.doFinal(cleartext));
+			return Convert.toString(Base64.encodeBase64(cipher.doFinal(cleartext)));
 		}
 		catch (Exception e)
 		{
@@ -74,7 +78,8 @@ public class EncryptDecryptProxy
 		try
 		{
 			//byte[] encrypedPwdBytes = this.base64decoder.decodeBuffer(value);
-			byte[] encrypedPwdBytes = Base64.decodeBase64(value);
+			//byte[] encrypedPwdBytes = Base64.decodeBase64(value);
+			byte[] encrypedPwdBytes = Base64.decodeBase64(value.getBytes());
 			Cipher cipher = Cipher.getInstance("DES");// cipher is not thread safe
 			cipher.init(Cipher.DECRYPT_MODE, this.key);
 			byte[] plainTextPwdBytes = (cipher.doFinal(encrypedPwdBytes));
