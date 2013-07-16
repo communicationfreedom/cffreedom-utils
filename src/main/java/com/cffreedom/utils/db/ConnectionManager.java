@@ -118,40 +118,49 @@ public class ConnectionManager
 		}
 		else
 		{
-			throw new FileSystemException("File does not exist: " + file);
+			logger.warn("File does not exist {}: " + file);
+			this.file = null;
 		}
 	}
 	
 	private boolean save()
 	{
-		ArrayList<String> lines = new ArrayList<String>();
-		logger.debug("Saving to file {}", this.getConnectionFile());
-		
-		lines.add("#--------------------------------------------------------------------------------------");
-		lines.add("# While it is not recommended, you can put usernames and passwords into this file.");
-		lines.add("# Passwords do need to be encrypted using the SecurityUtils class.");
-		lines.add("# It is suggested that you use the DbConnManager app in cffreedom-cl-apps to maintain");
-		lines.add("# this file.");
-		lines.add("#--------------------------------------------------------------------------------------");
-		lines.add("");
-		lines.add("keys=" + Convert.toDelimitedString(this.conns.keySet(), ","));
-		lines.add("");
-		
-		for (String entry : this.conns.keySet())
+		if (this.file == null)
 		{
-			logger.trace(entry);
-			DbConn conn = this.getDbConn(entry);
-			lines.add(entry + ".db=" + conn.getDb());
-			lines.add(entry + ".type=" + conn.getType());
-			lines.add(entry + ".host=" + conn.getHost());
-			lines.add(entry + ".port=" + conn.getPort());
-			lines.add(entry + ".user=" + conn.getUser());
-			lines.add(entry + ".password=" + security.encrypt(conn.getPassword()));
-			lines.add(entry + ".jndi=" + conn.getJndi());
-			lines.add("");
+			logger.warn("No file to save to");
+			return false;
 		}
-		
-		return FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
+		else
+		{
+			ArrayList<String> lines = new ArrayList<String>();
+			logger.debug("Saving to file {}", this.getConnectionFile());
+			
+			lines.add("#--------------------------------------------------------------------------------------");
+			lines.add("# While it is not recommended, you can put usernames and passwords into this file.");
+			lines.add("# Passwords do need to be encrypted using the SecurityUtils class.");
+			lines.add("# It is suggested that you use the DbConnManager app in cffreedom-cl-apps to maintain");
+			lines.add("# this file.");
+			lines.add("#--------------------------------------------------------------------------------------");
+			lines.add("");
+			lines.add("keys=" + Convert.toDelimitedString(this.conns.keySet(), ","));
+			lines.add("");
+			
+			for (String entry : this.conns.keySet())
+			{
+				logger.trace(entry);
+				DbConn conn = this.getDbConn(entry);
+				lines.add(entry + ".db=" + conn.getDb());
+				lines.add(entry + ".type=" + conn.getType());
+				lines.add(entry + ".host=" + conn.getHost());
+				lines.add(entry + ".port=" + conn.getPort());
+				lines.add(entry + ".user=" + conn.getUser());
+				lines.add(entry + ".password=" + security.encrypt(conn.getPassword()));
+				lines.add(entry + ".jndi=" + conn.getJndi());
+				lines.add("");
+			}
+			
+			return FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
+		}
 	}
 	
 	public void close()
@@ -199,6 +208,10 @@ public class ConnectionManager
 			// Set / override username and password if passed in
 			if (user != null) { dbconn.setUser(user); }
 			if (pass != null) { dbconn.setPassword(pass); }
+		}
+		else
+		{
+			logger.warn("A DbConn does not exist for key: {}", key);
 		}
 		
 		// Default to a JNDI connection if one exists
