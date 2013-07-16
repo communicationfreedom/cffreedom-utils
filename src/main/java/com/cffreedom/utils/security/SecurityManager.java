@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Original Class: com.cffreedom.utils.security.EncryptDecryptProxy
+ * Original Class: com.cffreedom.utils.security.SecurityManager
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
@@ -26,16 +26,17 @@ import org.slf4j.LoggerFactory;
  * 
  * Changes
  * 2013-07-15	markjacobsen.net 	Slight mods for greater backword compatibility with org.apache.commons.codec.binary.Base64
+ * 2013-07-16 	markjacobsen.net 	Renamed from EncryptDecryptProxy
  */
-public class EncryptDecryptProxy
+public class SecurityManager
 {
-	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.security.EncryptDecryptProxy");
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.security.SecurityManager");
 	private String secretKey = null;
 	private DESKeySpec keySpec = null;
 	private SecretKeyFactory keyFactory = null;
 	private SecretKey key = null;
 	
-	public EncryptDecryptProxy(String secretKey)
+	public SecurityManager(String secretKey)
 	{
 		try
 		{

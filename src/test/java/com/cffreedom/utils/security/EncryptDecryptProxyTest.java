@@ -14,7 +14,7 @@ public class EncryptDecryptProxyTest
 	@Test
 	public void testEncryptDecrypt() throws IOException
 	{
-		EncryptDecryptProxy edp = new EncryptDecryptProxy(KEY);
+		SecurityManager edp = new SecurityManager(KEY);
 		String encrypted = edp.encrypt(TEST_STRING);
 		Assert.assertEquals(TEST_STRING, edp.decrypt(encrypted));
 	}

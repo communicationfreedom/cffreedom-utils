@@ -21,7 +21,7 @@ import com.cffreedom.utils.Convert;
 import com.cffreedom.utils.SystemUtils;
 import com.cffreedom.utils.Utils;
 import com.cffreedom.utils.file.FileUtils;
-import com.cffreedom.utils.security.EncryptDecryptProxy;
+import com.cffreedom.utils.security.SecurityManager;
 
 /**
  * Automated layer for accessing DB Connections that should guarantee that
@@ -53,7 +53,7 @@ public class ConnectionManager
 	private HashMap<String, DbConn> conns = new HashMap<String, DbConn>();
 	private Hashtable<String, BasicDataSource> pools = null;
 	private String file = null;
-	private EncryptDecryptProxy security = new EncryptDecryptProxy("abasickeyyoushouldnotchange");
+	private SecurityManager security = new SecurityManager("abasickeyyoushouldnotchange");
 	
 	public ConnectionManager() throws FileSystemException, IOException
 	{
