@@ -3,6 +3,7 @@ package com.cffreedom.utils.db;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,10 +46,12 @@ import com.cffreedom.utils.security.SecurityManager;
  * 2013-06-25 	markjacobsen.net 	Added connection pooling to getConnection()
  * 2013-07-15	markjacobsne.net 	Replaced the use of KeyValueFileMgr with a properties file
  * 2013-07-15 	markjacobsen.net 	Added support for commons-dbcp
+ * 2013-07-17 	markjacobsen.net 	Added support for the dbconn.properties file being on the classpath
  */
 public class ConnectionManager
 {
-	public static final String DEFAULT_FILE = SystemUtils.getDirConfig() + SystemUtils.getPathSeparator() + "dbconn.properties";
+	public static final String PROP_FILE = "dbconn.properties";
+	public static final String DEFAULT_FILE = SystemUtils.getDirConfig() + SystemUtils.getPathSeparator() + PROP_FILE;
 	public static final boolean CREATE_FILE = true;
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.ConnectionManager");
 	private HashMap<String, DbConn> conns = new HashMap<String, DbConn>();
@@ -56,53 +59,79 @@ public class ConnectionManager
 	private String file = null;
 	private SecurityManager security = new SecurityManager("abasickeyyoushouldnotchange");
 	
-	public ConnectionManager() throws FileSystemException
+	public ConnectionManager() throws FileSystemException, InfrastructureException
 	{
 		this(ConnectionManager.DEFAULT_FILE);
 	}
 	
-	public ConnectionManager(String file) throws FileSystemException
+	public ConnectionManager(String file) throws FileSystemException, InfrastructureException
 	{
-		this(file, false);
+		this(file, true);
 	}
 	
-	public ConnectionManager(String file, boolean cacheConnections) throws FileSystemException
-	{
-		this(file, cacheConnections, CREATE_FILE);
-	}
-	
-	public ConnectionManager(String file, boolean cacheConnections, boolean createPropFileIfNew) throws FileSystemException
+	public ConnectionManager(String file, boolean createPropFileIfNew) throws FileSystemException, InfrastructureException
 	{		
 		this.loadConnectionFile(file, createPropFileIfNew);
-
-		if (cacheConnections == true)
-		{
-			logger.info("Using ConnectionFactory/Connection Pooling");
-			this.pools = new Hashtable<String, BasicDataSource>();;
+	}
+	
+	/**
+	 * Use to enable commons-dbcp connection pooling. Note that this value
+	 * and connection pooling will only be done via this class if it is 
+	 * unable to get a JNDI connection. In other words, if this class can get
+	 * a JNDI connection it will, and we'll never setup an internal pool
+	 * @param enable True to enable, false to disable
+	 */
+	public void enableConnectionPooling(boolean enable)
+	{
+		if (enable == true){
+			if (this.pools == null){
+				logger.info("Turning on Connection Pooling");
+				this.pools = new Hashtable<String, BasicDataSource>();
+			}
+		}else{
+			logger.info("Turning off Connection Pooling");
+			this.pools = null;
 		}
 	}
 	
-	public void loadConnectionFile(String file) throws FileSystemException { this.loadConnectionFile(file, ConnectionManager.CREATE_FILE); }
-	public void loadConnectionFile(String file, boolean createPropFileIfNew) throws FileSystemException
+	public void loadConnectionFile(String file) throws FileSystemException, InfrastructureException { this.loadConnectionFile(file, ConnectionManager.CREATE_FILE); }
+	@SuppressWarnings("resource")
+	public void loadConnectionFile(String file, boolean createPropFileIfNew) throws FileSystemException, InfrastructureException
 	{
+		InputStream inputStream = null;
+		Properties props = new Properties();
+		
 		try
 		{
 			this.file = file;
-			
-			if ((FileUtils.fileExists(file) == false) && (createPropFileIfNew == true))
+		
+			if ((this.file != null) && (FileUtils.fileExists(this.file) == false) && (createPropFileIfNew == true))
 			{
-				logger.debug("Attempting to create file: {}", file);
+				logger.debug("Attempting to create file: {}", this.file);
 				this.save();
 			}
 			
 			if (FileUtils.fileExists(this.file) == true)
 			{
-				logger.debug("Loading file: {}", file);
+				logger.info("Loading from passed in file: {}", this.file);
+				inputStream = new FileInputStream(this.file);
+			}
+			else
+			{
+				logger.info("Attempting to find file on classpath: {}", ConnectionManager.PROP_FILE);
+				inputStream = this.getClass().getClassLoader().getResourceAsStream(ConnectionManager.PROP_FILE);
+			}
+			
+			if (inputStream == null)
+			{
+				throw new InfrastructureException("Invalid connection file or no default file \""+ConnectionManager.PROP_FILE+"\" found on the classpath");
+			}
+			else
+			{
+				logger.debug("Loading property file");
 				
-				Properties props = new Properties();
-				FileInputStream in = new FileInputStream(this.file);
-				props.load(in);
-				in.close();
+				props.load(inputStream);
+				inputStream.close();
 				
 				if (props.getProperty("keys") == null)
 				{
@@ -132,18 +161,13 @@ public class ConnectionManager
 												db,
 												Convert.toInt(port));
 						
-						if (user != null) { dbconn.setUser(user); }
-						if (password != null) { dbconn.setPassword(security.decrypt(password)); }
-						if (jndi != null) { dbconn.setJndi(jndi); }
+						if (this.validValue(user) == true) { dbconn.setUser(user); }
+						if (this.validValue(password) == true) { dbconn.setPassword(security.decrypt(password)); }
+						if (this.validValue(jndi) == true) { dbconn.setJndi(jndi); }
 		
 						this.conns.put(key, dbconn);
 					}
 				}
-			}
-			else
-			{
-				logger.warn("File does not exist {}: " + file);
-				this.file = null;
 			}
 		}
 		catch (FileNotFoundException e)
@@ -153,6 +177,15 @@ public class ConnectionManager
 		catch (IOException e)
 		{
 			throw new FileSystemException("IOException", e);
+		}
+	}
+	
+	private boolean validValue(String val)
+	{
+		if ((val != null) && (val.length() > 0) && (val.equalsIgnoreCase("null") == false)){
+			return true;
+		}else{
+			return false;
 		}
 	}
 	
@@ -190,18 +223,32 @@ public class ConnectionManager
 				{
 					logger.trace(entry);
 					DbConn conn = this.getDbConn(entry);
-					lines.add(entry + ".db=" + conn.getDb());
-					lines.add(entry + ".type=" + conn.getType());
-					lines.add(entry + ".host=" + conn.getHost());
-					lines.add(entry + ".port=" + conn.getPort());
-					lines.add(entry + ".user=" + conn.getUser());
-					lines.add(entry + ".password=" + security.encrypt(conn.getPassword()));
-					lines.add(entry + ".jndi=" + conn.getJndi());
+					lines.add(entry + ".db=" + this.getPropFileValue(conn.getDb()));
+					lines.add(entry + ".type=" + this.getPropFileValue(conn.getType()));
+					lines.add(entry + ".host=" + this.getPropFileValue(conn.getHost()));
+					lines.add(entry + ".port=" + this.getPropFileValue(Convert.toString(conn.getPort())));
+					lines.add(entry + ".user=" + this.getPropFileValue(conn.getUser()));
+					lines.add(entry + ".password=" + this.getPropFileValue(security.encrypt(conn.getPassword()), true));
+					lines.add(entry + ".jndi=" + this.getPropFileValue(conn.getJndi()));
 					lines.add("");
 				}
 			}
 			
 			return FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
+		}
+	}
+	
+	private String getPropFileValue(String val) { return getPropFileValue(val, false); }
+	private String getPropFileValue(String val, boolean encrypt)
+	{
+		if (val == null){
+			return "";
+		}else{
+			if (encrypt == true){
+				return security.encrypt(val);
+			}else{
+				return val;
+			}
 		}
 	}
 	
