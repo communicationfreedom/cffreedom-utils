@@ -52,7 +52,7 @@ public class ConnectionManager
 {
 	public static final String PROP_FILE = "dbconn.properties";
 	public static final String DEFAULT_FILE = SystemUtils.getDirConfig() + SystemUtils.getPathSeparator() + PROP_FILE;
-	public static final boolean CREATE_FILE = true;
+	public static final boolean CREATE_FILE = false;
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.ConnectionManager");
 	private HashMap<String, DbConn> conns = new HashMap<String, DbConn>();
 	private Hashtable<String, BasicDataSource> pools = null;
@@ -66,7 +66,7 @@ public class ConnectionManager
 	
 	public ConnectionManager(String file) throws FileSystemException, InfrastructureException
 	{
-		this(file, true);
+		this(file, ConnectionManager.CREATE_FILE);
 	}
 	
 	public ConnectionManager(String file, boolean createPropFileIfNew) throws FileSystemException, InfrastructureException
