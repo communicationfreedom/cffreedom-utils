@@ -7,13 +7,14 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.cffreedom.exceptions.FileSystemException;
+import com.cffreedom.exceptions.InfrastructureException;
 
 public class ConnectionManagerTest
 {
 	@Test
-	public void testGetConnection() throws FileSystemException, IOException
+	public void testGetConnection() throws FileSystemException, IOException, InfrastructureException
 	{
-		ConnectionManager cm = new ConnectionManager("nofile", false, false);
+		ConnectionManager cm = new ConnectionManager();
 		Assert.assertNull(cm.getConnection("junkkeythatshouldnotexit", null, null));
 	}
 }
