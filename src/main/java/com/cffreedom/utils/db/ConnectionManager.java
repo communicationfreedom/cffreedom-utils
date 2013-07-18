@@ -304,7 +304,7 @@ public class ConnectionManager
 		}
 		
 		// Default to a JNDI connection if one exists
-		if ((dbconn != null) && (dbconn.getJndi().length() > 0))
+		if ((dbconn != null) && (dbconn.getJndi() != null) && (dbconn.getJndi().length() > 0))
 		{
 			logger.debug("Getting JNDI connection: {}", key);
 			try
