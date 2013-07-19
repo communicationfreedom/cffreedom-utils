@@ -114,12 +114,15 @@ public class SecurityMgr
 					
 					for (String key : keys)
 					{
-						logger.debug(key);
+						logger.trace(key);
 						String user = props.getProperty(key + ".user");
 						String password = props.getProperty(key + ".password");
 						String note = props.getProperty(key + ".note");
 						
-						Entry entry = new Entry(key, this.cipher.decrypt(user), this.cipher.decrypt(password), note);
+						if (Utils.hasLength(user) == true) { user = this.cipher.decrypt(user); }
+						if (Utils.hasLength(password) == true) { password = this.cipher.decrypt(password); }
+						
+						Entry entry = new Entry(key, user, password, note);
 		
 						this.entries.put(key, entry);
 					}
