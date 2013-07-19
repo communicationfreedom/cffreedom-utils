@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.utils.file.FileUtils;
-import com.cffreedom.utils.security.SecurityManager;
+import com.cffreedom.utils.security.SecurityCipher;
 
 /**
  * Simple java based serializable key/value pair manager with the option to
@@ -36,7 +36,7 @@ public class KeyValueFileMgr
 	
 	private String file = null;
 	TreeMap<String, Object> map = null;
-	private SecurityManager encDecProx = null;
+	private SecurityCipher cipher = null;
 	
 	public KeyValueFileMgr(String file)
 	{
@@ -53,7 +53,7 @@ public class KeyValueFileMgr
 	
 	private boolean encryptVals()
 	{
-		if (this.encDecProx == null){
+		if (this.cipher == null){
 			return false;
 		}else{
 			return true;
@@ -104,7 +104,7 @@ public class KeyValueFileMgr
 		String val = (String)this.getEntry(key);
 		if (this.encryptVals() == true)
 		{
-			val = this.encDecProx.decrypt(val);
+			val = this.cipher.decrypt(val);
 		}
 		return val;
 	}
@@ -127,7 +127,7 @@ public class KeyValueFileMgr
 	{
 		if (this.encryptVals() == true)
 		{
-			value = this.encDecProx.encrypt(value);
+			value = this.cipher.encrypt(value);
 		}
 		return this.addEntry(key, (Object)value);
 	}

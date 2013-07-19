@@ -6,15 +6,15 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-public class EncryptDecryptProxyTest
+public class SecurityCipherTest
 {
 	private final String KEY = "somerandomvaluefortesting";
 	private final String TEST_STRING = "this is my value";
 
 	@Test
-	public void testEncryptDecrypt() throws IOException
+	public void testSecurityCipher() throws IOException
 	{
-		SecurityManager edp = new SecurityManager(KEY);
+		SecurityCipher edp = new SecurityCipher(KEY);
 		String encrypted = edp.encrypt(TEST_STRING);
 		Assert.assertEquals(TEST_STRING, edp.decrypt(encrypted));
 	}

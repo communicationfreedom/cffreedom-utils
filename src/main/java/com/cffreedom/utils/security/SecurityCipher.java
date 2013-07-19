@@ -27,16 +27,17 @@ import org.slf4j.LoggerFactory;
  * Changes
  * 2013-07-15	markjacobsen.net 	Slight mods for greater backword compatibility with org.apache.commons.codec.binary.Base64
  * 2013-07-16 	markjacobsen.net 	Renamed from EncryptDecryptProxy
+ * 2013-07-19 	markjacobsen.net 	Renamed from SecurityManager
  */
-public class SecurityManager
+public class SecurityCipher
 {
-	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.security.SecurityManager");
+	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.security.SecurityCipher");
 	private String secretKey = null;
 	private DESKeySpec keySpec = null;
 	private SecretKeyFactory keyFactory = null;
 	private SecretKey key = null;
 	
-	public SecurityManager(String secretKey)
+	public SecurityCipher(String secretKey)
 	{
 		try
 		{
@@ -63,8 +64,6 @@ public class SecurityManager
 			byte[] cleartext = value.getBytes("UTF8");
 			Cipher cipher = Cipher.getInstance("DES"); // cipher is not thread safe
 			cipher.init(Cipher.ENCRYPT_MODE, this.key);
-			//return this.base64encoder.encode(cipher.doFinal(cleartext));
-			//return Base64.encodeBase64String(cipher.doFinal(cleartext));
 			return Convert.toString(Base64.encodeBase64(cipher.doFinal(cleartext)));
 		}
 		catch (Exception e)
@@ -78,8 +77,6 @@ public class SecurityManager
 	{
 		try
 		{
-			//byte[] encrypedPwdBytes = this.base64decoder.decodeBuffer(value);
-			//byte[] encrypedPwdBytes = Base64.decodeBase64(value);
 			byte[] encrypedPwdBytes = Base64.decodeBase64(value.getBytes());
 			Cipher cipher = Cipher.getInstance("DES");// cipher is not thread safe
 			cipher.init(Cipher.DECRYPT_MODE, this.key);

@@ -23,7 +23,7 @@ import com.cffreedom.utils.Convert;
 import com.cffreedom.utils.SystemUtils;
 import com.cffreedom.utils.Utils;
 import com.cffreedom.utils.file.FileUtils;
-import com.cffreedom.utils.security.SecurityManager;
+import com.cffreedom.utils.security.SecurityCipher;
 
 /**
  * Automated layer for accessing DB Connections that should guarantee that
@@ -57,7 +57,7 @@ public class ConnectionManager
 	private HashMap<String, DbConn> conns = new HashMap<String, DbConn>();
 	private Hashtable<String, BasicDataSource> pools = null;
 	private String file = null;
-	private SecurityManager security = new SecurityManager("abasickeyyoushouldnotchange");
+	private SecurityCipher cipher = new SecurityCipher("abasickeyyoushouldnotchange");
 	
 	public ConnectionManager() throws FileSystemException, InfrastructureException
 	{
@@ -71,7 +71,7 @@ public class ConnectionManager
 	
 	public ConnectionManager(String file, boolean createPropFileIfNew) throws FileSystemException, InfrastructureException
 	{		
-		this.loadConnectionFile(file, createPropFileIfNew);
+		this.loadFile(file, createPropFileIfNew);
 	}
 	
 	/**
@@ -94,9 +94,9 @@ public class ConnectionManager
 		}
 	}
 	
-	public void loadConnectionFile(String file) throws FileSystemException, InfrastructureException { this.loadConnectionFile(file, ConnectionManager.CREATE_FILE); }
+	public void loadFile(String file) throws FileSystemException, InfrastructureException { this.loadFile(file, ConnectionManager.CREATE_FILE); }
 	@SuppressWarnings("resource")
-	public void loadConnectionFile(String file, boolean createPropFileIfNew) throws FileSystemException, InfrastructureException
+	public void loadFile(String file, boolean createPropFileIfNew) throws FileSystemException, InfrastructureException
 	{
 		InputStream inputStream = null;
 		Properties props = new Properties();
@@ -161,9 +161,9 @@ public class ConnectionManager
 												db,
 												Convert.toInt(port));
 						
-						if (this.validValue(user) == true) { dbconn.setUser(user); }
-						if (this.validValue(password) == true) { dbconn.setPassword(security.decrypt(password)); }
-						if (this.validValue(jndi) == true) { dbconn.setJndi(jndi); }
+						if (Utils.hasLength(user) == true) { dbconn.setUser(user); }
+						if (Utils.hasLength(password) == true) { dbconn.setPassword(this.cipher.decrypt(password)); }
+						if (Utils.hasLength(jndi) == true) { dbconn.setJndi(jndi); }
 		
 						this.conns.put(key, dbconn);
 					}
@@ -177,15 +177,6 @@ public class ConnectionManager
 		catch (IOException e)
 		{
 			throw new FileSystemException("IOException", e);
-		}
-	}
-	
-	private boolean validValue(String val)
-	{
-		if ((val != null) && (val.length() > 0) && (val.equalsIgnoreCase("null") == false)){
-			return true;
-		}else{
-			return false;
 		}
 	}
 	
@@ -228,7 +219,7 @@ public class ConnectionManager
 					lines.add(entry + ".host=" + this.getPropFileValue(conn.getHost()));
 					lines.add(entry + ".port=" + this.getPropFileValue(Convert.toString(conn.getPort())));
 					lines.add(entry + ".user=" + this.getPropFileValue(conn.getUser()));
-					lines.add(entry + ".password=" + this.getPropFileValue(security.encrypt(conn.getPassword()), true));
+					lines.add(entry + ".password=" + this.getPropFileValue(conn.getPassword(), true));
 					lines.add(entry + ".jndi=" + this.getPropFileValue(conn.getJndi()));
 					lines.add("");
 				}
@@ -245,7 +236,7 @@ public class ConnectionManager
 			return "";
 		}else{
 			if (encrypt == true){
-				return security.encrypt(val);
+				return this.cipher.encrypt(val);
 			}else{
 				return val;
 			}
@@ -423,7 +414,7 @@ public class ConnectionManager
 		}
 	}
 	
-	public void printConnInfo(String key)
+	public void printKey(String key)
 	{
 		DbConn dbconn = getDbConn(key);
 		Utils.output("");

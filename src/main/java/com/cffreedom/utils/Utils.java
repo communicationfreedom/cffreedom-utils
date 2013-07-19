@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
  * 2013-04-08 	markjacobsen.net 	Added JavaDoc comments
  * 2013-04-30 	markjacobsen.net 	Added longestString()
  * 2013-05-21 	markjacobsen.net 	Added appendToStringArray() and appendToIntArray()
+ * 2013-07-19	markjacobsen.net 	Added hasLength()
  */
 public class Utils
 {
@@ -81,6 +82,25 @@ public class Utils
         }catch (Exception e){
             return false;
         }
+    }
+    
+    /**
+     * Determine if a string has length (and account for nulls)
+     * @param val The value to evaluate
+     * @return True if it is not null and has length, false otherwise
+     */
+    public static boolean hasLength(String val)
+    {
+    	try
+    	{
+    		if ((val != null) && (val.length() > 0)){
+    			return true;
+    		}else{
+    			return false;
+    		}
+    	}catch (NullPointerException e){
+    		return false;
+    	}
     }
     
     /**
