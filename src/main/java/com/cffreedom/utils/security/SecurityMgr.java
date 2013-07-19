@@ -299,7 +299,7 @@ public class SecurityMgr
 		}
 	}
 	
-	public void printEntryInfo(String key)
+	public void printKey(String key)
 	{
 		Entry entry = getEntry(key);
 		Utils.output("");
