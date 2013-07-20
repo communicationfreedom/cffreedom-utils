@@ -632,7 +632,7 @@ public class DbUtils
 	public static Connection getConnectionJNDI(String dsn) throws InfrastructureException, DbException { return getConnectionJNDI(dsn, "java:comp/env"); }
 	public static Connection getConnectionJNDI(String dsn, String initContext) throws InfrastructureException, DbException
 	{
-		logger.debug("Getting connection: {}", dsn);
+		logger.debug("Getting connection {} via initial context {}", dsn, initContext);
 		
 		try
 		{
