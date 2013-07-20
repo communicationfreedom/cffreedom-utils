@@ -56,6 +56,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-05-23	markjacobsen.net 	Updated outputResultSet() to handle RAW format better
  * 2013-07-05	markjacobsen.net 	Added getJndiDataSourceNames()
  * 2013-07-06 	markjacobsen.net 	Using slf4j
+ * 2013-07-20	markjacobsen.net 	Fixed getConnectionJNDI()
  */
 public class DbUtils
 {
@@ -628,14 +629,16 @@ public class DbUtils
 		}
 	}
 	
-	public static Connection getConnectionJNDI(String dsn) throws InfrastructureException, DbException
+	public static Connection getConnectionJNDI(String dsn) throws InfrastructureException, DbException { return getConnectionJNDI(dsn, "java:comp/env"); }
+	public static Connection getConnectionJNDI(String dsn, String initContext) throws InfrastructureException, DbException
 	{
 		logger.debug("Getting connection: {}", dsn);
 		
 		try
 		{
 			Context initialContext = new InitialContext();
-			DataSource datasource = (DataSource)initialContext.lookup(dsn);
+			Context envCtx = (Context)initialContext.lookup(initContext);
+			DataSource datasource = (DataSource)envCtx.lookup(dsn);
 			if (datasource != null) {
 		        return datasource.getConnection();
 			}
