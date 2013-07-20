@@ -17,21 +17,21 @@ package com.cffreedom.exceptions;
  * 2013-04-16	markjacobsen.net 	Added additional Constructors
  * 2013-07-15	markjacobsen.net 	Removed constructors
  */
-public class BadDataException extends Exception
+public class DoesNotExistException extends Exception
 {
 	private static final long serialVersionUID = 1L;
 
-	public BadDataException(Throwable exception)
+	public DoesNotExistException(Throwable exception)
 	{
 		super(exception);
 	}
 	
-	public BadDataException(String message, Throwable exception)
+	public DoesNotExistException(String message, Throwable exception)
 	{
 		super(message, exception);
 	}
 	
-	public BadDataException(String message)
+	public DoesNotExistException(String message)
 	{
 		super(message);
 	}
