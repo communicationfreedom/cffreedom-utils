@@ -128,6 +128,8 @@ public class SecurityMgr
 					}
 				}
 			}
+			
+			logger.debug("Loaded {} entries", this.entries.size());
 		}
 		catch (FileNotFoundException e)
 		{

@@ -169,6 +169,8 @@ public class ConnectionManager
 					}
 				}
 			}
+			
+			logger.debug("Loaded {} connections", this.conns.size());
 		}
 		catch (FileNotFoundException e)
 		{

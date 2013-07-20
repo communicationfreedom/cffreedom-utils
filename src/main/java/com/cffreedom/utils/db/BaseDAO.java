@@ -3,6 +3,9 @@ package com.cffreedom.utils.db;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cffreedom.exceptions.FileSystemException;
+import com.cffreedom.exceptions.InfrastructureException;
+
 /**
  * Original Class: com.cffreedom.utils.db.BaseDAO
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -28,12 +31,19 @@ public class BaseDAO
 
 	public BaseDAO()
 	{
-		logger.debug("Initialized with no ConnectionManager");
+		this(null);
 	}
 
 	public BaseDAO(ConnectionManager cm)
 	{
-		logger.debug("Initializing with passed in ConnectionManager");
+		try
+		{
+			if (cm == null) { cm = new ConnectionManager(); }
+		}
+		catch (FileSystemException | InfrastructureException e)
+		{
+			logger.error("Error evaluating ConnectionManager", e);
+		}
 		this.cm = cm;
 	}
 }
