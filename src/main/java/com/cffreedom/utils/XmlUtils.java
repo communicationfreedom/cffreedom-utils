@@ -29,6 +29,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
+ * Original Class: com.cffreedom.utils.XmlUtils
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 

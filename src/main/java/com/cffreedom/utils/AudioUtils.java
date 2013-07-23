@@ -9,6 +9,7 @@ import com.cffreedom.utils.file.FileUtils;
 import com.cffreedom.utils.file.FilterNameEnd;
 
 /**
+ * Original Class: com.cffreedom.utils.AudioUtils
  * @author markjacobsen.net (http://mjg2.net/code)
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
