@@ -885,6 +885,96 @@ public class FileUtils
 		
 		return ret;
 	}
+	
+	public static ArrayList<String> getLastLineOfFile(String file, int lines) throws IOException
+	{
+		ArrayList<String> ret = new ArrayList<String>();
+		RandomAccessFile raf = new RandomAccessFile(file, "r");
+		int seekBackDistance = 500;
+		
+		// seek to end of file
+		raf.seek(raf.length());
+				
+		// read backward in chunks to find the newline character
+		StringBuilder lastLine = new StringBuilder(1000);
+		byte[] byteBuffer = new byte[seekBackDistance];
+		boolean foundNewline = false;
+		
+		while(true)
+		{
+			// reset flag
+			foundNewline = false;
+			
+			if (raf.getFilePointer() == 0) {
+				ret.add(lastLine.toString().trim());
+				logger.debug("Breaking because either hit the beginning of the file or the file is empty");
+				break; // out of the while loop
+			}
+			
+			// make sure we don't seek to before the beginning of the file on accident
+			if(raf.getFilePointer() - seekBackDistance < 0) {
+				raf.seek(0);
+			} else {
+				// seek back a little ways
+				raf.seek(raf.getFilePointer() - seekBackDistance);
+			}
+			
+			// read from the file
+			raf.read(byteBuffer, 0, seekBackDistance);
+			String str = new String(byteBuffer, "UTF-8");
+			
+			// assume we won't find a newline char (prepare to seek back again)
+			long nextSeekLocation = raf.getFilePointer() - seekBackDistance;
+			for(int i = str.length() - 1; i >= 0; i--) {
+				if(str.charAt(i) == '\n' && i != str.length() - 1) {
+					// set flag
+					foundNewline = true;
+					// get string up until the newline
+					str = new String(byteBuffer,i,str.length() - i);
+					// seek back to one char before new line (if possible)
+					if(raf.getFilePointer() - str.length() >= 0) {
+						nextSeekLocation = raf.getFilePointer() - str.length();
+					} else {
+						nextSeekLocation = 0;
+					}
+					break;  // out of the for loop
+				}
+			}
+			
+			// seek back, regardless of whether or not we found a full line
+			raf.seek(nextSeekLocation);
+			
+			// if line is empty, don't append it to the last line buffer
+			if(str == null || str.trim().length() == 0)
+			{
+				continue;
+			}
+			else
+			{
+				// prepend text to buffer
+				lastLine.insert(0, str);
+			}
+			
+			// check if we can stop reading backwards (line found)
+			if(foundNewline)
+			{
+				ret.add(lastLine.toString().trim());
+				
+				if (ret.size() == lines)
+				{
+					logger.debug("Found {} lines so breaking", lines);
+					break;
+				}
+				else
+				{
+					logger.debug("Found {} of {} lines. Looking for more.", ret.size(), lines);
+					lastLine = new StringBuilder(1000);
+				}
+			}
+		}
+		
+		return ret;
+	}
 }
 
 class DirFilter implements FilenameFilter
