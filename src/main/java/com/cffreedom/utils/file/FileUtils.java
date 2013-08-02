@@ -122,8 +122,7 @@ public class FileUtils
 	/**
 	 * Get the entire contents of a file as a string
 	 * 
-	 * @param file
-	 *            File to get contents of
+	 * @param file File to get contents of
 	 * @return The entire contents of a file as a string
 	 */
 	public static String getFileContents(String file)
@@ -149,10 +148,33 @@ public class FileUtils
 		}
 		catch (Exception e)
 		{
+			logger.error("Error getting file contents from: {}", file);
 			e.printStackTrace();
 		}
 
 		return sb.toString();
+	}
+	
+	public static String getFileContents(InputStream stream)
+	{
+		Reader reader = new BufferedReader(new InputStreamReader(stream));
+	    StringBuffer content = new StringBuffer();
+	    char[] buffer = new char[500];
+	    int n;
+	     
+	    try
+	    {
+		    while ( ( n = reader.read(buffer)) != -1 ) {
+		        content.append(buffer,0,n);
+		    }
+	    }
+	    catch (IOException e)
+	    {
+	    	logger.error("IOException getting file contents from stream");
+	    	e.printStackTrace();
+	    }
+	     
+	    return content.toString();
 	}
 
 	/**
@@ -774,7 +796,7 @@ public class FileUtils
 
 		try
 		{
-			logger.debug("Replacing \"{}\" with \"{}\" in: {}", find, replace, file);
+			logger.debug("Replacing \""+find+"\" with \""+replace+"\" in: "+file);
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			ArrayList<String> lines = new ArrayList<String>();
 			String line;
@@ -927,7 +949,8 @@ public class FileUtils
 	}
 
 	/**
-	 * Get the last X lines in the file specified
+	 * Get the last X lines in the file specified. Does not include/return empty
+	 * lines at the end of the file.
 	 * 
 	 * @param file File to read
 	 * @param lines Number of lines at the end to return
@@ -980,8 +1003,12 @@ public class FileUtils
 					String tmp = buffer.substring(i, lastBufferStop);
 					lastLine.insert(0, tmp);
 					String addThis = lastLine.toString().trim();
-					logger.debug("Adding line: {}", addThis);
-					ret.add(addThis);
+					if ((ret.size() == 0) && (addThis.length() == 0)){
+						logger.debug("Skipping because last line is blank");
+					}else{
+						logger.debug("Adding line: {}", addThis);
+						ret.add(addThis);
+					}
 
 					if (ret.size() == lines)
 					{
