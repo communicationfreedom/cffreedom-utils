@@ -7,31 +7,29 @@ import java.util.jar.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cffreedom.utils.Convert;
 import com.cffreedom.utils.DateTimeUtils;
 import com.cffreedom.utils.SystemUtils;
 
 /**
  * Original Class: com.cffreedom.utils.file.FileUtils
+ * @author markjacobsen.net (http://mjg2.net/code)
+ * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
- * @author markjacobsen.net (http://mjg2.net/code) Copyright: Communication
- *         Freedom, LLC - http://www.communicationfreedom.com
+ * Free to use, modify, redistribute.  Must keep full class header including 
+ * copyright and note your modifications.
  * 
- *         Free to use, modify, redistribute. Must keep full class header
- *         including copyright and note your modifications.
+ * If this helped you out or saved you time, please consider...
+ * 1) Donating: http://www.communicationfreedom.com/go/donate/
+ * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
+ * 3) Linking to: http://visit.markjacobsen.net
  * 
- *         If this helped you out or saved you time, please consider... 1)
- *         Donating: http://www.communicationfreedom.com/go/donate/ 2) Shoutout
- *         on twitter: @MarkJacobsen or @cffreedom 3) Linking to:
- *         http://visit.markjacobsen.net
- * 
- *         Changes: 2013-04-14 markjacobsen.net Added concatFiles() 2013-04-26
- *         markjacobsen.net Added getDateStampedFileName() and
- *         getTimeStampedFileName() 2013-05-08 markjacobsen.net Added
- *         getFirstXLines() and getLastXLines() 2013-05-08 markjacobsen.net
- *         Added appendFile() 2013-05-17 markjacobsen.net Fixed
- *         getFileContents() to not add an additional CRLF at the end of the
- *         file
+ * Changes: 
+ * 2013-04-14 	markjacobsen.net 	Added concatFiles() 
+ * 2013-04-26 	markjacobsen.net 	Added getDateStampedFileName() and getTimeStampedFileName() 
+ * 2013-05-08 	markjacobsen.net 	Added getFirstXLines() and getLastXLines() 
+ * 2013-05-08 	markjacobsen.net 	Added appendFile() 
+ * 2013-05-17 	markjacobsen.net 	Fixed getFileContents() to not add an additional CRLF at the end of the file
+ * 2013-08-01 	markjacobsen.net 	Much more efficient getLastXLines() added getLastLine()
  */
 public class FileUtils
 {
@@ -899,10 +897,8 @@ public class FileUtils
 	/**
 	 * Get the first X lines in the file specified
 	 * 
-	 * @param file
-	 *            File to read
-	 * @param lines
-	 *            Number of lines at the beginning to return
+	 * @param file File to read
+	 * @param lines Number of lines at the beginning to return
 	 * @return The first X lines in the file specified
 	 */
 	public static ArrayList<String> getFirstXLines(String file, int lines)
