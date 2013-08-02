@@ -228,6 +228,11 @@ public class Convert
 		return (new Long(val)).longValue();	
 	}
 	
+	public static long toLong(int val)
+	{
+		return (new Long(val)).longValue();
+	}
+	
     //------------------------------------------------------------------
     // Calendar methods
     public static Calendar toCalendar(String val, String mask) throws ParseException

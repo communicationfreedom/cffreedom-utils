@@ -7,37 +7,41 @@ import java.util.jar.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cffreedom.utils.Convert;
 import com.cffreedom.utils.DateTimeUtils;
 import com.cffreedom.utils.SystemUtils;
 
 /**
  * Original Class: com.cffreedom.utils.file.FileUtils
- * @author markjacobsen.net (http://mjg2.net/code)
- * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
- * Free to use, modify, redistribute.  Must keep full class header including 
- * copyright and note your modifications.
+ * @author markjacobsen.net (http://mjg2.net/code) Copyright: Communication
+ *         Freedom, LLC - http://www.communicationfreedom.com
  * 
- * If this helped you out or saved you time, please consider...
- * 1) Donating: http://www.communicationfreedom.com/go/donate/
- * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
- * 3) Linking to: http://visit.markjacobsen.net
+ *         Free to use, modify, redistribute. Must keep full class header
+ *         including copyright and note your modifications.
  * 
- * Changes:
- * 2013-04-14 	markjacobsen.net 	Added concatFiles()
- * 2013-04-26 	markjacobsen.net 	Added getDateStampedFileName() and getTimeStampedFileName()
- * 2013-05-08	markjacobsen.net 	Added getFirstXLines() and getLastXLines()
- * 2013-05-08 	markjacobsen.net 	Added appendFile()
- * 2013-05-17 	markjacobsen.net 	Fixed getFileContents() to not add an additional CRLF at the end of the file
+ *         If this helped you out or saved you time, please consider... 1)
+ *         Donating: http://www.communicationfreedom.com/go/donate/ 2) Shoutout
+ *         on twitter: @MarkJacobsen or @cffreedom 3) Linking to:
+ *         http://visit.markjacobsen.net
+ * 
+ *         Changes: 2013-04-14 markjacobsen.net Added concatFiles() 2013-04-26
+ *         markjacobsen.net Added getDateStampedFileName() and
+ *         getTimeStampedFileName() 2013-05-08 markjacobsen.net Added
+ *         getFirstXLines() and getLastXLines() 2013-05-08 markjacobsen.net
+ *         Added appendFile() 2013-05-17 markjacobsen.net Fixed
+ *         getFileContents() to not add an additional CRLF at the end of the
+ *         file
  */
 public class FileUtils
 {
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.file.FileUtils");
-	
+
 	/**
 	 * Get the file extension
 	 * 
-	 * @param file File to get the extension for
+	 * @param file
+	 *            File to get the extension for
 	 * @return the file extension
 	 */
 	public static String getFileExtension(String file)
@@ -50,7 +54,8 @@ public class FileUtils
 	 * Get just the file name from a full path ex: c:\temp\junk.txt would return
 	 * junk.txt
 	 * 
-	 * @param fullPath Full path of the file to get the file name for
+	 * @param fullPath
+	 *            Full path of the file to get the file name for
 	 * @return File name
 	 */
 	public static String getFileName(String fullPath)
@@ -62,7 +67,8 @@ public class FileUtils
 	/**
 	 * Same thing as getFileName, but removes the extension
 	 * 
-	 * @param fullPath Full path of the file to get the file name for
+	 * @param fullPath
+	 *            Full path of the file to get the file name for
 	 * @return File name (minus the extension)
 	 */
 	public static String getFileNameWithoutExtension(String fullPath)
@@ -76,8 +82,11 @@ public class FileUtils
 
 	/**
 	 * Append a line to a file
-	 * @param line The text to append
-	 * @param file File to append to
+	 * 
+	 * @param line
+	 *            The text to append
+	 * @param file
+	 *            File to append to
 	 */
 	public static boolean appendLine(String line, String file)
 	{
@@ -105,7 +114,7 @@ public class FileUtils
 
 		return success;
 	}
-	
+
 	public static boolean appendFile(String fileToAppend, String fileToAppendTo)
 	{
 		String[] files = { fileToAppend };
@@ -115,7 +124,8 @@ public class FileUtils
 	/**
 	 * Get the entire contents of a file as a string
 	 * 
-	 * @param file File to get contents of
+	 * @param file
+	 *            File to get contents of
 	 * @return The entire contents of a file as a string
 	 */
 	public static String getFileContents(String file)
@@ -132,7 +142,10 @@ public class FileUtils
 			{
 				sb.append(line);
 				line = br.readLine();
-				if (line != null) { sb.append(SystemUtils.getNewline()); }
+				if (line != null)
+				{
+					sb.append(SystemUtils.getNewline());
+				}
 			}
 			br.close();
 		}
@@ -151,8 +164,16 @@ public class FileUtils
 	 *            File to get contents of
 	 * @return ArrayList of lines in the file
 	 */
-	public static ArrayList<String> getFileLines(String file) { return getFileLines(file, null); }
-	public static ArrayList<String> getFileLines(String file, String appendToLines) { return getFileLines(file, appendToLines, null); }
+	public static ArrayList<String> getFileLines(String file)
+	{
+		return getFileLines(file, null);
+	}
+
+	public static ArrayList<String> getFileLines(String file, String appendToLines)
+	{
+		return getFileLines(file, appendToLines, null);
+	}
+
 	public static ArrayList<String> getFileLines(String file, String appendToLines, String prependToLines)
 	{
 		ArrayList<String> lines = new ArrayList<String>();
@@ -164,8 +185,14 @@ public class FileUtils
 
 			while ((line = br.readLine()) != null)
 			{
-				if (prependToLines != null) { line = prependToLines + line; }
-				if (appendToLines != null) { line += appendToLines; }
+				if (prependToLines != null)
+				{
+					line = prependToLines + line;
+				}
+				if (appendToLines != null)
+				{
+					line += appendToLines;
+				}
 				lines.add(line);
 			}
 			br.close();
@@ -198,7 +225,7 @@ public class FileUtils
 
 		return success;
 	}
-	
+
 	/**
 	 * Write the contents of an ArrayList to a file
 	 * 
@@ -215,7 +242,7 @@ public class FileUtils
 	{
 		boolean success = false;
 		String term = SystemUtils.getNewline();
-		
+
 		try
 		{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file, append));
@@ -251,7 +278,11 @@ public class FileUtils
 		return writeLinesToFile(file, lines, false);
 	}
 
-	public static boolean writeObjectToFile(String file, Object content) { return writeObjectToFile(file, content, false); }
+	public static boolean writeObjectToFile(String file, Object content)
+	{
+		return writeObjectToFile(file, content, false);
+	}
+
 	public static boolean writeObjectToFile(String file, Object content, boolean append)
 	{
 		boolean success = false;
@@ -302,7 +333,7 @@ public class FileUtils
 			return false;
 		}
 	}
-	
+
 	public static boolean deleteFolder(String folder)
 	{
 		if (folderExists(folder) == true)
@@ -402,11 +433,14 @@ public class FileUtils
 
 		return success;
 	}
-	
+
 	/**
 	 * Does a byte by byte concatenation of 1 or more files
-	 * @param files Array of full file names to concatenate together
-	 * @param outputFile The file to output them to
+	 * 
+	 * @param files
+	 *            Array of full file names to concatenate together
+	 * @param outputFile
+	 *            The file to output them to
 	 * @return true on success
 	 */
 	public static boolean concatFiles(String[] files, String outputFile)
@@ -423,15 +457,15 @@ public class FileUtils
 				success = new File(outputFile).createNewFile();
 			}
 			FileOutputStream fos = new FileOutputStream(dst);
-			
+
 			// Concatenate the files
 			for (int x = 0; x < files.length; x++)
 			{
 				src = new File(files[x]);
 				FileInputStream fis = new FileInputStream(src);
-				
+
 				byte[] buf = new byte[1024];
-				
+
 				// Get file 1
 				int i = 0;
 				while ((i = fis.read(buf)) != -1)
@@ -476,20 +510,24 @@ public class FileUtils
 			success = false;
 			e.printStackTrace();
 		}
-		
+
 		return success;
 	}
 
 	/**
 	 * Tell if a file exists
 	 * 
-	 * @param file File to check existance of
+	 * @param file
+	 *            File to check existance of
 	 * @return true if it exists, false if not
 	 */
 	public static boolean fileExists(String file)
 	{
-		if (file == null) { return false; }
-		
+		if (file == null)
+		{
+			return false;
+		}
+
 		File oFile = new File(file);
 
 		if ((oFile.exists() == true) && (oFile.isFile() == true))
@@ -505,13 +543,17 @@ public class FileUtils
 	/**
 	 * Tell if a folder exists
 	 * 
-	 * @param folder Folder to check existance of
+	 * @param folder
+	 *            Folder to check existance of
 	 * @return true if it exists, false if not
 	 */
 	public static boolean folderExists(String folder)
 	{
-		if (folder == null) { return false; }
-		
+		if (folder == null)
+		{
+			return false;
+		}
+
 		File oFolder = new File(folder);
 
 		if ((oFolder.exists() == true) && (oFolder.isDirectory() == true))
@@ -563,8 +605,10 @@ public class FileUtils
 	/**
 	 * Get a directory listing of file names (file name only)
 	 * 
-	 * @param folder Folder to get listing for
-	 * @param filter Filter for files (ex: .log)
+	 * @param folder
+	 *            Folder to get listing for
+	 * @param filter
+	 *            Filter for files (ex: .log)
 	 * @return Array of file names in the folder matching the filter
 	 * @throws Exception
 	 */
@@ -577,8 +621,10 @@ public class FileUtils
 	/**
 	 * Get a directory listing w/ full paths (folder and file)
 	 * 
-	 * @param folder Folder to get listing for
-	 * @param filter Filter for files (ex: .log)
+	 * @param folder
+	 *            Folder to get listing for
+	 * @param filter
+	 *            Filter for files (ex: .log)
 	 * @return Array of file paths in the folder matching the filter
 	 * @throws Exception
 	 */
@@ -599,8 +645,10 @@ public class FileUtils
 	/**
 	 * Create a folder
 	 * 
-	 * @param path Full path name for the folder to create
-	 * @param overwrite If true -> delete folder if it already exists
+	 * @param path
+	 *            Full path name for the folder to create
+	 * @param overwrite
+	 *            If true -> delete folder if it already exists
 	 * @return True on success, false otherwise
 	 * @throws Exception
 	 */
@@ -609,12 +657,12 @@ public class FileUtils
 		try
 		{
 			File folder = new File(path);
-	
+
 			if ((overwrite == true) && (folder.exists() == true))
 			{
 				folder.delete();
 			}
-	
+
 			if (folder.exists() == false)
 			{
 				return folder.mkdir();
@@ -633,7 +681,8 @@ public class FileUtils
 	/**
 	 * Create a folder
 	 * 
-	 * @param path Full path name for the folder to create
+	 * @param path
+	 *            Full path name for the folder to create
 	 * @return True on success, false otherwise
 	 * @throws Exception
 	 */
@@ -641,19 +690,23 @@ public class FileUtils
 	{
 		return createFolder(path, false);
 	}
-	
-	public static boolean createFile(String path) { return createFile(path, false); }
+
+	public static boolean createFile(String path)
+	{
+		return createFile(path, false);
+	}
+
 	public static boolean createFile(String path, boolean overwrite)
 	{
 		try
 		{
 			File file = new File(path);
-	
+
 			if ((overwrite == true) && (file.exists() == true))
 			{
 				file.delete();
 			}
-	
+
 			if (file.exists() == false)
 			{
 				return file.createNewFile();
@@ -677,8 +730,10 @@ public class FileUtils
 	/**
 	 * Extract the contents of a zip/jar file to a directory
 	 * 
-	 * @param zipFile File to unzip
-	 * @param destDir Directory to unzip to
+	 * @param zipFile
+	 *            File to unzip
+	 * @param destDir
+	 *            Directory to unzip to
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
@@ -696,7 +751,7 @@ public class FileUtils
 				continue;
 			}
 			InputStream is = jar.getInputStream(file); // get the input
-															// stream
+														// stream
 			FileOutputStream fos = new FileOutputStream(f);
 			while (is.available() > 0) // write contents of 'is' to 'fos'
 			{
@@ -707,7 +762,7 @@ public class FileUtils
 		}
 		jar.close();
 	}
-	
+
 	public static boolean replaceInFile(String file, String find, String replace)
 	{
 		boolean success = false;
@@ -736,7 +791,8 @@ public class FileUtils
 			// Delete the file because we're going to replace it
 			success = theFile.delete();
 
-			// Now write the contents of the original file with the changes needed
+			// Now write the contents of the original file with the changes
+			// needed
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 			for (String writeLine : lines)
 			{
@@ -751,11 +807,11 @@ public class FileUtils
 		{
 			e.printStackTrace();
 			success = false;
-		}	
+		}
 
 		return success;
 	}
-	
+
 	public static boolean stripLinesInFileContaining(String file, String find)
 	{
 		boolean success = false;
@@ -784,7 +840,8 @@ public class FileUtils
 			// Delete the file because we're going to replace it
 			success = theFile.delete();
 
-			// Now write the contents of the original file with the changes needed
+			// Now write the contents of the original file with the changes
+			// needed
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 			for (String writeLine : lines)
 			{
@@ -802,24 +859,33 @@ public class FileUtils
 		{
 			e.printStackTrace();
 			success = false;
-		}	
+		}
 
 		return success;
 	}
-	
-	public static String getDateStampedFileName(String prefix, String suffix) { return getTimeStampedFileName(prefix, suffix, "yyyy-MM-dd"); }
-	public static String getTimeStampedFileName(String prefix, String suffix) { return getTimeStampedFileName(prefix, suffix, "yyyyMMddHHmmss"); }
+
+	public static String getDateStampedFileName(String prefix, String suffix)
+	{
+		return getTimeStampedFileName(prefix, suffix, "yyyy-MM-dd");
+	}
+
+	public static String getTimeStampedFileName(String prefix, String suffix)
+	{
+		return getTimeStampedFileName(prefix, suffix, "yyyyMMddHHmmss");
+	}
+
 	public static String getTimeStampedFileName(String prefix, String suffix, String mask)
 	{
 		return prefix + DateTimeUtils.formatDate(mask, new Date()) + suffix;
 	}
-	
+
 	public static boolean touch(String file)
 	{
 		try
 		{
 			File temp = new File(file);
-			if (temp.exists() == false){
+			if (temp.exists() == false)
+			{
 				temp.createNewFile();
 			}
 			return temp.setLastModified((new Date()).getTime());
@@ -829,11 +895,14 @@ public class FileUtils
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Get the first X lines in the file specified
-	 * @param file File to read
-	 * @param lines Number of lines at the beginning to return
+	 * 
+	 * @param file
+	 *            File to read
+	 * @param lines
+	 *            Number of lines at the beginning to return
 	 * @return The first X lines in the file specified
 	 */
 	public static ArrayList<String> getFirstXLines(String file, int lines)
@@ -846,7 +915,7 @@ public class FileUtils
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line = "";
 
-			while ( ((line = br.readLine()) != null) && (counter < lines) )
+			while (((line = br.readLine()) != null) && (counter < lines))
 			{
 				counter++;
 				ret.add(line);
@@ -860,120 +929,113 @@ public class FileUtils
 
 		return ret;
 	}
-	
+
 	/**
 	 * Get the last X lines in the file specified
+	 * 
 	 * @param file File to read
 	 * @param lines Number of lines at the end to return
 	 * @return The last X lines in the file specified
 	 */
-	public static ArrayList<String> getLastXLines(String file, int lines)
+	public static ArrayList<String> getLastXLines(String file, int lines) throws IOException
 	{
 		ArrayList<String> ret = new ArrayList<String>();
-		ArrayList<String> allLines = getFileLines(file);
-		int startIndex = 0;
-		
-		if (allLines.size() > lines)
-		{
-			startIndex = allLines.size() - lines - 1;
-		}
-		
-		for (int x = startIndex; x < allLines.size(); x++)
-		{
-			ret.add(allLines.get(x));
-		}
-		
-		return ret;
-	}
-	
-	public static ArrayList<String> getLastLineOfFile(String file, int lines) throws IOException
-	{
-		ArrayList<String> ret = new ArrayList<String>();
+		boolean foundNewlineInBuffer = false;
 		RandomAccessFile raf = new RandomAccessFile(file, "r");
-		int seekBackDistance = 500;
-		
-		// seek to end of file
-		raf.seek(raf.length());
-				
-		// read backward in chunks to find the newline character
+		int bufferSize = 500;
+		byte[] byteBuffer = new byte[bufferSize];
 		StringBuilder lastLine = new StringBuilder(1000);
-		byte[] byteBuffer = new byte[seekBackDistance];
-		boolean foundNewline = false;
+		long lastFilePointer = raf.length();
 		
-		while(true)
+		logger.debug("File size: {}", lastFilePointer);
+		while (true)
 		{
-			// reset flag
-			foundNewline = false;
-			
-			if (raf.getFilePointer() == 0) {
+			long seekTo = lastFilePointer - bufferSize;
+			if (seekTo <= 0){
+				logger.trace("Last chunk");
+				seekTo = 0;
+			}
+			logger.trace("Seeking back to {}", seekTo);
+			raf.seek(seekTo);
+			lastFilePointer = raf.getFilePointer();
+
+			// read from the file
+			raf.read(byteBuffer);
+			String buffer = new String(byteBuffer, "UTF-8");
+
+			if (raf.getFilePointer() == 0)
+			{
+				String tmp = buffer.substring(0, buffer.length());
+				lastLine.insert(0, tmp);
 				ret.add(lastLine.toString().trim());
-				logger.debug("Breaking because either hit the beginning of the file or the file is empty");
+				logger.trace("Breaking because either hit the beginning of the file or the file is empty");
 				break; // out of the while loop
 			}
-			
-			// make sure we don't seek to before the beginning of the file on accident
-			if(raf.getFilePointer() - seekBackDistance < 0) {
-				raf.seek(0);
-			} else {
-				// seek back a little ways
-				raf.seek(raf.getFilePointer() - seekBackDistance);
-			}
-			
-			// read from the file
-			raf.read(byteBuffer, 0, seekBackDistance);
-			String str = new String(byteBuffer, "UTF-8");
-			
-			// assume we won't find a newline char (prepare to seek back again)
-			long nextSeekLocation = raf.getFilePointer() - seekBackDistance;
-			for(int i = str.length() - 1; i >= 0; i--) {
-				if(str.charAt(i) == '\n' && i != str.length() - 1) {
-					// set flag
-					foundNewline = true;
-					// get string up until the newline
-					str = new String(byteBuffer,i,str.length() - i);
-					// seek back to one char before new line (if possible)
-					if(raf.getFilePointer() - str.length() >= 0) {
-						nextSeekLocation = raf.getFilePointer() - str.length();
-					} else {
-						nextSeekLocation = 0;
-					}
-					break;  // out of the for loop
-				}
-			}
-			
-			// seek back, regardless of whether or not we found a full line
-			raf.seek(nextSeekLocation);
-			
-			// if line is empty, don't append it to the last line buffer
-			if(str == null || str.trim().length() == 0)
+
+			foundNewlineInBuffer = false;
+			int lastBufferStop = buffer.length();
+			for (int i = buffer.length() - 1; i >= 0; i--)
 			{
-				continue;
+				if ((buffer.charAt(i) == '\n') && (i < lastBufferStop))
+				{
+					foundNewlineInBuffer = true;
+					
+					logger.trace("Found newline at position {} of the buffer", i);
+					String tmp = buffer.substring(i, lastBufferStop);
+					lastLine.insert(0, tmp);
+					String addThis = lastLine.toString().trim();
+					logger.debug("Adding line: {}", addThis);
+					ret.add(addThis);
+
+					if (ret.size() == lines)
+					{
+						logger.debug("Found {} lines so breaking", lines);
+						break; // out of for loop
+					}
+					else
+					{
+						logger.debug("Found {} of {} lines. Looking for more.", ret.size(), lines);
+						lastLine = new StringBuilder(1000);
+						lastBufferStop = i;
+					}
+				} // end of newline processing
+			} // end of looping over the buffer
+
+			if (ret.size() != lines)
+			{
+				if (foundNewlineInBuffer == false)
+				{
+					logger.trace("Didn't find a newline in the buffer so saving the entire buffer");
+					lastLine.insert(0, buffer);
+				}
+				else if (lastBufferStop > 0)
+				{
+					String tmp = buffer.substring(0, lastBufferStop);
+					logger.trace("Last buffer stop at {}, so saving buffer up to that point: {}", lastBufferStop, tmp);
+					lastLine.append(tmp);
+				}
+				
+				if (lastFilePointer <= 0)
+				{
+					logger.trace("We would read past the beginning of the file so stopping here");
+					break;  // out of while loop
+				}
 			}
 			else
 			{
-				// prepend text to buffer
-				lastLine.insert(0, str);
-			}
-			
-			// check if we can stop reading backwards (line found)
-			if(foundNewline)
-			{
-				ret.add(lastLine.toString().trim());
-				
-				if (ret.size() == lines)
-				{
-					logger.debug("Found {} lines so breaking", lines);
-					break;
-				}
-				else
-				{
-					logger.debug("Found {} of {} lines. Looking for more.", ret.size(), lines);
-					lastLine = new StringBuilder(1000);
-				}
+				logger.trace("We have everything we need. Breaking out of while loop.");
+				break;
 			}
 		}
-		
+
+		raf.close();
+
 		return ret;
+	}
+	
+	public static String getLastLine(String file) throws IOException
+	{
+		return getLastXLines(file, 1).get(0);
 	}
 }
 
