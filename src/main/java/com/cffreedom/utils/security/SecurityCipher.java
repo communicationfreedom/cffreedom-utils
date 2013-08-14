@@ -73,10 +73,21 @@ public class SecurityCipher
 	{
 		try
 		{
-			byte[] cleartext = value.getBytes(CHARSET);
-			Cipher cipher = Cipher.getInstance(ALGORITHM);
-			cipher.init(Cipher.ENCRYPT_MODE, this.key);
-			return Convert.toString(Base64.encodeBase64(cipher.doFinal(cleartext)));
+			if ((value == null) || (value.length() == 0))
+			{
+				logger.warn("No value passed in. Returning zero length string.");
+				return "";
+			}
+			else
+			{
+				logger.trace("Encrypting \"{}\"", value, this.key);
+				byte[] cleartext = value.getBytes(CHARSET);
+				Cipher cipher = Cipher.getInstance(ALGORITHM);
+				cipher.init(Cipher.ENCRYPT_MODE, this.key);
+				String encryptedValue = Convert.toString(Base64.encodeBase64(cipher.doFinal(cleartext)));
+				logger.trace("Encrypted value \"{}\"", encryptedValue);
+				return encryptedValue;
+			}
 		}
 		catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException | 
 				IllegalBlockSizeException | UnsupportedEncodingException e)
@@ -90,11 +101,22 @@ public class SecurityCipher
 	{
 		try
 		{
-			byte[] encrypedPwdBytes = Base64.decodeBase64(value.getBytes());
-			Cipher cipher = Cipher.getInstance(ALGORITHM);
-			cipher.init(Cipher.DECRYPT_MODE, this.key);
-			byte[] plainTextPwdBytes = (cipher.doFinal(encrypedPwdBytes));
-			return Convert.toString(plainTextPwdBytes);
+			if ((value == null) || (value.length() == 0))
+			{
+				logger.warn("No value passed in. Returning zero length string.");
+				return "";
+			}
+			else
+			{
+				logger.trace("Decrypting \"{}\"", value, this.key);
+				byte[] encrypedPwdBytes = Base64.decodeBase64(value.getBytes());
+				Cipher cipher = Cipher.getInstance(ALGORITHM);
+				cipher.init(Cipher.DECRYPT_MODE, this.key);
+				byte[] plainTextPwdBytes = (cipher.doFinal(encrypedPwdBytes));
+				String decryptedValue = Convert.toString(plainTextPwdBytes);
+				logger.trace("Decrypted value \"{}\"", decryptedValue);
+				return decryptedValue;
+			}
 		}
 		catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException |
 				IllegalBlockSizeException e)
