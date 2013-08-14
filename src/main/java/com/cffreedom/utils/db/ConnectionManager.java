@@ -143,7 +143,7 @@ public class ConnectionManager
 					
 					for (String key : keys)
 					{
-						logger.debug(key);
+						logger.debug("Loading: {}", key);
 						String type = props.getProperty(key + ".type");
 						String host = props.getProperty(key + ".host");
 						String db = props.getProperty(key + ".db");
@@ -371,6 +371,7 @@ public class ConnectionManager
 	{
 		if (this.conns.containsKey(key) == false)
 		{
+			logger.debug("Adding: {}", key);
 			this.conns.put(key, dbconn);
 			this.save();
 			return true;
@@ -384,6 +385,7 @@ public class ConnectionManager
 	
 	public boolean updateConnection(String key, DbConn dbconn)
 	{
+		logger.debug("Updating: {}", key);
 		deleteConnection(key);
 		return addConnection(key, dbconn);
 	}
@@ -392,6 +394,7 @@ public class ConnectionManager
 	{
 		if (this.conns.containsKey(key) == true)
 		{
+			logger.debug("Deleting: {}", key);
 			this.conns.remove(key);
 			this.save();
 			return true;
