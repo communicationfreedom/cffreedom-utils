@@ -4,11 +4,11 @@
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
     <encoder>
-      <pattern>%d [%thread] %-5level %logger{100} - %msg%n</pattern>
+      <pattern>%date{yyyy-dd-MM HH:mm:ss.SSS} %-5level %logger{100} %method - %msg%n</pattern>
     </encoder>
   </appender>
 
-  <root level="debug">
+  <root level="trace">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>
