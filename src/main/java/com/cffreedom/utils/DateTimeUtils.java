@@ -20,6 +20,7 @@ import java.util.*;
  * 2013-05-20 	markjacobsen.net 	dayOfWeekAsString() now returns full day (not just 3 letter abbreviation)
  * 2013-06-12 	markjacobsen.net 	Moved masks into FormatUtils for consistency and added combineDates()
  * 2013-06-13	markjacobsen.net 	Added gmtToLocal()
+ * 2013-08-19	markjacobsen.net 	Added dayOfYear()
  */
 public class DateTimeUtils extends FormatUtils
 {
@@ -99,6 +100,16 @@ public class DateTimeUtils extends FormatUtils
     public static int dayOfWeek(Date date)
     {
     	return dayOfWeek(Convert.toCalendar(date));
+    }
+    
+    public static int dayOfYear(Calendar date)
+    {
+    	return date.get(Calendar.DAY_OF_YEAR);
+    }
+    
+    public static int dayOfYear(Date date)
+    {
+    	return dayOfYear(Convert.toCalendar(date));
     }
            
     /**
