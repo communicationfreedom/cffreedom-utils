@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * 2013-06-12	markjacobsen.net 	Handling string dates in the form yyyy-MM-dd HH:mm:ss better in toDate(val, mask)
  * 									Added toLong(String) and toString(Date)
  * 2013-07-15	markjacobsen.net 	Added toDelimitedString()
+ * 2013-08-27 	markjacobsen.net 	Added toBigInteger()
  */
 public class Convert
 {
@@ -405,6 +407,16 @@ public class Convert
     public static java.sql.Timestamp toTimestamp(java.util.Date val)
     {
         return new java.sql.Timestamp(val.getTime());
+    }
+    
+    public static BigInteger toBigInteger(long val)
+    {
+    	return new BigInteger(toString(val));
+    }
+    
+    public static BigInteger toBigInteger(int val)
+    {
+    	return new BigInteger(toString(val));
     }
 
 }
