@@ -21,6 +21,7 @@ import java.util.*;
  * 2013-06-12 	markjacobsen.net 	Moved masks into FormatUtils for consistency and added combineDates()
  * 2013-06-13	markjacobsen.net 	Added gmtToLocal()
  * 2013-08-19	markjacobsen.net 	Added dayOfYear()
+ * 2013-09-03 	markjacobsen.net 	Added hourMinAsInt()
  */
 public class DateTimeUtils extends FormatUtils
 {
@@ -69,7 +70,7 @@ public class DateTimeUtils extends FormatUtils
            
     public static int hour24(Date date)
     {
-    	return hour(Convert.toCalendar(date));
+    	return hour24(Convert.toCalendar(date));
     }
    
     public static int hour(Calendar date)
@@ -80,6 +81,11 @@ public class DateTimeUtils extends FormatUtils
     public static int hour(Date date)
     {
     	return hour(Convert.toCalendar(date));
+    }
+    
+    public static int hourMinAsInt(Date date)
+    {
+    	return Convert.toInt(FormatUtils.formatDate("Hmm", date));
     }
    
     public static int day(Calendar date)
