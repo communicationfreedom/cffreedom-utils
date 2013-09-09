@@ -9,7 +9,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
@@ -47,6 +49,7 @@ import com.cffreedom.utils.security.SecurityCipher;
  * 2013-07-15	markjacobsne.net 	Replaced the use of KeyValueFileMgr with a properties file
  * 2013-07-15 	markjacobsen.net 	Added support for commons-dbcp
  * 2013-07-17 	markjacobsen.net 	Added support for the dbconn.properties file being on the classpath
+ * 2013-09-09	markjacobsen.net 	printKeys() prints keys in sorted order
  */
 public class ConnectionManager
 {
@@ -406,19 +409,27 @@ public class ConnectionManager
 		}
 	}
 	
+	/**
+	 * Print all the DB Connection keys contained in the ConnectionManager in sorted order
+	 */
 	public void printKeys()
 	{
 		Utils.output("Keys");
 		Utils.output("======================");
 		if ((this.conns != null) && (this.conns.size() > 0))
 		{
-			for(String key : this.conns.keySet())
+			Map<String, Object> sorted = new TreeMap<String, Object>(this.conns); // Convert to TreeMap for sorting
+			for(String key : sorted.keySet())
 			{
 				Utils.output(key);
 			}
 		}
 	}
 	
+	/**
+	 * Print the connection details for the passed in connection key
+	 * @param key Key to display details for
+	 */
 	public void printKey(String key)
 	{
 		DbConn dbconn = getDbConn(key);
