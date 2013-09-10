@@ -742,7 +742,13 @@ public class FileUtils
 		}
 	}
 
-	public static String buildPath(String parent, String child) throws Exception
+	/**
+	 * Take two pieces of a file (directory and filename) and return a valid full absolute file path 
+	 * @param parent prepended value
+	 * @param child appended value
+	 * @return Absolute path for the combination
+	 */
+	public static String buildPath(String parent, String child)
 	{
 		return (new File(parent, child)).getAbsolutePath();
 	}
