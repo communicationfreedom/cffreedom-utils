@@ -30,6 +30,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-05-08 	markjacobsen.net 	Added appendFile() 
  * 2013-05-17 	markjacobsen.net 	Fixed getFileContents() to not add an additional CRLF at the end of the file
  * 2013-08-01 	markjacobsen.net 	Much more efficient getLastXLines() added getLastLine()
+ * 2013-09-12 	markjacobsen.net 	Added getDuplicateLines()
  */
 public class FileUtils
 {
@@ -1065,6 +1066,50 @@ public class FileUtils
 	public static String getLastLine(String file) throws IOException
 	{
 		return getLastXLines(file, 1).get(0);
+	}
+	
+	/**
+	 * Given a file, find all duplicate lines and return back the lines that are duplicated and 
+	 * what line numbers they are duplicated on.
+	 * 
+	 * @param file File to find dups in
+	 * @param caseSensative Set to true to perform a case in-sensative comparison
+	 * @param trim Set to true to have each line trimmed before comparing
+	 * @return
+	 */
+	public static Map<String, ArrayList<Integer>> getDuplicateLines(String file, boolean caseSensative, boolean trim)
+	{
+		Map<String, Integer> unique = new HashMap<String, Integer>();
+		Map<String, ArrayList<Integer>> dups = new LinkedHashMap<String, ArrayList<Integer>>();
+		ArrayList<String> lines = getFileLines(file);
+		
+		Integer origLine = null;
+		int lineNo = 0;
+		for (String line : lines)
+		{
+			if (caseSensative == false) { line = line.toLowerCase(); }
+			if (trim == true) { line = line.trim(); }
+			
+			lineNo++;
+			origLine = unique.get(line);
+			if (origLine == null)
+			{
+				unique.put(line, new Integer(lineNo));
+			}
+			else
+			{
+				ArrayList<Integer> lineNos = dups.get(line);
+				if (lineNos == null)
+				{
+					lineNos = new ArrayList<Integer>();
+					lineNos.add(origLine);
+				}
+				lineNos.add(new Integer(lineNo));
+				dups.put(line, lineNos);
+			}
+		}
+		
+		return dups;
 	}
 }
 
