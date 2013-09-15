@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +27,13 @@ import org.slf4j.LoggerFactory;
  * 2013-04-30 	markjacobsen.net 	Added longestString()
  * 2013-05-21 	markjacobsen.net 	Added appendToStringArray() and appendToIntArray()
  * 2013-07-19	markjacobsen.net 	Added hasLength()
+ * 2013-09-15 	markjacobsen.net 	Added getRandomString()
  */
 public class Utils
 {
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.Utils");
+	private static final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	private static Random random = new Random();
 	
 	/**
      * @param val The number to evaluate
@@ -253,5 +257,15 @@ public class Utils
 		}
 		
 		return newArray;
+	}
+	
+	public static String getRandomString(int len)
+	{
+		String ret = "";
+		for (int x = 0; x < len; x++)
+		{
+			ret += ALPHA_NUM.charAt(random.nextInt(ALPHA_NUM.length()));
+		}
+		return ret;
 	}
 }
