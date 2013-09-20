@@ -57,6 +57,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-07-05	markjacobsen.net 	Added getJndiDataSourceNames()
  * 2013-07-06 	markjacobsen.net 	Using slf4j
  * 2013-07-20	markjacobsen.net 	Fixed getConnectionJNDI()
+ * 2013-09-20 	markjacobsen.net 	testConnection() is not void and throws exceptions
  */
 public class DbUtils
 {
@@ -132,18 +133,21 @@ public class DbUtils
 		}
 	}
 	
-	public static boolean testConnection(DbConn dbconn, String user, String pass)
+	public static void testConnection(DbConn dbconn, String user, String pass) throws DbException, InfrastructureException
 	{
-		return testConnection(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort(), user, pass);
+		testConnection(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort(), user, pass);
 	}
 	
-	public static boolean testConnection(String type, String host, String db, int port, String user, String pass)
+	public static void testConnection(String type, String host, String db, int port, String user, String pass) throws DbException, InfrastructureException
 	{
-		String driver = DbUtils.getDriver(type);
-		String url = DbUtils.getUrl(type, host, db, port);
+		Connection conn = null;
+		
 		try
 		{
-			Connection conn = DbUtils.getConnection(driver, url, user, pass);
+			String driver = DbUtils.getDriver(type);
+			String url = DbUtils.getUrl(type, host, db, port);
+			
+			conn = DbUtils.getConnection(driver, url, user, pass);
 			String testSql = DbUtils.getTestSql(type);
 			if (testSql != null)
 			{
@@ -151,36 +155,17 @@ public class DbUtils
 				{
 					throw new DbException("Error running test SQL");
 				}
+				
+				logger.debug("SUCCESS: " + url);
 			}
-			conn.close();
-			logger.debug("SUCCESS: " + url);
-			return true;
 		}
-		catch (DbException e)
+		catch (DbException | InfrastructureException e)
 		{
-			logger.error("{}", e.getMessage());
-			return false;
+			throw e;
 		}
-		catch (InfrastructureException e)
-		{
-			logger.error("{}", e.getMessage());
-			return false;
-		}
-		catch (SQLException e)
-		{
-			int errorCode = e.getErrorCode();
-			String sqlState = e.getSQLState();
-			String readable = "";
-			if  (
-				(DbUtils.isDb2(type) == true) && 
-				(errorCode == -1060) && 
-				(sqlState.equalsIgnoreCase("08004") == true)
-				)
+		finally
 			{
-				readable = user + " does not have CONNECT permission: ";
-			}
-			logger.error("ERROR: SQLException: {} {}: {} ({}/{})", readable, url, e.getMessage(), errorCode, sqlState);
-			return false;
+			try {conn.close();} catch (Exception e){}
 		}
 	}
 	

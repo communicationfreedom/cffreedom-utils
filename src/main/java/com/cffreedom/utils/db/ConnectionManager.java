@@ -50,6 +50,7 @@ import com.cffreedom.utils.security.SecurityCipher;
  * 2013-07-15 	markjacobsen.net 	Added support for commons-dbcp
  * 2013-07-17 	markjacobsen.net 	Added support for the dbconn.properties file being on the classpath
  * 2013-09-09	markjacobsen.net 	printKeys() prints keys in sorted order
+ * 2013-09-20	markjacobsen.net 	Updates to testConnection()
  */
 public class ConnectionManager
 {
@@ -127,7 +128,14 @@ public class ConnectionManager
 			
 			if (inputStream == null)
 			{
-				throw new InfrastructureException("Invalid connection file or no default file \""+ConnectionManager.PROP_FILE+"\" found on the classpath");
+				if ((this.file == null) || (createPropFileIfNew == false))
+				{
+					logger.warn("No connection file. Creating memory based ConnectionManager");
+				}
+				else
+				{
+					throw new InfrastructureException("Invalid connection file or no default file \""+ConnectionManager.PROP_FILE+"\" found on the classpath");
+				}
 			}
 			else
 			{
@@ -444,14 +452,22 @@ public class ConnectionManager
 	public boolean testConnection(String key, String user, String pass)
 	{
 		DbConn dbconn = getDbConn(key);
-		boolean success = DbUtils.testConnection(dbconn, user, pass);
-		if (success == true)
+		boolean success = true;
+		
+		try
 		{
-			Utils.output("Test SQL succeeded for " + key);
+			if (dbconn == null)
+			{
+				throw new InfrastructureException("dbconn is null for key: " + key);
+			}
+			DbUtils.testConnection(dbconn, user, pass);
+			logger.debug("Test SQL succeeded for {}", key);
 		}
-		else
+		catch (Exception e)
 		{
-			Utils.output("ERROR: Running test SQL for " + key);
+			logger.error(e.getClass().getSimpleName() + " running test SQL for {}, {}", key, e.getMessage());
+			e.printStackTrace();
+			success = false;
 		}
 		return success;
 	}
