@@ -57,7 +57,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-07-05	markjacobsen.net 	Added getJndiDataSourceNames()
  * 2013-07-06 	markjacobsen.net 	Using slf4j
  * 2013-07-20	markjacobsen.net 	Fixed getConnectionJNDI()
- * 2013-09-20 	markjacobsen.net 	testConnection() is not void and throws exceptions
+ * 2013-09-20 	markjacobsen.net 	testConnection() is not void and throws exceptions, getResultSet() throws exceptions
  */
 public class DbUtils
 {
@@ -311,8 +311,9 @@ public class DbUtils
 	 * @param conn DB Connection
 	 * @param sql SQL to execute
 	 * @return ResultSet for the SQL
+	 * @throws DbException 
 	 */
-	public static ResultSet getResultSet(Connection conn, String sql)
+	public static ResultSet getResultSet(Connection conn, String sql) throws DbException
 	{
 		ResultSet rs = null;
 		
@@ -324,7 +325,8 @@ public class DbUtils
 		}
 		catch (SQLException e)
 		{
-			rs = null;
+			logger.error(e.getMessage(), e);
+			throw new DbException(e);
 		}
 		return rs;
 	}
