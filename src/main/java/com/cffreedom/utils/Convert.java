@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
  * 									Added toLong(String) and toString(Date)
  * 2013-07-15	markjacobsen.net 	Added toDelimitedString()
  * 2013-08-27 	markjacobsen.net 	Added toBigInteger()
+ * 2013-09-30 	markjacobsen.net 	Added toInteger()
  */
 public class Convert
 {
@@ -194,6 +195,11 @@ public class Convert
 		return retArray;	
 	}
 
+	public static Integer toInteger(int val)
+	{
+		return new Integer(val);
+	}
+	
 	//------------------------------------------------------------------
     // Boolean methods
 	public static boolean toBoolean(int val)
