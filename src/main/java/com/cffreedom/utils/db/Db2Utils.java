@@ -29,6 +29,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 
  * Changes:
  * 2013-09-01 	markjacobsen.net 	Created
+ * 2013-10-01	MarkJacobsen.net 	Added connectToAlias option necessary for catalog entries on remote servers
  */
 public class Db2Utils
 {
@@ -40,11 +41,11 @@ public class Db2Utils
 	private static final String TYPE_TRUNCATE = "truncate";
 	private static final String TYPE_RAW = "raw";
 	
-	public static void exportToFile(String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn) throws ProcessingException
+	public static void exportToFile(String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn, boolean connectToAlias) throws ProcessingException
 	{		
 		try
 		{
-			execCommands(TYPE_EXPORT, fileDirectory, name, nameSqlMap, dbconn);
+			execCommands(TYPE_EXPORT, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
 		catch (ProcessingException | ValidationException | InfrastructureException e)
 		{
@@ -53,11 +54,11 @@ public class Db2Utils
 		}
 	}
 	
-	public static void importFromFile(String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn) throws ProcessingException
+	public static void importFromFile(String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn, boolean connectToAlias) throws ProcessingException
 	{
 		try
 		{
-			execCommands(TYPE_IMPORT, fileDirectory, name, nameSqlMap, dbconn);
+			execCommands(TYPE_IMPORT, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
 		catch (ProcessingException | ValidationException | InfrastructureException e)
 		{
@@ -66,26 +67,7 @@ public class Db2Utils
 		}
 	}
 	
-	public static void runStatsOnTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn) throws ProcessingException
-	{
-		Map<String, String> nameSqlMap = new LinkedHashMap<String, String>();
-		for (String table : tables)
-		{
-			nameSqlMap.put(table, table);
-		}
-		
-		try
-		{
-			execCommands(TYPE_RUNSTATS, fileDirectory, name, nameSqlMap, dbconn);
-		}
-		catch (ProcessingException | ValidationException | InfrastructureException e)
-		{
-			logger.error("Error during processing: " + e.getMessage(), e);
-			throw new ProcessingException(e);
-		}
-	}
-	
-	public static void reorgTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn) throws ProcessingException
+	public static void runStatsOnTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn, boolean connectToAlias) throws ProcessingException
 	{
 		Map<String, String> nameSqlMap = new LinkedHashMap<String, String>();
 		for (String table : tables)
@@ -95,7 +77,7 @@ public class Db2Utils
 		
 		try
 		{
-			execCommands(TYPE_REORG, fileDirectory, name, nameSqlMap, dbconn);
+			execCommands(TYPE_RUNSTATS, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
 		catch (ProcessingException | ValidationException | InfrastructureException e)
 		{
@@ -104,7 +86,7 @@ public class Db2Utils
 		}
 	}
 	
-	public static void truncateTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn) throws ProcessingException
+	public static void reorgTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn, boolean connectToAlias) throws ProcessingException
 	{
 		Map<String, String> nameSqlMap = new LinkedHashMap<String, String>();
 		for (String table : tables)
@@ -114,7 +96,7 @@ public class Db2Utils
 		
 		try
 		{
-			execCommands(TYPE_TRUNCATE, fileDirectory, name, nameSqlMap, dbconn);
+			execCommands(TYPE_REORG, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
 		catch (ProcessingException | ValidationException | InfrastructureException e)
 		{
@@ -123,7 +105,26 @@ public class Db2Utils
 		}
 	}
 	
-	public static void grantAccessToTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn, String grantTo, boolean select, boolean insert, boolean update, boolean delete) throws ProcessingException
+	public static void truncateTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn, boolean connectToAlias) throws ProcessingException
+	{
+		Map<String, String> nameSqlMap = new LinkedHashMap<String, String>();
+		for (String table : tables)
+		{
+			nameSqlMap.put(table, table);
+		}
+		
+		try
+		{
+			execCommands(TYPE_TRUNCATE, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
+		}
+		catch (ProcessingException | ValidationException | InfrastructureException e)
+		{
+			logger.error("Error during processing: " + e.getMessage(), e);
+			throw new ProcessingException(e);
+		}
+	}
+	
+	public static void grantAccessToTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn, boolean connectToAlias, String grantTo, boolean select, boolean insert, boolean update, boolean delete) throws ProcessingException
 	{
 		Map<String, String> nameSqlMap = new LinkedHashMap<String, String>();
 		for (String table : tables)
@@ -136,7 +137,7 @@ public class Db2Utils
 		
 		try
 		{
-			execCommands(TYPE_RAW, fileDirectory, name, nameSqlMap, dbconn);
+			execCommands(TYPE_RAW, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
 		catch (ProcessingException | ValidationException | InfrastructureException e)
 		{
@@ -145,7 +146,7 @@ public class Db2Utils
 		}
 	}
 	
-	private static void execCommands(String type, String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn) throws ProcessingException, ValidationException, InfrastructureException
+	private static void execCommands(String type, String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn, boolean connectToAlias) throws ProcessingException, ValidationException, InfrastructureException
 	{
 		if (
 			(type.equalsIgnoreCase(TYPE_EXPORT) == false) &&
@@ -179,7 +180,9 @@ public class Db2Utils
 		
 		logger.debug("Creating command file");
 		ArrayList<String> lines = new ArrayList<String>();
-		lines.add("connect to "+dbconn.getDb()+" user "+dbconn.getUser()+" using \""+dbconn.getPassword()+"\";");
+		String connectTo = dbconn.getDb();
+		if ((connectToAlias == true) && (dbconn.getAlias() != null)) { connectTo = dbconn.getAlias(); }
+		lines.add("connect to "+connectTo+" user "+dbconn.getUser()+" using \""+dbconn.getPassword()+"\";");
 		lines.add("");
 		for (String curName : nameSqlMap.keySet())
 		{
