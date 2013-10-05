@@ -56,45 +56,9 @@ public class EmailUtils
 	
     public static void sendEmail(String to, String from, String subject, String body, boolean htmlBody, String user, String pass, String smtpServer, String protocol, String port) throws Exception
 	{
-    	boolean authenticatedSession = true;
-    	if ((user == null) || (user.length() == 0)) { authenticatedSession = false; }
-		Properties sysProps = System.getProperties();
-		sysProps.put("mail.smtp.host", smtpServer);
-		if (protocol != null)
-		{
-			sysProps.put("mail.transport.protocol", protocol);
-		}
-		if (authenticatedSession == true){
-			sysProps.put("mail.smtps.auth", "true");
-		}
-		
-		to = to.replace(',', ';');
-		String[] toArray = to.split(";");
-		
-		Session session = Session.getDefaultInstance(sysProps, null);
-        
-		MimeMessage message = new MimeMessage(session);
-		message.setFrom(new InternetAddress(from));
-		for (int y = 0; y < toArray.length; y++) {
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(toArray[y]));
-		}
-		message.setSubject(subject);
-		if (htmlBody == true){
-			message.setText(body, "utf-8", "html");
-		}else{
-			message.setText(body);
-		}
-        
-		logger.info("Sending message to {} from {} w/ subject: {}", to, from, subject);
-		
-		if (authenticatedSession == true){
-			Transport transport = session.getTransport();
-			transport.connect(smtpServer, Convert.toInt(port), user, pass);
-			transport.sendMessage(message, message.getAllRecipients());
-			transport.close();
-		}else{
-			Transport.send(message);
-		}		
+    	EmailMessage msg = new EmailMessage(to, from, subject, body);
+    	if (htmlBody == true) { msg.setBodyHtml(body); }
+    	sendEmail(msg, user, pass, smtpServer, protocol, port);		
 	}
     
     public static void sendEmail(EmailMessage msg, String user, String pass, String smtpServer, String protocol, String port) throws Exception
@@ -145,7 +109,7 @@ public class EmailUtils
 		
 		if (bcc.length() > 0) {
 			for (int y = 0; y < bccArray.length; y++) {
-				message.addRecipient(Message.RecipientType.CC, new InternetAddress(bccArray[y]));
+				message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bccArray[y]));
 			}
 		}
 		
