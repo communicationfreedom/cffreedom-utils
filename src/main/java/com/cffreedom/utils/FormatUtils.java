@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
  * 2013-04-27 	markjacobsen.net 	Added pad()
  * 2013-04-30 	markjacobsne.net 	Fixed repeatString()
  * 2013-06-12 	markjacobsen.net 	Consolidated date masks here
+ * 2013-10-05 	markjacobsen.net 	Fixed formatBigDecimal()
  */
 public class FormatUtils
 {
@@ -89,14 +90,20 @@ public class FormatUtils
 	public static String formatBigDecimal(BigDecimal n, int decimalPlaces, boolean includeThousandsSeparator)
 	{
 		String format = null;
-
+		String decimalFormat = "";
+		
+		if (decimalPlaces > 0)
+		{
+			decimalFormat = "." + repeatString("0", decimalPlaces);
+		}
+		
 		if (includeThousandsSeparator == false)
 		{
-			format = "#0." + repeatString("0", decimalPlaces - 1);
+			format = "#0" + decimalFormat;
 		}
 		else
 		{
-			format = "#,##0." + repeatString("0", decimalPlaces - 1);
+			format = "#,##0" + decimalFormat;
 		}
 
 		NumberFormat formatter = new DecimalFormat(format);
