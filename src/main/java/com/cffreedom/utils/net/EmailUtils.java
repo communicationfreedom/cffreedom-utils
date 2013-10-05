@@ -97,7 +97,7 @@ public class EmailUtils
 		}		
 	}
     
-    public void sendEmail(EmailMessage msg, String user, String pass, String smtpServer, String protocol, String port) throws Exception
+    public static void sendEmail(EmailMessage msg, String user, String pass, String smtpServer, String protocol, String port) throws Exception
     {	
     	boolean authenticatedSession = true;
     	if ((user == null) || (user.length() == 0)) { authenticatedSession = false; }
