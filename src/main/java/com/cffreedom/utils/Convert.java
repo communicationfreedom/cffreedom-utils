@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * 2013-07-15	markjacobsen.net 	Added toDelimitedString()
  * 2013-08-27 	markjacobsen.net 	Added toBigInteger()
  * 2013-09-30 	markjacobsen.net 	Added toInteger()
+ * 2013-10-06 	markjacobsen.net 	Added toCents()
  */
 public class Convert
 {
@@ -425,4 +427,18 @@ public class Convert
     	return new BigInteger(toString(val));
     }
 
+    public static int toCents(BigDecimal dollarAmt)
+	{
+		return dollarAmt.movePointRight(2).intValue();
+	}
+    
+    public static int toCents(double dollarAmount)
+    {
+    	return toInt(dollarAmount * 100);
+    }
+    
+    public static int toCents(float dollarAmount)
+    {
+    	return toInt(dollarAmount * 100);
+    }
 }
