@@ -11,12 +11,16 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.EmailMessage;
 import com.cffreedom.beans.Response;
 import com.cffreedom.exceptions.GeneralException;
+import com.cffreedom.exceptions.ValidationException;
+import com.cffreedom.utils.Convert;
 import com.cffreedom.utils.SystemUtils;
 
 /**
@@ -41,6 +45,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-06-25 	markjacobsen.net 	Added httpGetResponse() for returning a Response object
  * 2013-07-04 	markjacobsen.net 	httpGetResponse() is now httpGet()
  * 2013-07-06 	markjacobsen.net 	Using slf4j
+ * 2013-10-07 	MarkJacobsen.net	Added getParamAsInt()
  */
 public class HttpUtils
 {
@@ -318,5 +323,17 @@ public class HttpUtils
 	public static String getMailtoLink(EmailMessage email, String linkText)
 	{
 		return getMailtoLink(email.getTo(), linkText, email.getSubject(), email.getBody(), email.getCc(), email.getBcc());
+	}
+	
+	public static int getParamAsInt(HttpServletRequest request, String param) throws ValidationException
+	{
+		try
+		{
+			return Convert.toInt(request.getParameter(param));
+		}
+		catch (Exception e)
+		{
+			throw new ValidationException("Unable to get int value for " + param, e);
+		}
 	}
 }
