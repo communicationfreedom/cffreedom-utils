@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
  * 2013-08-27 	markjacobsen.net 	Added toBigInteger()
  * 2013-09-30 	markjacobsen.net 	Added toInteger()
  * 2013-10-06 	markjacobsen.net 	Added toCents()
+ * 2013-10-07 	MarkJacobsen.net	Added toBigDecimal()
  */
 public class Convert
 {
@@ -415,6 +416,11 @@ public class Convert
     public static java.sql.Timestamp toTimestamp(java.util.Date val)
     {
         return new java.sql.Timestamp(val.getTime());
+    }
+    
+    public static BigDecimal toBigDecimal(String val)
+    {
+    	return new BigDecimal(val);
     }
     
     public static BigInteger toBigInteger(long val)
