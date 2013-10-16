@@ -3,6 +3,7 @@ package com.cffreedom.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-06-07 	markjacobsen.net 	Added exception handling to getHomeDir()
  * 2013-06-21 	markjacobsen.net 	Added sleep(double) so that you can pass in fractions of a second
  * 2013-07-15	markjacobsen.net 	Changed method names around
+ * 2013-10-16 	markjacobsen.net 	Added getShell() and updated exec()
  */
 public class SystemUtils
 {
@@ -181,27 +183,49 @@ public class SystemUtils
 				dir = new File(workingDir);
 			}
 			
+			ArrayList<String> commands = new ArrayList<String>();
 			if (isWindows() == true)
 			{
-				cmd = new String[3];
-				cmd[0] = "cmd.exe";
-				cmd[1] = "/C";
-				cmd[2] = command;
+				commands.add("cmd.exe");
+				commands.add("/C");
+				commands.add(command);
 			}
 			else
 			{
-				cmd = new String[1];
-				cmd[0] = command;
+				String shell = getShell();
+				if (shell == null)
+				{
+					throw new NullPointerException("shell is null");
+				}
+				logger.trace("Shell path: {}", shell);
+				commands.add(shell);
+				commands.add(command);
+			}
+			logger.trace("Command size={}", commands.size());
+			cmd = new String[commands.size()];
+			for (int x = 0; x < commands.size(); x++)
+			{
+				String tmp = commands.get(x);
+				if (tmp == null)
+				{
+					logger.warn("Item {} is null", x);
+				}
+				cmd[x] = tmp;
 			}
 			Process process = Runtime.getRuntime().exec(cmd, args, dir);
 			
 			if(returnImmediately == false)
 			{
 				if (outputRedirectFile == null){
-					outputRedirectFile = getFileDefaultOutput();
+					if (FileUtils.folderExists(workingDir) == true){
+						outputRedirectFile = FileUtils.buildPath(workingDir, "tmp.out");
+					}else{
+						outputRedirectFile = getFileDefaultOutput();
+					}
 				}
 				FileOutputStream fos = null;
 				if (FileUtils.fileExists(outputRedirectFile) == true){
+					logger.trace("Output redirecting to: {}", outputRedirectFile);
 					fos = new FileOutputStream(outputRedirectFile);
 				}
 				StreamGobbler stderr = new StreamGobbler(process.getErrorStream(), "ERROR");
@@ -219,11 +243,41 @@ public class SystemUtils
 				}
 			}
 		}
-		catch (InterruptedException e) { returnCode = -1; e.printStackTrace(); }
-		catch (NullPointerException e) { returnCode = -1; e.printStackTrace(); }
-		catch (IOException e) { returnCode = -1; e.printStackTrace(); }
+		catch (InterruptedException | NullPointerException | IOException e)
+		{
+			returnCode = -1;
+			logger.error(e.getClass().getSimpleName() + " in exec of " + command, e);
+			e.printStackTrace();
+		}
 		
 		return returnCode;
+	}
+	
+	/**
+	 * Get the *nix shell path 
+	 * @return Path to *nix shell (tries SHELL env var first followed by /bin/bash/, 
+	 *           /bin/ksh, /usr/bin/bash, /usr/bin/bash2, /usr/bin/ksh)
+	 */
+	public static String getShell()
+	{
+		String shell = SystemUtils.getEnvVal("SHELL");
+		if ((shell == null) || (shell.length() == 0))
+		{
+			logger.trace("Trying hard coded list of shells");
+			String[] shells = {"/bin/bash", "/bin/ksh", "/usr/bin/bash", "/usr/bin/bash2", "/usr/bin/ksh"};
+			for (int x = 0; x < shells.length; x++)
+			{
+				shell = shells[x];
+				if (FileUtils.fileExists(shell) == true)
+				{
+					logger.trace("{} exists", shell);
+					break;
+				}
+			}
+		}
+
+		logger.trace("Shell={}", shell);
+		return shell;
 	}
 	
 	public static boolean isWindows()
