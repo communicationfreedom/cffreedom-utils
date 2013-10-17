@@ -1,14 +1,20 @@
 package com.cffreedom.utils.file;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.*;
 import java.util.jar.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cffreedom.exceptions.FileSystemException;
+import com.cffreedom.exceptions.ValidationException;
 import com.cffreedom.utils.DateTimeUtils;
 import com.cffreedom.utils.SystemUtils;
+import com.cffreedom.utils.Utils;
 
 /**
  * Original Class: com.cffreedom.utils.file.FileUtils
@@ -31,6 +37,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-05-17 	markjacobsen.net 	Fixed getFileContents() to not add an additional CRLF at the end of the file
  * 2013-08-01 	markjacobsen.net 	Much more efficient getLastXLines() added getLastLine()
  * 2013-09-12 	markjacobsen.net 	Added getDuplicateLines()
+ * 2013-10-17 	markjacobsen.net 	Added chmod()
  */
 public class FileUtils
 {
@@ -1110,6 +1117,67 @@ public class FileUtils
 		}
 		
 		return dups;
+	}
+	
+	/**
+	 * Do a UNIX chmod based on the values passed in
+	 * @param path The thing to chmod
+	 * @param octalCode The chmod octal code (ex: 777 or 755)
+	 * @throws ValidationException
+	 * @throws FileSystemException
+	 */
+	public static void chmod(String path, String octalCode) throws ValidationException, FileSystemException
+	{
+		if (octalCode.length() != 3) { throw new ValidationException("Length of octalCode " + octalCode + " != 3"); }
+		if (Utils.isNumeric(octalCode) == false) { throw new ValidationException("octalCode " + octalCode + " is not numeric"); }
+	
+		logger.debug("chmod {} {}", octalCode, path);
+		Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
+		
+		// Owner
+		char bit = octalCode.charAt(0);
+		if ((bit == '7') || (bit == '5') || (bit == '3') || (bit == '1')) {
+			perms.add(PosixFilePermission.OWNER_EXECUTE);
+		}
+		if ((bit == '7') || (bit == '6') || (bit == '3') || (bit == '2')) {
+			perms.add(PosixFilePermission.OWNER_WRITE);
+		}
+		if ((bit == '7') || (bit == '6') || (bit == '5') || (bit == '4')) {
+			perms.add(PosixFilePermission.OWNER_READ);
+		}
+
+		// Group
+		bit = octalCode.charAt(1);
+		if ((bit == '7') || (bit == '5') || (bit == '3') || (bit == '1')) {
+			perms.add(PosixFilePermission.GROUP_EXECUTE);
+		}
+		if ((bit == '7') || (bit == '6') || (bit == '3') || (bit == '2')) {
+			perms.add(PosixFilePermission.GROUP_WRITE);
+		}
+		if ((bit == '7') || (bit == '6') || (bit == '5') || (bit == '4')) {
+			perms.add(PosixFilePermission.GROUP_READ);
+		}
+
+		// Other / All
+		bit = octalCode.charAt(2);
+		if ((bit == '7') || (bit == '5') || (bit == '3') || (bit == '1')) {
+			perms.add(PosixFilePermission.OTHERS_EXECUTE);
+		}
+		if ((bit == '7') || (bit == '6') || (bit == '3') || (bit == '2')) {
+			perms.add(PosixFilePermission.OTHERS_WRITE);
+		}
+		if ((bit == '7') || (bit == '6') || (bit == '5') || (bit == '4')) {
+			perms.add(PosixFilePermission.OTHERS_READ);
+		}
+		
+		try
+		{
+			Files.setPosixFilePermissions(Paths.get(path), perms);
+		} catch (IOException e) {
+			logger.error(e.getClass().getSimpleName() + " attempting to set permissions", e);
+			e.printStackTrace();
+			throw new FileSystemException("Unable to chmod "+octalCode+" "+path, e);
+		}
 	}
 }
 

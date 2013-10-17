@@ -30,6 +30,7 @@ import com.cffreedom.utils.file.FileUtils;
  * Changes:
  * 2013-09-01 	markjacobsen.net 	Created
  * 2013-10-01	MarkJacobsen.net 	Added connectToAlias option necessary for catalog entries on remote servers
+ * 2013-10-17 	MarkJacobsen.net 	Improvements for when running on windows vs *nux
  */
 public class Db2Utils
 {
@@ -148,6 +149,9 @@ public class Db2Utils
 	
 	private static void execCommands(String type, String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn, boolean connectToAlias) throws ProcessingException, ValidationException, InfrastructureException
 	{
+		int execRet = -1;
+		ArrayList<String> filesToDelete = new ArrayList<String>();
+		
 		if (
 			(type.equalsIgnoreCase(TYPE_EXPORT) == false) &&
 			(type.equalsIgnoreCase(TYPE_IMPORT) == false) &&
@@ -165,6 +169,8 @@ public class Db2Utils
 		String dbCommandFile = FileUtils.buildPath(fileDirectory, name + "." + type + ".cmd");
 		String dbCommandLogFile = FileUtils.buildPath(fileDirectory, name + "." + type + ".cmd.log");
 		String lastDataLogFileName = null;
+		
+		filesToDelete.add(dbCommandFile);
 		
 		if (FileUtils.fileExists(dbCommandFile) == true)
 		{
@@ -190,10 +196,20 @@ public class Db2Utils
 			String dataFileName = FileUtils.buildPath(fileDirectory, name + ".data." + curName + ".ixf");
 			String dataLogFileName = FileUtils.buildPath(fileDirectory, name + ".data." + curName + "." + type + ".log");
 			
-			if ((FileUtils.fileExists(dataFileName) == true) && (type.equalsIgnoreCase(TYPE_EXPORT) == true))
+			if (type.equalsIgnoreCase(TYPE_EXPORT) == true)
 			{
-				logger.debug("Deleting old data file: {}", dataFileName);
-				FileUtils.deleteFile(dataFileName);
+				if (FileUtils.fileExists(dataFileName) == true)
+				{
+					logger.debug("Deleting old data file: {}", dataFileName);
+					FileUtils.deleteFile(dataFileName);
+				}
+			}
+			else
+			{
+				// Note: We do not want to delete the data after an export because we're assuming an import will happen
+				// and that process should delete the file if appropriate
+				logger.info("Clean up {} after your export. It will not happen here.", dataFileName);
+				filesToDelete.add(dataFileName);
 			}
 			
 			if (FileUtils.fileExists(dataLogFileName) == true)
@@ -224,9 +240,49 @@ public class Db2Utils
 		lines.add("terminate;");
 		FileUtils.writeLinesToFile(dbCommandFile, lines);
 		
-		logger.debug("Executing command file \"" + dbCommandFile + "\" with output in \"" + dbCommandLogFile + "\"");
-		int ret = SystemUtils.exec("db2cmd db2 -stf " + dbCommandFile + " -z" + dbCommandLogFile);
-		logger.debug("Execution returned {}", ret);
+		String execCmd = "db2 -stf " + dbCommandFile + " -z" + dbCommandLogFile;
+		String command;
+		if (SystemUtils.isWindows() == true)
+		{
+			command = "db2cmd " + execCmd;
+			logger.debug("Executing command file \"" + dbCommandFile + "\" with output in \"" + dbCommandLogFile + "\"");
+			execRet = SystemUtils.exec(command);
+		}
+		else
+		{
+			String stubFile = FileUtils.buildPath(fileDirectory, name + ".stub.cmd");
+			ArrayList<String> commands = new ArrayList<String>();
+			if ((dbconn.getProfileFile() != null) && (dbconn.getProfileFile().length() > 0))
+			{
+				commands.add(". " + dbconn.getProfileFile());  // ex: /dba/db2/cdXX/sqllib/db2profile
+			}
+			else
+			{
+				logger.warn("No ProfileFile specified in DbConn for " + dbconn.getDb() + ". Unexpected results may ensue.");
+			}
+			commands.add(execCmd);
+			FileUtils.writeLinesToFile(stubFile, commands);
+			command = stubFile;
+			filesToDelete.add(stubFile);
+			
+			try
+			{
+				FileUtils.chmod(stubFile, "744");
+			}
+			catch (Exception e)
+			{
+				logger.error("Unable to set permissions on " + stubFile + ": " + e.getMessage(), e);
+			}
+			
+			logger.debug("Executing command file \"" + dbCommandFile + "\" via \""+command+"\" with output in \"" + dbCommandLogFile + "\"");
+			execRet = SystemUtils.exec(command, new String[]{}, fileDirectory);
+		}
+		logger.debug("Execution returned {}", execRet);
+		
+		if (execRet != 0)
+		{
+			throw new ProcessingException("Attempt to run "+command+" returned "+execRet);
+		}
 		
 		// TODO: Enhancement - Check for errors or else we could camp out here all day
 		
@@ -270,5 +326,21 @@ public class Db2Utils
 		}
 		
 		logger.info(dbCommandLogFile + " contents:\n" + cmdLogFileContents);
+		
+		if (cmdLogFileContents.contains("There is at least one warning message in the message file") == true)
+		{
+			throw new ProcessingException("There is a warning in a message file");
+		}
+		
+		for (String file : filesToDelete)
+		{
+			if (FileUtils.fileExists(file) == true)
+			{
+				logger.debug("Deleting: {}", file);
+				FileUtils.deleteFile(file);
+			}
+		}
+		
+		logger.debug("Returning");
 	}
 }
