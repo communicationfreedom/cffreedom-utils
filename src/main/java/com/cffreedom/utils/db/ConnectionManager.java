@@ -310,7 +310,7 @@ public class ConnectionManager
 		// Default to a JNDI connection if one exists
 		if ((dbconn != null) && (dbconn.getJndi() != null) && (dbconn.getJndi().length() > 0))
 		{
-			logger.debug("Getting JNDI connection: {}", key);
+			logger.trace("Getting JNDI connection: {}", key);
 			try
 			{
 				conn = DbUtils.getConnectionJNDI(dbconn.getJndi());
@@ -338,7 +338,7 @@ public class ConnectionManager
 			
 			try
 			{
-				logger.debug("Getting pooled connection: {}", key);
+				logger.trace("Getting pooled connection: {}", key);
 				conn = this.pools.get(key).getConnection();
 			}
 			catch (SQLException e)
@@ -350,7 +350,7 @@ public class ConnectionManager
 		// Then try getting a non-pooled connection
 		if ((conn == null) && (dbconn != null))
 		{
-			logger.debug("Getting non-pooled connection: {}", key);
+			logger.trace("Getting non-pooled connection: {}", key);
 			try
 			{
 				conn = DbUtils.getConnection(dbconn.getDriver(), dbconn.getUrl(), dbconn.getUser(), dbconn.getPassword());
@@ -461,7 +461,7 @@ public class ConnectionManager
 				throw new InfrastructureException("dbconn is null for key: " + key);
 			}
 			DbUtils.testConnection(dbconn, user, pass);
-			logger.debug("Test SQL succeeded for {}", key);
+			logger.info("Test SQL succeeded for {}", key);
 		}
 		catch (Exception e)
 		{
