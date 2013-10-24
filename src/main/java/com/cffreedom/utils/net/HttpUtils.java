@@ -139,13 +139,6 @@ public class HttpUtils
 		return sb.toString();
 	}
 	
-	public static String httpGetWithReqProp(String urlStr, String reqPropKey, String reqPropVal) throws IOException
-	{
-		HashMap<String, String> reqProps = new HashMap<String, String>();
-		reqProps.put(reqPropKey, reqPropVal);
-		return httpGetWithReqProp(urlStr, reqProps);
-	}
-	
 	public static String httpPost(String urlStr, Map<String, String> queryParams) throws GeneralException, IOException { return httpPost(urlStr, queryParams, null); }
 	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps) throws GeneralException, IOException { return httpPost(urlStr, queryParams, reqProps, true); }
 	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps, boolean setupProxy) throws GeneralException, IOException
