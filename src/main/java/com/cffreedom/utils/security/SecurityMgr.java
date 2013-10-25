@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 
  * Changes:
  * 2013-07-19 	markjacobsen.net 	Created
+ * 2013-10-24 	MarkJacobsen.net 	Added getKeys()
  */
 public class SecurityMgr
 {
@@ -208,6 +210,11 @@ public class SecurityMgr
 	public Entry getEntry(String key)
 	{
 		return this.entries.get(key);
+	}
+	
+	public Set<String> getKeys()
+	{
+		return this.entries.keySet();
 	}
 	
 	public String getUsername(String key)
