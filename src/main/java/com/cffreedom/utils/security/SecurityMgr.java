@@ -37,7 +37,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 
  * Changes:
  * 2013-07-19 	markjacobsen.net 	Created
- * 2013-10-24 	MarkJacobsen.net 	Added getKeys()
+ * 2013-10-24 	MarkJacobsen.net 	Added getKeys() and fixed bug getting username
  */
 public class SecurityMgr
 {
@@ -117,7 +117,7 @@ public class SecurityMgr
 					for (String key : keys)
 					{
 						logger.trace(key);
-						String user = props.getProperty(key + ".user");
+						String user = props.getProperty(key + ".username");
 						String password = props.getProperty(key + ".password");
 						String note = props.getProperty(key + ".note");
 						
