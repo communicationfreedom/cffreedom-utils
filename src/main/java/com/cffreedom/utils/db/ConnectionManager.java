@@ -357,7 +357,7 @@ public class ConnectionManager
 			}
 			catch (DbException | InfrastructureException e)
 			{
-				logger.error("Error getting non-pooled connection");
+				logger.error(e.getClass().getSimpleName() + " getting non-pooled connection: " + e.getMessage());
 			}
 		}
 		
@@ -371,7 +371,7 @@ public class ConnectionManager
 			}
 			catch (DbException | InfrastructureException e)
 			{
-				logger.error("Error attempting to get last ditch JNDI connection");
+				logger.error(e.getClass().getSimpleName() + " attempting to get last ditch JNDI connection: " + e.getMessage());
 			}
 		}
 		

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.cffreedom.beans.EmailMessage;
 import com.cffreedom.beans.Response;
 import com.cffreedom.exceptions.GeneralException;
+import com.cffreedom.exceptions.NetworkException;
 import com.cffreedom.exceptions.ValidationException;
 import com.cffreedom.utils.Convert;
 import com.cffreedom.utils.SystemUtils;
@@ -69,34 +70,72 @@ public class HttpUtils
 		return urlStr;
 	}
 	
-	public static Response httpGet(String urlStr) throws IOException { return httpGet(urlStr, null); }
-	public static Response httpGet(String urlStr, Map<String, String> queryParams) throws IOException { return httpGet(urlStr, queryParams, true); }
-	public static Response httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws IOException
+	public static Response httpGet(String urlStr) throws NetworkException { return httpGet(urlStr, null); }
+	public static Response httpGet(String urlStr, Map<String, String> queryParams) throws NetworkException { return httpGet(urlStr, queryParams, true); }
+	public static Response httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws NetworkException
 	{
-		Response response = new Response(true, 0, "", "", "");
-		urlStr = buildUrl(urlStr, queryParams);
-		
-		if (setupProxy == true) { setupProxy(); }
-		
-		logger.debug("Getting: {}", urlStr);
-		URL url = new URL(urlStr);
-		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-		response.setIntCode(conn.getResponseCode());
-
-		if (conn.getResponseCode() != 200) 
+		try
 		{
-			response.setErrorLevel(Response.ErrorLevel.ERROR);
-			response.setBooleanCode(false);
-			response.setMessage(conn.getResponseMessage());
-			response.setStringCode("FAIL");
-		}
-		else
-		{
-			response.setErrorLevel(Response.ErrorLevel.INFO);
-			response.setBooleanCode(true);
-			response.setMessage("");
-			response.setStringCode("SUCCESS");
+			Response response = new Response(true, 0, "", "", "");
+			urlStr = buildUrl(urlStr, queryParams);
 			
+			if (setupProxy == true) { setupProxy(); }
+			
+			logger.debug("Getting: {}", urlStr);
+			URL url = new URL(urlStr);
+			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+			response.setIntCode(conn.getResponseCode());
+	
+			if (conn.getResponseCode() != 200) 
+			{
+				response.setErrorLevel(Response.ErrorLevel.ERROR);
+				response.setBooleanCode(false);
+				response.setMessage(conn.getResponseMessage());
+				response.setStringCode("FAIL");
+			}
+			else
+			{
+				response.setErrorLevel(Response.ErrorLevel.INFO);
+				response.setBooleanCode(true);
+				response.setMessage("");
+				response.setStringCode("SUCCESS");
+				
+				// Buffer the result into a string
+				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				StringBuilder sb = new StringBuilder();
+				String line;
+				while ((line = rd.readLine()) != null) {
+					sb.append(line);
+				}
+				rd.close();
+				response.setDetail(sb.toString());
+			}
+			
+			conn.disconnect();
+			
+			return response;
+		}
+		catch (IOException e)
+		{
+			throw new NetworkException("Error during httpGet: " + e.getMessage(), e);
+		}		
+	}
+
+	public static String httpGetWithReqProp(String urlStr, HashMap<String, String> reqProps) throws NetworkException
+	{
+		try
+		{
+			URL url = new URL(urlStr);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			for (String key : reqProps.keySet())
+			{
+				conn.setRequestProperty(key, reqProps.get(key));
+			}
+	
+			if (conn.getResponseCode() != 200) {
+				throw new NetworkException(conn.getResponseMessage());
+			}
+	
 			// Buffer the result into a string
 			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			StringBuilder sb = new StringBuilder();
@@ -105,94 +144,77 @@ public class HttpUtils
 				sb.append(line);
 			}
 			rd.close();
-			response.setDetail(sb.toString());
+	
+			conn.disconnect();
+			return sb.toString();
 		}
-		
-		conn.disconnect();
-		
-		return response;
-	}
-
-	public static String httpGetWithReqProp(String urlStr, HashMap<String, String> reqProps) throws IOException
-	{
-		URL url = new URL(urlStr);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		for (String key : reqProps.keySet())
+		catch (IOException e)
 		{
-			conn.setRequestProperty(key, reqProps.get(key));
+			throw new NetworkException("Error during httpGetWithReqProp: " + e.getMessage(), e);
 		}
-
-		if (conn.getResponseCode() != 200) {
-			throw new IOException(conn.getResponseMessage());
-		}
-
-		// Buffer the result into a string
-		BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		StringBuilder sb = new StringBuilder();
-		String line;
-		while ((line = rd.readLine()) != null) {
-			sb.append(line);
-		}
-		rd.close();
-
-		conn.disconnect();
-		return sb.toString();
 	}
 	
-	public static String httpPost(String urlStr, Map<String, String> queryParams) throws GeneralException, IOException { return httpPost(urlStr, queryParams, null); }
-	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps) throws GeneralException, IOException { return httpPost(urlStr, queryParams, reqProps, true); }
-	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps, boolean setupProxy) throws GeneralException, IOException
+	public static String httpPost(String urlStr, Map<String, String> queryParams) throws GeneralException, NetworkException { return httpPost(urlStr, queryParams, null); }
+	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps) throws GeneralException, NetworkException { return httpPost(urlStr, queryParams, reqProps, true); }
+	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps, boolean setupProxy) throws GeneralException, NetworkException
 	{
-		int responseCode = 0;
-		StringBuilder response = new StringBuilder();
-		String urlParameters = encodeParams(queryParams);
-		
-		if (setupProxy == true) { setupProxy(); }
-		
-		URL url = new URL(urlStr);
-		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-		
-		if (reqProps != null)
+		try
 		{
-			for (String key : reqProps.keySet())
+			int responseCode = 0;
+			StringBuilder response = new StringBuilder();
+			String urlParameters = encodeParams(queryParams);
+			
+			if (setupProxy == true) { setupProxy(); }
+			
+			URL url = new URL(urlStr);
+			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+			
+			if (reqProps != null)
 			{
-				conn.setRequestProperty(key, reqProps.get(key));
+				for (String key : reqProps.keySet())
+				{
+					conn.setRequestProperty(key, reqProps.get(key));
+				}
 			}
+			
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setInstanceFollowRedirects(false); 
+			conn.setRequestMethod("POST"); 
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
+			conn.setRequestProperty("charset", "utf-8");
+			conn.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+			conn.setUseCaches(false);
+	
+			DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
+	
+			responseCode = conn.getResponseCode();
+			
+			if ((responseCode == 200) || (responseCode == 301) || (responseCode == 302))
+			{
+				// Buffer the result into a string
+				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				String line;
+				while ((line = rd.readLine()) != null) {
+					response.append(line);
+				}
+				rd.close();
+			}
+			
+			conn.disconnect();
+			
+			if (responseCode != 200) {
+				throw new GeneralException("Bad Response Code: " + responseCode);
+			}
+			return response.toString();
 		}
-		
-		conn.setDoOutput(true);
-		conn.setDoInput(true);
-		conn.setInstanceFollowRedirects(false); 
-		conn.setRequestMethod("POST"); 
-		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
-		conn.setRequestProperty("charset", "utf-8");
-		conn.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
-		conn.setUseCaches(false);
-
-		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-		wr.writeBytes(urlParameters);
-		wr.flush();
-		wr.close();
-
-		responseCode = conn.getResponseCode();
-		
-		if ((responseCode == 200) || (responseCode == 301) || (responseCode == 302))
+		catch (IOException e)
 		{
-			// Buffer the result into a string
-			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			String line;
-			while ((line = rd.readLine()) != null) {
-				response.append(line);
-			}
-			rd.close();
+			throw new NetworkException("Error during httpPost: " + e.getMessage(), e);
 		}
-		
-		conn.disconnect();
-		
-		if (responseCode != 200) {
-			throw new GeneralException("Bad Response Code: " + responseCode);
-		}
-		return response.toString();
 	}
 	
 	public static String encodeParams(Map<String, String> params) throws UnsupportedEncodingException
