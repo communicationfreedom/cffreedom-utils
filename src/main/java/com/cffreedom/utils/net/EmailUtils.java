@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.EmailMessage;
 import com.cffreedom.utils.Convert;
+import com.cffreedom.utils.Utils;
 
 /**
  * @author markjacobsen.net (http://mjg2.net/code)
@@ -27,6 +28,7 @@ import com.cffreedom.utils.Convert;
  * 2013-05-17 	markjacobsen.net 	Added sendGmail() option and added protocol to sendEmail()
  * 2013-05-18 	markjacobsen.net 	Added htmlBody options
  * 2013-10-05 	markjacobsen.net 	Additional sendEmail()
+ * 2013-11-05 	MarkJacobsen.net 	Fix in sendEmail() for CC and BCC
  */
 public class EmailUtils
 {
@@ -61,6 +63,16 @@ public class EmailUtils
     	sendEmail(msg, user, pass, smtpServer, protocol, port);		
 	}
     
+    /**
+     * Send an email message
+     * @param msg The EmailMessage object containing details about the message to send
+     * @param user SMTP username
+     * @param pass SMTP password
+     * @param smtpServer SMTP server
+     * @param protocol SMTP protocol
+     * @param port SMTP port
+     * @throws Exception
+     */
     public static void sendEmail(EmailMessage msg, String user, String pass, String smtpServer, String protocol, String port) throws Exception
     {	
     	boolean authenticatedSession = true;
@@ -75,22 +87,9 @@ public class EmailUtils
 			sysProps.put("mail.smtps.auth", "true");
 		}
 		
-		String to = msg.getTo().replace(',', ';');
-		String[] toArray = to.split(";");
-		
-		String cc = "";
-		String[] ccArray = null;
-		if (msg.getCc() != null) {
-			msg.getCc().replace(',', ';');
-			ccArray = cc.split(";");
-		}
-		
-		String bcc = "";
-		String[] bccArray = null;
-		if (msg.getBcc() != null) {
-			msg.getBcc().replace(',', ';');
-			bccArray = bcc.split(";");
-		}
+		String[] toArray = getRecipientArray(msg.getTo());
+		String[] ccArray = getRecipientArray(msg.getCc());
+		String[] bccArray = getRecipientArray(msg.getBcc());
 		
 		Session session = Session.getDefaultInstance(sysProps, null);
         
@@ -101,13 +100,13 @@ public class EmailUtils
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(toArray[y]));
 		}
 		
-		if (cc.length() > 0) {
+		if (ccArray != null) {
 			for (int y = 0; y < ccArray.length; y++) {
 				message.addRecipient(Message.RecipientType.CC, new InternetAddress(ccArray[y]));
 			}
 		}
 		
-		if (bcc.length() > 0) {
+		if (bccArray != null) {
 			for (int y = 0; y < bccArray.length; y++) {
 				message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bccArray[y]));
 			}
@@ -121,7 +120,7 @@ public class EmailUtils
 			message.setText(msg.getBody());
 		}
         
-		logger.info("Sending message to {} from {} w/ subject: {}", to, msg.getFrom(), msg.getSubject());
+		logger.info("Sending message to {}, cc {}, bcc {}, from {} w/ subject: {}", msg.getTo(), msg.getCc(), msg.getBcc(), msg.getFrom(), msg.getSubject());
 		
 		if (authenticatedSession == true){
 			Transport transport = session.getTransport();
@@ -131,6 +130,17 @@ public class EmailUtils
 		}else{
 			Transport.send(message);
 		}
+    }
+    
+    private static String[] getRecipientArray(String recipients)
+    {
+    	String[] returnArray = null;
+		if (Utils.hasLength(recipients) == true) {
+			recipients = recipients.replace(',', ';');
+			recipients = recipients.replace(' ', ';');
+			returnArray = recipients.split(";");
+		}
+		return returnArray;
     }
 }
 
