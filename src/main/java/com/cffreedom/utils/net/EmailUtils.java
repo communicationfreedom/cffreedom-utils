@@ -120,7 +120,7 @@ public class EmailUtils
 			message.setText(msg.getBody());
 		}
         
-		logger.info("Sending message to {}, cc {}, bcc {}, from {} w/ subject: {}", msg.getTo(), msg.getCc(), msg.getBcc(), msg.getFrom(), msg.getSubject());
+		logger.trace("Sending message to {}, cc {}, bcc {}, from {} w/ subject: {}", msg.getTo(), msg.getCc(), msg.getBcc(), msg.getFrom(), msg.getSubject());
 		
 		if (authenticatedSession == true){
 			Transport transport = session.getTransport();

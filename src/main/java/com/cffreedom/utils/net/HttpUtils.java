@@ -81,7 +81,7 @@ public class HttpUtils
 			
 			if (setupProxy == true) { setupProxy(); }
 			
-			logger.debug("Getting: {}", urlStr);
+			logger.trace("Getting: {}", urlStr);
 			URL url = new URL(urlStr);
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			response.setIntCode(conn.getResponseCode());
@@ -166,6 +166,7 @@ public class HttpUtils
 			
 			if (setupProxy == true) { setupProxy(); }
 			
+			logger.trace("Posting to: {}", urlStr);
 			URL url = new URL(urlStr);
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			
