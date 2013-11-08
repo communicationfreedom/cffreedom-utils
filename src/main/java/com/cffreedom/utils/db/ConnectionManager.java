@@ -52,6 +52,7 @@ import com.cffreedom.utils.security.SecurityCipher;
  * 2013-07-17 	markjacobsen.net 	Added support for the dbconn.properties file being on the classpath
  * 2013-09-09	markjacobsen.net 	printKeys() prints keys in sorted order
  * 2013-09-20	markjacobsen.net 	Updates to testConnection()
+ * 2013-11-08	MarkJacobsen.net	Enhanced connection pooling
  */
 public class ConnectionManager
 {
@@ -351,6 +352,16 @@ public class ConnectionManager
 			    bds.setUrl(dbconn.getUrl());
 			    bds.setUsername(dbconn.getUser());
 			    bds.setPassword(dbconn.getPassword());
+			    bds.setPoolPreparedStatements(true);
+			    bds.setMaxOpenPreparedStatements(30);
+			    bds.setMaxWait(30 * 1000); // seconds * 1000 = milliseconds
+			    
+			    String validationSql = DbUtils.getTestSql(dbconn.getType());
+			    if (Utils.hasLength(validationSql) == true)
+			    {
+			    	bds.setValidationQuery(validationSql); 
+			    	bds.setTestOnBorrow(true);
+			    }
 				
 				this.pools.put(key, bds);
 			}
