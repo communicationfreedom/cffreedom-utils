@@ -2,8 +2,11 @@ package com.cffreedom.utils.db;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.cffreedom.beans.DbConn;
@@ -15,43 +18,41 @@ import com.cffreedom.utils.file.FileUtils;
 
 public class ConnectionManagerTest
 {
+	private String testFile = FileUtils.buildPath(SystemUtils.getDirConfig(), "junit.test.dbconn.properties");
+	ConnectionManager cm;
+	
 	@Test
 	public void testGetConnection() throws FileSystemException, IOException, InfrastructureException
 	{
-		ConnectionManager cm = new ConnectionManager();
-		Assert.assertNull(cm.getConnection("junkkeythatshouldnotexit", null, null));
+		cm = new ConnectionManager("nofile", false);
+		Assert.assertNull(cm.getConnection("junkkeythatshouldnotexit", null, null));		
 	}
 	
 	@Test
 	public void testReadWrite() throws Exception
 	{
+		cm = new ConnectionManager(testFile);
 		String connkey = "test";
-		String file = FileUtils.buildPath(SystemUtils.getDirConfig(), "junit.test.dbconn.properties");
 		
-		// Create the test file
-		ConnectionManager cm = new ConnectionManager(file, true);
+		// Create the test file and make sure it exists on disk
 		DbConn dbconn = new DbConn("jdbcDriverClass", "jdbcUrlVal", DbType.MYSQL, "hostName", "dbName", 0);
 		cm.addConnection(connkey, dbconn);
 		cm.close();
+		cm = null;
+		assertTrue(FileUtils.fileExists(testFile));
 		
-		// Read from the test file
-		ConnectionManager cm2 = new ConnectionManager(file);
-		DbConn dbconn2 = cm2.getDbConn(connkey);
-		Assert.assertEquals(DbType.MYSQL, dbconn2.getType());
+		// Read the file created back in and make sure we can get the values that were stored
+		cm = new ConnectionManager(testFile);
+		DbConn actual = cm.getDbConn(connkey);
+		assertNotNull(actual);
+		assertEquals(DbType.MYSQL, actual.getType());
+		assertEquals("hostName", actual.getHost());
+		assertEquals("dbName", actual.getDb());
+		assertEquals(0, actual.getPort());
 		
-		// Update the value and check it again
-		DbConn dbconn3 = new DbConn("jdbcDriverClass", "jdbcUrlVal", DbType.DB2, "hostName", "dbName", 0);
-		cm2.updateConnection(connkey, dbconn3);
-		DbConn dbconn4 = cm2.getDbConn(connkey);
-		Assert.assertEquals(DbType.DB2, dbconn4.getType());
+		// Delete the file and make sure it's actually gone
+		FileUtils.deleteFile(testFile);
+		assertFalse(FileUtils.fileExists(testFile));
 		
-		// Delete the value and check it again
-		cm2.deleteConnection(connkey);
-		DbConn dbconn5 = cm2.getDbConn(connkey);
-		Assert.assertNull(dbconn5);		
-		
-		// Cleanup
-		cm2.close();
-		FileUtils.deleteFile(file);
 	}
 }

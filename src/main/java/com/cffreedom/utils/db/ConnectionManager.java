@@ -69,6 +69,13 @@ public class ConnectionManager
 		this(ConnectionManager.DEFAULT_FILE);
 	}
 	
+	/**
+	 * Load and store connection properties in the file specified. If you pass null, the properties 
+	 * will NOT be persisted
+	 * @param file File to load/store connection properties
+	 * @throws FileSystemException
+	 * @throws InfrastructureException
+	 */
 	public ConnectionManager(String file) throws FileSystemException, InfrastructureException
 	{
 		this(file, ConnectionManager.CREATE_FILE);
@@ -165,10 +172,19 @@ public class ConnectionManager
 						String jndi = props.getProperty(key + ".jndi");
 						
 						DbType dbType = null;
-						if (Utils.hasLength(type) == true) { dbType = DbType.valueOf(type); }
+						if (Utils.hasLength(type) == true)
+						{
+							dbType = DbType.valueOf(type);
+							if (dbType == null)
+							{
+								// Make backward compatible
+								if (type.equalsIgnoreCase("DB2_JCC") == true) { dbType = DbType.DB2; }
+								else if (type.equalsIgnoreCase("DB2_APP") == true) { dbType = DbType.DB2; }
+							}
+						}
 						if ((port == null) || (port.trim().length() == 0)) { port = "0"; }
 						
-						DbConn dbconn = new DbConn(DbUtils.getDriver(dbType),
+						DbConn dbconn = new DbConn(DbUtils.getDefaultDriver(dbType),
 												DbUtils.getUrl(dbType, host, db, Convert.toInt(port)), 
 												dbType,
 												host,

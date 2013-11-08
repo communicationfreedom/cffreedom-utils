@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.DbConn;
+import com.cffreedom.beans.DbDriver;
+import com.cffreedom.beans.DbType;
 import com.cffreedom.exceptions.InfrastructureException;
 import com.cffreedom.exceptions.ProcessingException;
 import com.cffreedom.exceptions.ValidationException;
@@ -34,9 +36,10 @@ import com.cffreedom.utils.file.FileUtils;
  */
 public class Db2Utils
 {
-	public final static String DRIVER = DbUtils.DRIVER_DB2_JCC;
-	public final static String DRIVER_JCC = DbUtils.DRIVER_DB2_JCC;
-	public final static String DRIVER_APP = DbUtils.DRIVER_DB2_APP;
+	public final static String DRIVER = DbUtils.getDefaultDriver(DbType.DB2);
+	public final static String DRIVER_JCC = DbDriver.DB2_JCC.value;
+	public final static String DRIVER_APP = DbDriver.DB2_APP.value;
+	public final static String DRIVER_NET = DbDriver.DB2_NET.value;
 	
 	private static final Logger logger = LoggerFactory.getLogger(Db2Utils.class);
 	private static final String TYPE_IMPORT = "import";

@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.DbConn;
+import com.cffreedom.beans.DbDriver;
 import com.cffreedom.beans.DbType;
 import com.cffreedom.exceptions.DbException;
 import com.cffreedom.exceptions.InfrastructureException;
@@ -65,14 +66,6 @@ public class DbUtils
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.DbUtils");
 	
 	public static enum FORMAT {CSV,TAB,XML,RAW,NO_OUTPUT};
-	
-	public final static String DRIVER_MYSQL = "com.mysql.jdbc.Driver";
-	public final static String DRIVER_DB2_JCC = "com.ibm.db2.jcc.DB2Driver";
-	public final static String DRIVER_DB2_APP = "COM.ibm.db2.jdbc.app.DB2Driver";
-	public final static String DRIVER_DB2_NET = "COM.ibm.db2.jdbc.net.DB2Driver";
-	public final static String DRIVER_SQL_SERVER_2005 = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-	public final static String DRIVER_ODBC = "sun.jdbc.odbc.JdbcOdbcDriver";
-	public final static String DRIVER_SQLITE = "org.sqlite.JDBC";
 
 	public final static String SQL_TEST_SQLSERVER = "SELECT getDate()";
 	public final static String SQL_TEST_DB2 = "SELECT CURRENT_TIMESTAMP FROM SYSIBM.SYSDUMMY1";
@@ -142,7 +135,7 @@ public class DbUtils
 		
 		try
 		{
-			String driver = DbUtils.getDriver(dbType);
+			String driver = DbUtils.getDefaultDriver(dbType);
 			String url = DbUtils.getUrl(dbType, host, db, port);
 			
 			conn = DbUtils.getConnection(driver, url, user, pass);
@@ -496,31 +489,27 @@ public class DbUtils
 		return retVal.toString();
 	}
 	
-	public static String getDriver(DbType dbType)
+	public static String getDefaultDriver(DbType dbType)
 	{
 		if (dbType == DbType.MYSQL)
 		{
-			return DbUtils.DRIVER_MYSQL;
+			return DbDriver.MYSQL.value;
 		}
-		else if (dbType == DbType.DB2_JCC)
+		else if (dbType == DbType.DB2)
 		{
-			return DbUtils.DRIVER_DB2_JCC;
-		}
-		else if (dbType == DbType.DB2_APP)
-		{
-			return DbUtils.DRIVER_DB2_APP;
+			return DbDriver.DB2_JCC.value;
 		}
 		else if (dbType == DbType.SQL_SERVER)
 		{
-			return DbUtils.DRIVER_SQL_SERVER_2005;
+			return DbDriver.SQL_SERVER.value;
 		}
 		else if (dbType == DbType.ODBC)
 		{
-			return DbUtils.DRIVER_ODBC;
+			return DbDriver.ODBC.value;
 		}
 		else if (dbType == DbType.SQLITE)
 		{
-			return DbUtils.DRIVER_SQLITE;
+			return DbDriver.SQLITE.value;
 		}
 		else
 		{
@@ -543,13 +532,13 @@ public class DbUtils
 			}
 			return "jdbc:mysql://" + host + ":" + port + "/" + db;
 		}
-		else if (dbType == DbType.DB2_JCC)
+		else if (dbType == DbType.DB2)
 		{
-			return "jdbc:db2://" + host + ":" + port + "/" + db;
-		}
-		else if (dbType == DbType.DB2_APP)
-		{
-			return "jdbc:db2:" + db;
+			if (host == null) {
+				return "jdbc:db2:" + db;
+			} else {
+				return "jdbc:db2://" + host + ":" + port + "/" + db;
+			}
 		}
 		else if (dbType == DbType.SQL_SERVER)
 		{
@@ -565,7 +554,11 @@ public class DbUtils
 		}
 		else if (dbType == DbType.SQLITE)
 		{
-			return "jdbc:sqlite:" + db;
+			if (db == null) {
+				return "jdbc:sqlite::memory:";
+			} else {
+				return "jdbc:sqlite:" + db;
+			}
 		}
 		else
 		{

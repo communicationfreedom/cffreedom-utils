@@ -7,6 +7,7 @@ import java.sql.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cffreedom.beans.DbDriver;
 import com.cffreedom.beans.DbType;
 import com.cffreedom.exceptions.DbException;
 import com.cffreedom.exceptions.InfrastructureException;
@@ -30,8 +31,9 @@ import com.cffreedom.exceptions.InfrastructureException;
 public class SQLiteUtils 
 {
 	private static final Logger logger = LoggerFactory.getLogger(SQLiteUtils.class);
-	public final static String DRIVER = DbUtils.DRIVER_SQLITE;
+	public final static String DRIVER = DbDriver.SQLITE.value;
 	public final static DbType DB_TYPE = DbType.SQLITE;
+	public final static String URL_IN_MEMORY_DB = DbUtils.getUrl(DbType.SQLITE, null, null);
 	
 	/**
 	 * Get a connection to the DB file passed in (note: File gets created if it does not already exist)
@@ -43,7 +45,7 @@ public class SQLiteUtils
 	public static Connection getConnection(String file) throws DbException, InfrastructureException
 	{
 		String url = DbUtils.getUrl(DbType.SQLITE, null, file);
-		return DbUtils.getConnection(DbUtils.DRIVER_SQLITE, url, null, null);
+		return DbUtils.getConnection(DRIVER, url, null, null);
 	}
 	
 	/**
@@ -54,8 +56,7 @@ public class SQLiteUtils
 	 */
 	public static Connection getConnectionForInMemoryDb() throws DbException, InfrastructureException
 	{
-		String url = "jdbc:sqlite::memory:";
-		return DbUtils.getConnection(DbUtils.DRIVER_SQLITE, url, null, null);
+		return DbUtils.getConnection(DRIVER, URL_IN_MEMORY_DB, null, null);
 	}
 	
 	public static boolean tableExists(Connection conn, String table)
