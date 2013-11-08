@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.beans.DbConn;
+import com.cffreedom.beans.DbType;
 import com.cffreedom.exceptions.DbException;
 import com.cffreedom.exceptions.InfrastructureException;
 import com.cffreedom.utils.Utils;

@@ -7,6 +7,7 @@ import java.sql.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cffreedom.beans.DbType;
 import com.cffreedom.exceptions.DbException;
 import com.cffreedom.exceptions.InfrastructureException;
 
@@ -30,6 +31,7 @@ public class SQLiteUtils
 {
 	private static final Logger logger = LoggerFactory.getLogger(SQLiteUtils.class);
 	public final static String DRIVER = DbUtils.DRIVER_SQLITE;
+	public final static DbType DB_TYPE = DbType.SQLITE;
 	
 	/**
 	 * Get a connection to the DB file passed in (note: File gets created if it does not already exist)
