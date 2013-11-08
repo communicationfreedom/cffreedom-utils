@@ -111,6 +111,11 @@ public class DbUtils
 		return dataSources;
 	}
 	
+	public static DbType getDbType(String val)
+	{
+		return DbType.valueOf(val);
+	}
+	
 	public static void listTables(DbConn dbconn)
 	{
 		Connection conn = null;
@@ -135,23 +140,23 @@ public class DbUtils
 	
 	public static void testConnection(DbConn dbconn, String user, String pass) throws DbException, InfrastructureException
 	{
-		testConnection(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort(), user, pass);
+		testConnection(getDbType(dbconn.getType()), dbconn.getHost(), dbconn.getDb(), dbconn.getPort(), user, pass);
 	}
 	
-	public static void testConnection(String type, String host, String db, int port, String user, String pass) throws DbException, InfrastructureException
+	public static void testConnection(DbType dbType, String host, String db, int port, String user, String pass) throws DbException, InfrastructureException
 	{
 		Connection conn = null;
 		
 		try
 		{
-			String driver = DbUtils.getDriver(type);
-			String url = DbUtils.getUrl(type, host, db, port);
+			String driver = DbUtils.getDriver(dbType);
+			String url = DbUtils.getUrl(dbType, host, db, port);
 			
 			conn = DbUtils.getConnection(driver, url, user, pass);
-			String testSql = DbUtils.getTestSql(type);
+			String testSql = DbUtils.getTestSql(dbType);
 			if (testSql != null)
 			{
-				if (runSql(conn, DbUtils.getTestSql(type)) == false)
+				if (runSql(conn, DbUtils.getTestSql(dbType)) == false)
 				{
 					throw new DbException("Error running test SQL");
 				}
@@ -307,7 +312,8 @@ public class DbUtils
 	}
 	
 	/**
-	 * Execute SQL and return the result set
+	 * Execute SQL and return the result set. 
+	 * Note that nothing (like the Connection) is closed, so you will need to do that.
 	 * @param conn DB Connection
 	 * @param sql SQL to execute
 	 * @return ResultSet for the SQL
@@ -497,29 +503,29 @@ public class DbUtils
 		return retVal.toString();
 	}
 	
-	public static String getDriver(String type)
+	public static String getDriver(DbType dbType)
 	{
-		if (isMySql(type) == true)
+		if (dbType == DbType.MYSQL)
 		{
 			return DbUtils.DRIVER_MYSQL;
 		}
-		else if (isDb2JCC(type) == true)
+		else if (dbType == DbType.DB2_JCC)
 		{
 			return DbUtils.DRIVER_DB2_JCC;
 		}
-		else if (isDb2App(type) == true)
+		else if (dbType == DbType.DB2_APP)
 		{
 			return DbUtils.DRIVER_DB2_APP;
 		}
-		else if (isSqlServer(type) == true)
+		else if (dbType == DbType.SQL_SERVER)
 		{
 			return DbUtils.DRIVER_SQL_SERVER_2005;
 		}
-		else if (isOdbc(type) == true)
+		else if (dbType == DbType.ODBC)
 		{
 			return DbUtils.DRIVER_ODBC;
 		}
-		else if (isSqlLite(type) == true)
+		else if (dbType == DbType.SQLITE)
 		{
 			return DbUtils.DRIVER_SQLITE;
 		}
@@ -529,42 +535,42 @@ public class DbUtils
 		}
 	}
 
-	public static String getUrl(String type, String host, String db)
+	public static String getUrl(DbType dbType, String host, String db)
 	{
-		return getUrl(type, host, db, 0);
+		return getUrl(dbType, host, db, 0);
 	}
 
-	public static String getUrl(String type, String host, String db, int port)
+	public static String getUrl(DbType dbType, String host, String db, int port)
 	{
-		if (isMySql(type) == true)
+		if (dbType == DbType.MYSQL)
 		{
 			if (port <= 0)
 			{
-				port = getDefaultPort(type);
+				port = getDefaultPort(dbType);
 			}
 			return "jdbc:mysql://" + host + ":" + port + "/" + db;
 		}
-		else if (isDb2JCC(type) == true)
+		else if (dbType == DbType.DB2_JCC)
 		{
 			return "jdbc:db2://" + host + ":" + port + "/" + db;
 		}
-		else if (isDb2App(type) == true)
+		else if (dbType == DbType.DB2_APP)
 		{
 			return "jdbc:db2:" + db;
 		}
-		else if (isSqlServer(type) == true)
+		else if (dbType == DbType.SQL_SERVER)
 		{
 			if (port <= 0)
 			{
-				port = getDefaultPort(type);
+				port = getDefaultPort(dbType);
 			}
 			return "jdbc:microsoft:sqlserver://" + host + ":" + port + ";databaseName=" + db;
 		}
-		else if (isOdbc(type) == true)
+		else if (dbType == DbType.ODBC)
 		{
 			return "jdbc:odbc:" + db;
 		}
-		else if (isSqlLite(type) == true)
+		else if (dbType == DbType.SQLITE)
 		{
 			return "jdbc:sqlite:" + db;
 		}
@@ -574,21 +580,21 @@ public class DbUtils
 		}
 	}
 	
-	public static int getDefaultPort(String dbType)
+	public static int getDefaultPort(DbType dbType)
 	{
 		if (dbType == null)
 		{
 			return 0;
 		}
-		else if (isMySql(dbType) == true)
+		else if (dbType == DbType.MYSQL)
 		{
 			return 3306;
 		}
-		else if (isSqlServer(dbType) == true)
+		else if (dbType == DbType.SQL_SERVER)
 		{
 			return 1443;
 		}
-		else if (isDb2(dbType) == true)
+		else if (dbType == DbType.DB2)
 		{
 			return 50000;
 		}
@@ -682,13 +688,13 @@ public class DbUtils
 		}
 	}	
 	
-	public static String getTestSql(String dbType)
+	public static String getTestSql(DbType dbType)
 	{
-		if (isDb2(dbType) == true)
+		if (dbType == DbType.DB2)
 		{
 			 return DbUtils.SQL_TEST_DB2;
 		}
-		else if (isSqlServer(dbType) == true)
+		else if (dbType == DbType.SQL_SERVER)
 		{
 			return DbUtils.SQL_TEST_SQLSERVER;
 		}

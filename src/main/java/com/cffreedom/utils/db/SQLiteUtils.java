@@ -1,6 +1,11 @@
 package com.cffreedom.utils.db;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cffreedom.exceptions.DbException;
 import com.cffreedom.exceptions.InfrastructureException;
@@ -23,6 +28,9 @@ import com.cffreedom.exceptions.InfrastructureException;
  */
 public class SQLiteUtils 
 {
+	private static final Logger logger = LoggerFactory.getLogger(SQLiteUtils.class);
+	public final static String DRIVER = DbUtils.DRIVER_SQLITE;
+	
 	/**
 	 * Get a connection to the DB file passed in (note: File gets created if it does not already exist)
 	 * @param file File to hold the DB
@@ -32,7 +40,7 @@ public class SQLiteUtils
 	 */
 	public static Connection getConnection(String file) throws DbException, InfrastructureException
 	{
-		String url = DbUtils.getUrl(DbUtils.TYPE_SQLITE, null, file);
+		String url = DbUtils.getUrl(DbType.SQLITE, null, file);
 		return DbUtils.getConnection(DbUtils.DRIVER_SQLITE, url, null, null);
 	}
 	
@@ -46,5 +54,31 @@ public class SQLiteUtils
 	{
 		String url = "jdbc:sqlite::memory:";
 		return DbUtils.getConnection(DbUtils.DRIVER_SQLITE, url, null, null);
+	}
+	
+	public static boolean tableExists(Connection conn, String table)
+	{
+		ResultSet rs = null;
+				
+		try
+		{
+			String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='"+table+"'";
+			rs = DbUtils.getResultSet(conn, sql);
+			while (rs.next())
+			{
+				return true;
+			}
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		finally
+		{
+			DbUtils.cleanup(conn, null, rs);
+		}
+		
+		return false;
 	}
 }

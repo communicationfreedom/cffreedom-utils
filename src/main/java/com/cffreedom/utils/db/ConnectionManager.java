@@ -163,10 +163,11 @@ public class ConnectionManager
 						String password = props.getProperty(key + ".password");
 						String jndi = props.getProperty(key + ".jndi");
 						
+						DbType dbType = DbUtils.getDbType(type);
 						if ((port == null) || (port.trim().length() == 0)) { port = "0"; }
 						
-						DbConn dbconn = new DbConn(DbUtils.getDriver(type),
-												DbUtils.getUrl(type, host, db, Convert.toInt(port)), 
+						DbConn dbconn = new DbConn(DbUtils.getDriver(dbType),
+												DbUtils.getUrl(dbType, host, db, Convert.toInt(port)), 
 												type,
 												host,
 												db,

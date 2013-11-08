@@ -34,6 +34,10 @@ import com.cffreedom.utils.file.FileUtils;
  */
 public class Db2Utils
 {
+	public final static String DRIVER = DbUtils.DRIVER_DB2_JCC;
+	public final static String DRIVER_JCC = DbUtils.DRIVER_DB2_JCC;
+	public final static String DRIVER_APP = DbUtils.DRIVER_DB2_APP;
+	
 	private static final Logger logger = LoggerFactory.getLogger(Db2Utils.class);
 	private static final String TYPE_IMPORT = "import";
 	private static final String TYPE_EXPORT = "export";
