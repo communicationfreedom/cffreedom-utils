@@ -311,6 +311,18 @@ public class ConnectionManager
 	
 	public boolean cacheConnections() { if (this.pools != null){ return true; }else{ return false; } }
 		
+	/**
+	 * Get a DB Connection for the key passed in. The methods used to try and get a Connection
+	 * are executed in this order:
+	 *  1) Try and get a connection by the JNDI name
+	 *  2) Try getting a connection from a pool if connection pooling has been enabled
+	 *  3) Try getting a connection by driver and url
+	 *  4) Try to get a connection by JNDI using the key passed in
+	 * @param key
+	 * @param user Override user in DbConn if not null
+	 * @param pass Override password in DbConn if not null
+	 * @return
+	 */
 	public Connection getConnection(String key, String user, String pass)
 	{
 		Connection conn = null;
@@ -325,6 +337,9 @@ public class ConnectionManager
 		else
 		{
 			logger.warn("A DbConn does not exist for key: {}", key);
+			// Note: Not throwing an error here, because the last thing we'll try to do
+			// if we couldn't get a connection is try to get a connection via JNDI
+			// using the key.
 		}
 		
 		// Default to a JNDI connection if one exists
@@ -391,7 +406,7 @@ public class ConnectionManager
 			}
 		}
 		
-		// Finally make a last ditch attempt to just get a jndi connection
+		// Finally make a last ditch attempt to just get a jndi connection from the passed in key
 		if (conn == null)
 		{
 			logger.warn("Making last ditch attempt to get JNDI connection: {}", key);
