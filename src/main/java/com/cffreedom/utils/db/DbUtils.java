@@ -74,14 +74,6 @@ public class DbUtils
 	public final static String DRIVER_ODBC = "sun.jdbc.odbc.JdbcOdbcDriver";
 	public final static String DRIVER_SQLITE = "org.sqlite.JDBC";
 
-	public final static String TYPE_MYSQL = "MYSQL";
-	public final static String TYPE_DB2_JCC = "DB2_JCC";
-	public final static String TYPE_DB2_APP = "DB2_APP";
-	public final static String TYPE_DB2 = TYPE_DB2_JCC;
-	public final static String TYPE_SQL_SERVER = "SQL_SERVER";
-	public final static String TYPE_ODBC = "ODBC";
-	public final static String TYPE_SQLITE = "SQLITE";
-
 	public final static String SQL_TEST_SQLSERVER = "SELECT getDate()";
 	public final static String SQL_TEST_DB2 = "SELECT CURRENT_TIMESTAMP FROM SYSIBM.SYSDUMMY1";
 	
@@ -141,7 +133,7 @@ public class DbUtils
 	
 	public static void testConnection(DbConn dbconn, String user, String pass) throws DbException, InfrastructureException
 	{
-		testConnection(getDbType(dbconn.getType()), dbconn.getHost(), dbconn.getDb(), dbconn.getPort(), user, pass);
+		testConnection(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort(), user, pass);
 	}
 	
 	public static void testConnection(DbType dbType, String host, String db, int port, String user, String pass) throws DbException, InfrastructureException
@@ -669,17 +661,17 @@ public class DbUtils
 		return count;
 	}
 	
-	public static String getListTablesSql(String dbType)
+	public static String getListTablesSql(DbType dbType)
 	{
-		if (isDb2(dbType) == true)
+		if (dbType == DbType.DB2)
 		{
 			 return DbUtils.SQL_LIST_TABLES_DB2;
 		}
-		else if (isSqlServer(dbType) == true)
+		else if (dbType == DbType.SQL_SERVER)
 		{
 			return DbUtils.SQL_LIST_TABLES_SQLSERVER;
 		}
-		else if (isMySql(dbType) == true)
+		else if (dbType == DbType.MYSQL)
 		{
 			return DbUtils.SQL_LIST_TABLES_MYSQL;
 		}
@@ -702,86 +694,6 @@ public class DbUtils
 		else
 		{
 			return null;
-		}
-	}	
-	
-	public static boolean isOdbc(String dbType)
-	{
-		if (dbType.equalsIgnoreCase(DbUtils.TYPE_ODBC) == true){
-			return true;
-		}else{
-			return false;
-		}
-	}	
-	
-	public static boolean isMySql(String dbType)
-	{
-		if (dbType.equalsIgnoreCase(DbUtils.TYPE_MYSQL) == true){
-			return true;
-		}else{
-			return false;
-		}
-	}	
-	
-	public static boolean isSqlServer(String dbType)
-	{
-		if (dbType.equalsIgnoreCase(DbUtils.TYPE_SQL_SERVER) == true){
-			return true;
-		}else{
-			return false;
-		}
-	}	
-	
-	public static boolean isSqlLite(String dbType)
-	{
-		if (dbType.equalsIgnoreCase(DbUtils.TYPE_SQLITE) == true){
-			return true;
-		}else{
-			return false;
-		}
-	}	
-	
-	public static boolean isDb2(String dbType)
-	{
-		if 
-		(
-			(isDb2Misc(dbType) == true) ||
-			(isDb2App(dbType) == true) ||
-			(isDb2JCC(dbType) == true)
-		)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}	
-	
-	public static boolean isDb2Misc(String dbType)
-	{
-		if (dbType.equalsIgnoreCase(DbUtils.TYPE_DB2) == true){
-			return true;
-		}else{
-			return false;
-		}
-	}	
-	
-	public static boolean isDb2JCC(String dbType)
-	{
-		if (dbType.equalsIgnoreCase(DbUtils.TYPE_DB2_JCC) == true){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	
-	public static boolean isDb2App(String dbType)
-	{
-		if (dbType.equalsIgnoreCase(DbUtils.TYPE_DB2_APP) == true){
-			return true;
-		}else{
-			return false;
 		}
 	}
 	

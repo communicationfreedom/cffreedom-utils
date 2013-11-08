@@ -164,12 +164,13 @@ public class ConnectionManager
 						String password = props.getProperty(key + ".password");
 						String jndi = props.getProperty(key + ".jndi");
 						
-						DbType dbType = DbUtils.getDbType(type);
+						DbType dbType = null;
+						if (Utils.hasLength(type) == true) { dbType = DbType.valueOf(type); }
 						if ((port == null) || (port.trim().length() == 0)) { port = "0"; }
 						
 						DbConn dbconn = new DbConn(DbUtils.getDriver(dbType),
 												DbUtils.getUrl(dbType, host, db, Convert.toInt(port)), 
-												type,
+												dbType,
 												host,
 												db,
 												Convert.toInt(port));
@@ -230,7 +231,7 @@ public class ConnectionManager
 					logger.trace(entry);
 					DbConn conn = this.getDbConn(entry);
 					lines.add(entry + ".db=" + this.getPropFileValue(conn.getDb()));
-					lines.add(entry + ".type=" + this.getPropFileValue(conn.getType()));
+					lines.add(entry + ".type=" + this.getPropFileValue(conn.getType().value));
 					lines.add(entry + ".host=" + this.getPropFileValue(conn.getHost()));
 					lines.add(entry + ".port=" + this.getPropFileValue(Convert.toString(conn.getPort())));
 					lines.add(entry + ".user=" + this.getPropFileValue(conn.getUser()));
