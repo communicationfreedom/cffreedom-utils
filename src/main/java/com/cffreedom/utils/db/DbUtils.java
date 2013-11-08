@@ -777,4 +777,17 @@ public class DbUtils
 			return false;
 		}
 	}
+	
+	/**
+	 * Cleanup the items passed in to free up resources
+	 * @param conn Connection to close
+	 * @param stmt Statement to close
+	 * @param rs ResultSet to close
+	 */
+	public static void cleanup(Connection conn, Statement stmt, ResultSet rs)
+	{
+		if (rs != null) { try { rs.close(); } catch (Exception e) {} finally { rs = null; } }
+		if (stmt != null) { try { stmt.close(); } catch (Exception e) {} finally { stmt = null; } }
+		if (conn != null) { try { conn.close(); } catch (Exception e) {} finally { conn = null; } }
+	}
 }
