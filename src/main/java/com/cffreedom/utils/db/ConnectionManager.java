@@ -175,13 +175,11 @@ public class ConnectionManager
 						DbType dbType = null;
 						if (Utils.hasLength(type) == true)
 						{
+							// Make backward compatible
+							if (type.equalsIgnoreCase("DB2_JCC") == true) { type = DbType.DB2.value; }
+							else if (type.equalsIgnoreCase("DB2_APP") == true) { type = DbType.DB2.value; }
+							
 							dbType = DbType.valueOf(type);
-							if (dbType == null)
-							{
-								// Make backward compatible
-								if (type.equalsIgnoreCase("DB2_JCC") == true) { dbType = DbType.DB2; }
-								else if (type.equalsIgnoreCase("DB2_APP") == true) { dbType = DbType.DB2; }
-							}
 						}
 						if ((port == null) || (port.trim().length() == 0)) { port = "0"; }
 						
@@ -486,12 +484,19 @@ public class ConnectionManager
 	public void printKey(String key)
 	{
 		DbConn dbconn = getDbConn(key);
-		Utils.output("");
-		Utils.output("Key = " + key);
-		Utils.output("Type = " + dbconn.getType());
-		Utils.output("DB = " + dbconn.getDb());
-		Utils.output("Host = " + dbconn.getHost());
-		Utils.output("Port = " + dbconn.getPort());
+		if (dbconn != null)
+		{
+			Utils.output("");
+			Utils.output("Key = " + key);
+			Utils.output("Type = " + dbconn.getType());
+			Utils.output("DB = " + dbconn.getDb());
+			Utils.output("Host = " + dbconn.getHost());
+			Utils.output("Port = " + dbconn.getPort());
+		}
+		else
+		{
+			Utils.output("Invalid key: " + key);
+		}
 	}
 	
 	public boolean testConnection(String key, String user, String pass)
