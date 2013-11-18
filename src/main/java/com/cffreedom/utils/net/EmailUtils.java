@@ -1,7 +1,10 @@
 package com.cffreedom.utils.net;
 
 import java.util.Properties;
-import javax.mail.*;
+
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.*;
 
 import org.slf4j.Logger;

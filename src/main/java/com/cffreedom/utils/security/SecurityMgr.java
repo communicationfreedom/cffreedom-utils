@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -47,7 +49,7 @@ public class SecurityMgr
 	public static final String DEFAULT_FILE = SystemUtils.getDirConfig() + SystemUtils.getPathSeparator() + PROP_FILE;
 	public static final boolean CREATE_FILE = false;
 	
-	private Hashtable<String, Entry> entries = new Hashtable<String, Entry>();
+	private Map<String, Entry> entries = new Hashtable<String, Entry>();
 	private String file = null;
 	private SecurityCipher cipher = null;
 	
@@ -152,7 +154,7 @@ public class SecurityMgr
 		}
 		else
 		{
-			ArrayList<String> lines = new ArrayList<String>();
+			List<String> lines = new ArrayList<String>();
 			logger.debug("Saving to file {}", this.getFile());
 			
 			lines.add("#--------------------------------------------------------------------------------------");

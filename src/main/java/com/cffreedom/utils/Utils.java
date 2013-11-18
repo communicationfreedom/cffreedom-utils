@@ -2,8 +2,8 @@ package com.cffreedom.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -208,7 +208,7 @@ public class Utils
     	}
     }
     
-    public static int longestString(ArrayList<String> vals)
+    public static int longestString(List<String> vals)
     {
     	int longest = 0;
     	for (String val : vals)
@@ -220,7 +220,7 @@ public class Utils
 
 	public static int longestString(String[] vals)
 	{
-		return longestString(Convert.toArrayListOfStrings(vals));
+		return longestString(Convert.toListOfStrings(vals));
 	}
 	
 	public static String[] appendToStringArray(String[] array, String val)

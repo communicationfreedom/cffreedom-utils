@@ -3,6 +3,7 @@ package com.cffreedom.utils.net;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Address;
@@ -171,10 +172,10 @@ public class EmailProxy
 		return l_oFolder;
     }
     
-    public ArrayList<EmailMessage> getMail(String a_sName, String a_sAction, String folderName, 
+    public List<EmailMessage> getMail(String a_sName, String a_sAction, String folderName, 
     	int[] a_iMessageNumbers, int a_iStartRow, int a_iMaxRows, String a_sOrder) throws Exception
     {
-    	ArrayList<EmailMessage> mail = new ArrayList<EmailMessage>();
+    	List<EmailMessage> mail = new ArrayList<EmailMessage>();
     	String l_sBody = null;
     	Folder folder = this.getFolder(this.store, folderName);
     	folder.open(Folder.READ_ONLY);

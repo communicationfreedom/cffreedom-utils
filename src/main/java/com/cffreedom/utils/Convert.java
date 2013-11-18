@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
@@ -46,6 +47,7 @@ import org.slf4j.LoggerFactory;
  * 2013-09-30 	markjacobsen.net 	Added toInteger()
  * 2013-10-06 	markjacobsen.net 	Added toCents()
  * 2013-10-07 	MarkJacobsen.net	Added toBigDecimal()
+ * 2013-11-18 	MarkJacobsen.net 	Changed toArrayListOfStrings() to toListOfStrings()
  */
 public class Convert
 {
@@ -151,9 +153,9 @@ public class Convert
 		return sb.toString();
 	}
 	
-	public static ArrayList<String> toArrayListOfStrings(String[] vals)
+	public static List<String> toListOfStrings(String[] vals)
 	{
-		ArrayList<String> ret = new ArrayList<String>();
+		List<String> ret = new ArrayList<String>();
 		for (int x = 0; x < vals.length; x++)
 		{
 			ret.add(vals[x]);

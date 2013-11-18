@@ -178,7 +178,7 @@ public class DbUtils
 		
 		logger.debug("Running: " + file);
 		
-		ArrayList<String> content = FileUtils.getFileLines(file, " ");
+		List<String> content = FileUtils.getFileLines(file, " ");
 		String temp = "";
 		for (String line : content)
 		{				

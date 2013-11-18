@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,7 +120,7 @@ public class HttpUtils
 		}		
 	}
 
-	public static String httpGetWithReqProp(String urlStr, HashMap<String, String> reqProps) throws NetworkException
+	public static String httpGetWithReqProp(String urlStr, Map<String, String> reqProps) throws NetworkException
 	{
 		try
 		{

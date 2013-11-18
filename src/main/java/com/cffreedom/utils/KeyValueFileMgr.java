@@ -35,7 +35,7 @@ public class KeyValueFileMgr
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.KeyValueFileMgr");
 	
 	private String file = null;
-	TreeMap<String, Object> map = null;
+	private Map<String, Object> map = null;
 	private SecurityCipher cipher = null;
 	
 	public KeyValueFileMgr(String file)
@@ -179,12 +179,12 @@ public class KeyValueFileMgr
 	}
 	
 	@SuppressWarnings("unchecked")
-	private TreeMap<String, Object> loadFile(String infile) throws IOException, ClassNotFoundException
+	private Map<String, Object> loadFile(String infile) throws IOException, ClassNotFoundException
 	{
 		if (FileUtils.fileExists(infile) == true)
 		{
 			logger.debug("Loading: {}", infile);
-			return (TreeMap<String, Object>)FileUtils.readObjectFromFile(infile);
+			return (Map<String, Object>)FileUtils.readObjectFromFile(infile);
 		}
 		else
 		{

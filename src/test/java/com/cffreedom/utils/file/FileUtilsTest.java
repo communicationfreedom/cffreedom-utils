@@ -1,10 +1,11 @@
 package com.cffreedom.utils.file;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import junit.framework.Assert;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ public class FileUtilsTest
 	{
 		File file = new File("src/test/java/com/cffreedom/utils/file/test.txt");
 		String line = FileUtils.getLastLine(file.getAbsolutePath());
-		Assert.assertEquals("This is line 3", line);
+		assertEquals("This is line 3", line);
 	}
 	
 	@Test
@@ -23,10 +24,10 @@ public class FileUtilsTest
 	{
 		int linesToRead = 2;
 		File file = new File("src/test/java/com/cffreedom/utils/file/test.txt");
-		ArrayList<String> lines = FileUtils.getLastXLines(file.getAbsolutePath(), linesToRead);
-		Assert.assertEquals(linesToRead, lines.size());
-		Assert.assertEquals("This is line 3", lines.get(0));
-		Assert.assertEquals("This is line 2", lines.get(1));
+		List<String> lines = FileUtils.getLastXLines(file.getAbsolutePath(), linesToRead);
+		assertEquals(linesToRead, lines.size());
+		assertEquals("This is line 3", lines.get(0));
+		assertEquals("This is line 2", lines.get(1));
 	}
 	
 	@Test
@@ -34,9 +35,9 @@ public class FileUtilsTest
 	{
 		int linesToRead = 2;
 		File file = new File("src/test/java/com/cffreedom/utils/file/test.txt");
-		ArrayList<String> lines = FileUtils.getFirstXLines(file.getAbsolutePath(), linesToRead);
-		Assert.assertEquals(linesToRead, lines.size());
-		Assert.assertEquals("This is line 1", lines.get(0));
-		Assert.assertEquals("This is line 2", lines.get(1));
+		List<String> lines = FileUtils.getFirstXLines(file.getAbsolutePath(), linesToRead);
+		assertEquals(linesToRead, lines.size());
+		assertEquals("This is line 1", lines.get(0));
+		assertEquals("This is line 2", lines.get(1));
 	}
 }

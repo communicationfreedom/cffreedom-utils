@@ -4,7 +4,15 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.jar.*;
 
 import org.slf4j.Logger;
@@ -46,8 +54,7 @@ public class FileUtils
 	/**
 	 * Get the file extension
 	 * 
-	 * @param file
-	 *            File to get the extension for
+	 * @param file File to get the extension for
 	 * @return the file extension
 	 */
 	public static String getFileExtension(String file)
@@ -73,8 +80,7 @@ public class FileUtils
 	/**
 	 * Same thing as getFileName, but removes the extension
 	 * 
-	 * @param fullPath
-	 *            Full path of the file to get the file name for
+	 * @param fullPath Full path of the file to get the file name for
 	 * @return File name (minus the extension)
 	 */
 	public static String getFileNameWithoutExtension(String fullPath)
@@ -89,10 +95,8 @@ public class FileUtils
 	/**
 	 * Append a line to a file
 	 * 
-	 * @param line
-	 *            The text to append
-	 * @param file
-	 *            File to append to
+	 * @param line The text to append
+	 * @param file File to append to
 	 */
 	public static boolean appendLine(String line, String file)
 	{
@@ -188,23 +192,22 @@ public class FileUtils
 	/**
 	 * Get the contents of a file line by line into an ArrayList
 	 * 
-	 * @param file
-	 *            File to get contents of
+	 * @param file File to get contents of
 	 * @return ArrayList of lines in the file
 	 */
-	public static ArrayList<String> getFileLines(String file)
+	public static List<String> getFileLines(String file)
 	{
 		return getFileLines(file, null);
 	}
 
-	public static ArrayList<String> getFileLines(String file, String appendToLines)
+	public static List<String> getFileLines(String file, String appendToLines)
 	{
 		return getFileLines(file, appendToLines, null);
 	}
 
-	public static ArrayList<String> getFileLines(String file, String appendToLines, String prependToLines)
+	public static List<String> getFileLines(String file, String appendToLines, String prependToLines)
 	{
-		ArrayList<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<String>();
 
 		try
 		{
@@ -257,16 +260,12 @@ public class FileUtils
 	/**
 	 * Write the contents of an ArrayList to a file
 	 * 
-	 * @param file
-	 *            File to write to
-	 * @param lines
-	 *            ArrayList of strings to write
-	 * @param append
-	 *            True to append the lines to the file, false to write from the
-	 *            top
+	 * @param file File to write to
+	 * @param lines List of strings to write
+	 * @param append True to append the lines to the file, false to write from the top
 	 * @return true on success, false otherwise
 	 */
-	public static boolean writeLinesToFile(String file, ArrayList<String> lines, boolean append)
+	public static boolean writeLinesToFile(String file, List<String> lines, boolean append)
 	{
 		boolean success = false;
 		String term = SystemUtils.getNewline();
@@ -295,13 +294,11 @@ public class FileUtils
 	/**
 	 * rite the contents of an ArrayList to a file (does NOT append)
 	 * 
-	 * @param file
-	 *            File to write to
-	 * @param lines
-	 *            ArrayList of strings to write to the file
+	 * @param file File to write to
+	 * @param lines ArrayList of strings to write to the file
 	 * @return true on success, false otherwise
 	 */
-	public static boolean writeLinesToFile(String file, ArrayList<String> lines)
+	public static boolean writeLinesToFile(String file, List<String> lines)
 	{
 		return writeLinesToFile(file, lines, false);
 	}
@@ -379,10 +376,8 @@ public class FileUtils
 	 * Move a file from one location to another (Note: Must specify full src and
 	 * dest - including file for both)
 	 * 
-	 * @param source
-	 *            = File to move (full path - including file if necessary)
-	 * @param destination
-	 *            = New file (full path - including file if necessary)
+	 * @param source File to move (full path - including file if necessary)
+	 * @param destination New file (full path - including file if necessary)
 	 * @return true if the move works, false if it fails
 	 * @throws Exception
 	 */
@@ -417,10 +412,8 @@ public class FileUtils
 	/**
 	 * Copy a file from one location to another
 	 * 
-	 * @param source
-	 *            = File to copy
-	 * @param destination
-	 *            = Destination to copy the source file to
+	 * @param source File to copy
+	 * @param destination Destination to copy the source file to
 	 * @throws Exception
 	 */
 	public static boolean copyFile(String source, String destination)
@@ -465,10 +458,8 @@ public class FileUtils
 	/**
 	 * Does a byte by byte concatenation of 1 or more files
 	 * 
-	 * @param files
-	 *            Array of full file names to concatenate together
-	 * @param outputFile
-	 *            The file to output them to
+	 * @param files Array of full file names to concatenate together
+	 * @param outputFile The file to output them to
 	 * @return true on success
 	 */
 	public static boolean concatFiles(String[] files, String outputFile)
@@ -519,10 +510,8 @@ public class FileUtils
 	 * Copy an entire folder and it's contents from one location to another
 	 * (Note: Recurses dir to copy all items)
 	 * 
-	 * @param source
-	 *            = Folder to copy
-	 * @param destination
-	 *            = Destination to copy the source folder to
+	 * @param source Folder to copy
+	 * @param destination Destination to copy the source folder to
 	 * @throws Exception
 	 */
 	public static boolean copyFolder(String source, String destination)
@@ -545,8 +534,7 @@ public class FileUtils
 	/**
 	 * Tell if a file exists
 	 * 
-	 * @param file
-	 *            File to check existance of
+	 * @param file File to check existance of
 	 * @return true if it exists, false if not
 	 */
 	public static boolean fileExists(String file)
@@ -571,8 +559,7 @@ public class FileUtils
 	/**
 	 * Tell if a folder exists
 	 * 
-	 * @param folder
-	 *            Folder to check existance of
+	 * @param folder Folder to check existance of
 	 * @return true if it exists, false if not
 	 */
 	public static boolean folderExists(String folder)
@@ -597,8 +584,7 @@ public class FileUtils
 	/**
 	 * Get a directory listing of file names (file name only)
 	 * 
-	 * @param folder
-	 *            Folder to get listing for
+	 * @param folder Folder to get listing for
 	 * @return Array of file names in the folder
 	 * @throws Exception
 	 */
@@ -611,8 +597,7 @@ public class FileUtils
 	/**
 	 * Get a directory listing w/ full paths (folder and file)
 	 * 
-	 * @param folder
-	 *            Folder to get listing for
+	 * @param folder Folder to get listing for
 	 * @return Array of file paths in the folder
 	 * @throws Exception
 	 */
@@ -633,10 +618,8 @@ public class FileUtils
 	/**
 	 * Get a directory listing of file names (file name only)
 	 * 
-	 * @param folder
-	 *            Folder to get listing for
-	 * @param filter
-	 *            Filter for files (ex: .log)
+	 * @param folder Folder to get listing for
+	 * @param filter Filter for files (ex: .log)
 	 * @return Array of file names in the folder matching the filter
 	 * @throws Exception
 	 */
@@ -673,10 +656,8 @@ public class FileUtils
 	/**
 	 * Create a folder
 	 * 
-	 * @param path
-	 *            Full path name for the folder to create
-	 * @param overwrite
-	 *            If true -> delete folder if it already exists
+	 * @param path Full path name for the folder to create
+	 * @param overwrite If true -> delete folder if it already exists
 	 * @return True on success, false otherwise
 	 * @throws Exception
 	 */
@@ -709,8 +690,7 @@ public class FileUtils
 	/**
 	 * Create a folder
 	 * 
-	 * @param path
-	 *            Full path name for the folder to create
+	 * @param path Full path name for the folder to create
 	 * @return True on success, false otherwise
 	 * @throws Exception
 	 */
@@ -764,10 +744,8 @@ public class FileUtils
 	/**
 	 * Extract the contents of a zip/jar file to a directory
 	 * 
-	 * @param zipFile
-	 *            File to unzip
-	 * @param destDir
-	 *            Directory to unzip to
+	 * @param zipFile File to unzip
+	 * @param destDir Directory to unzip to
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
@@ -812,7 +790,7 @@ public class FileUtils
 		{
 			logger.debug("Replacing \""+find+"\" with \""+replace+"\" in: "+file);
 			BufferedReader br = new BufferedReader(new FileReader(file));
-			ArrayList<String> lines = new ArrayList<String>();
+			List<String> lines = new ArrayList<String>();
 			String line;
 
 			// Read the contents of the file
@@ -861,7 +839,7 @@ public class FileUtils
 		{
 			logger.debug("Stripping lines containing \"{}\" in: {}", find, file);
 			BufferedReader br = new BufferedReader(new FileReader(file));
-			ArrayList<String> lines = new ArrayList<String>();
+			List<String> lines = new ArrayList<String>();
 			String line;
 
 			// Read the contents of the file
@@ -937,10 +915,10 @@ public class FileUtils
 	 * @param lines Number of lines at the beginning to return
 	 * @return The first X lines in the file specified
 	 */
-	public static ArrayList<String> getFirstXLines(String file, int lines)
+	public static List<String> getFirstXLines(String file, int lines)
 	{
 		int counter = 0;
-		ArrayList<String> ret = new ArrayList<String>();
+		List<String> ret = new ArrayList<String>();
 
 		try
 		{
@@ -970,9 +948,9 @@ public class FileUtils
 	 * @param lines Number of lines at the end to return
 	 * @return The last X lines in the file specified
 	 */
-	public static ArrayList<String> getLastXLines(String file, int lines) throws IOException
+	public static List<String> getLastXLines(String file, int lines) throws IOException
 	{
-		ArrayList<String> ret = new ArrayList<String>();
+		List<String> ret = new ArrayList<String>();
 		boolean foundNewlineInBuffer = false;
 		RandomAccessFile raf = new RandomAccessFile(file, "r");
 		int bufferSize = 500;
@@ -1084,11 +1062,11 @@ public class FileUtils
 	 * @param trim Set to true to have each line trimmed before comparing
 	 * @return
 	 */
-	public static Map<String, ArrayList<Integer>> getDuplicateLines(String file, boolean caseSensative, boolean trim)
+	public static Map<String, List<Integer>> getDuplicateLines(String file, boolean caseSensative, boolean trim)
 	{
 		Map<String, Integer> unique = new HashMap<String, Integer>();
-		Map<String, ArrayList<Integer>> dups = new LinkedHashMap<String, ArrayList<Integer>>();
-		ArrayList<String> lines = getFileLines(file);
+		Map<String, List<Integer>> dups = new LinkedHashMap<String, List<Integer>>();
+		List<String> lines = getFileLines(file);
 		
 		Integer origLine = null;
 		int lineNo = 0;
@@ -1105,7 +1083,7 @@ public class FileUtils
 			}
 			else
 			{
-				ArrayList<Integer> lineNos = dups.get(line);
+				List<Integer> lineNos = dups.get(line);
 				if (lineNos == null)
 				{
 					lineNos = new ArrayList<Integer>();

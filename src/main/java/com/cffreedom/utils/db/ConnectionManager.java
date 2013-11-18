@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -60,8 +61,8 @@ public class ConnectionManager
 	public static final String DEFAULT_FILE = SystemUtils.getDirConfig() + SystemUtils.getPathSeparator() + PROP_FILE;
 	public static final boolean CREATE_FILE = false;
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.db.ConnectionManager");
-	private HashMap<String, DbConn> conns = new HashMap<String, DbConn>();
-	private Hashtable<String, BasicDataSource> pools = null;
+	private Map<String, DbConn> conns = new HashMap<String, DbConn>();
+	private Map<String, BasicDataSource> pools = null;
 	private String file = null;
 	private SecurityCipher cipher = new SecurityCipher("abasickeyyoushouldnotchange");
 	

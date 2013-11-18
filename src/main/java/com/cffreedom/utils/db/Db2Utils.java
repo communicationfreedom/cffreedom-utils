@@ -2,6 +2,7 @@ package com.cffreedom.utils.db;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -75,7 +76,7 @@ public class Db2Utils
 		}
 	}
 	
-	public static void runStatsOnTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn, boolean connectToAlias) throws ProcessingException
+	public static void runStatsOnTables(String fileDirectory, String name, List<String> tables, DbConn dbconn, boolean connectToAlias) throws ProcessingException
 	{
 		Map<String, String> nameSqlMap = new LinkedHashMap<String, String>();
 		for (String table : tables)
@@ -94,7 +95,7 @@ public class Db2Utils
 		}
 	}
 	
-	public static void reorgTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn, boolean connectToAlias) throws ProcessingException
+	public static void reorgTables(String fileDirectory, String name, List<String> tables, DbConn dbconn, boolean connectToAlias) throws ProcessingException
 	{
 		Map<String, String> nameSqlMap = new LinkedHashMap<String, String>();
 		for (String table : tables)
@@ -113,7 +114,7 @@ public class Db2Utils
 		}
 	}
 	
-	public static void truncateTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn, boolean connectToAlias) throws ProcessingException
+	public static void truncateTables(String fileDirectory, String name, List<String> tables, DbConn dbconn, boolean connectToAlias) throws ProcessingException
 	{
 		Map<String, String> nameSqlMap = new LinkedHashMap<String, String>();
 		for (String table : tables)
@@ -132,7 +133,7 @@ public class Db2Utils
 		}
 	}
 	
-	public static void grantAccessToTables(String fileDirectory, String name, ArrayList<String> tables, DbConn dbconn, boolean connectToAlias, String grantTo, boolean select, boolean insert, boolean update, boolean delete) throws ProcessingException
+	public static void grantAccessToTables(String fileDirectory, String name, List<String> tables, DbConn dbconn, boolean connectToAlias, String grantTo, boolean select, boolean insert, boolean update, boolean delete) throws ProcessingException
 	{
 		Map<String, String> nameSqlMap = new LinkedHashMap<String, String>();
 		for (String table : tables)
@@ -157,7 +158,7 @@ public class Db2Utils
 	private static void execCommands(String type, String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn, boolean connectToAlias) throws ProcessingException, ValidationException, InfrastructureException
 	{
 		int execRet = -1;
-		ArrayList<String> filesToDelete = new ArrayList<String>();
+		List<String> filesToDelete = new ArrayList<String>();
 		
 		if (
 			(type.equalsIgnoreCase(TYPE_EXPORT) == false) &&
@@ -192,7 +193,7 @@ public class Db2Utils
 		}
 		
 		logger.debug("Creating command file");
-		ArrayList<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<String>();
 		String connectTo = dbconn.getDb();
 		if ((connectToAlias == true) && (dbconn.getAlias() != null)) { connectTo = dbconn.getAlias(); }
 		lines.add("connect to "+connectTo+" user "+dbconn.getUser()+" using \""+dbconn.getPassword()+"\";");
@@ -258,7 +259,7 @@ public class Db2Utils
 		else
 		{
 			String stubFile = FileUtils.buildPath(fileDirectory, name + ".stub.cmd");
-			ArrayList<String> commands = new ArrayList<String>();
+			List<String> commands = new ArrayList<String>();
 			if ((dbconn.getProfileFile() != null) && (dbconn.getProfileFile().length() > 0))
 			{
 				commands.add(". " + dbconn.getProfileFile());  // ex: /dba/db2/cdXX/sqllib/db2profile
