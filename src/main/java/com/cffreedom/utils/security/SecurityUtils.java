@@ -1,5 +1,6 @@
 package com.cffreedom.utils.security;
 
+import com.cffreedom.exceptions.FileSystemException;
 import com.cffreedom.utils.file.FileUtils;
 
 /**
@@ -43,11 +44,11 @@ public class SecurityUtils
 	 * Use the crappy encryptDecrypt() function and save the value to a file
 	 * @param file File to save the pw to
 	 * @param password Password to encrypt
-	 * @return true on success
+	 * @throws FileSystemException 
 	 */
-	public static boolean savePasswordToFile(String file, String password)
+	public static void savePasswordToFile(String file, String password) throws FileSystemException
 	{
-		return FileUtils.writeStringToFile(file, encryptDecrypt(password), false);
+		FileUtils.writeStringToFile(file, encryptDecrypt(password), false);
 	}
 	
 	/**

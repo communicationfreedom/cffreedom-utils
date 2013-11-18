@@ -98,38 +98,32 @@ public class FileUtils
 	 * 
 	 * @param line The text to append
 	 * @param file File to append to
+	 * @throws FileSystemException 
 	 */
-	public static boolean appendLine(String line, String file)
+	public static void appendLine(String line, String file) throws FileSystemException
 	{
-		boolean success;
-
 		try
 		{
 			if (new File(file).exists() == false)
 			{
-				success = new File(file).createNewFile();
+				new File(file).createNewFile();
 			}
 
 			FileWriter fw = new FileWriter(file, true);
 			fw.write(line + SystemUtils.getNewline());
 			fw.flush();
 			fw.close();
-
-			success = true;
 		}
 		catch (Exception e)
 		{
-			success = false;
-			e.printStackTrace();
+			throw new FileSystemException(e);
 		}
-
-		return success;
 	}
 
-	public static boolean appendFile(String fileToAppend, String fileToAppendTo)
+	public static void appendFile(String fileToAppend, String fileToAppendTo) throws FileSystemException
 	{
 		String[] files = { fileToAppend };
-		return concatFiles(files, fileToAppendTo);
+		concatFiles(files, fileToAppendTo);
 	}
 
 	/**
@@ -237,25 +231,18 @@ public class FileUtils
 		return lines;
 	}
 
-	public static boolean writeStringToFile(String file, String content, boolean append)
+	public static void writeStringToFile(String file, String content, boolean append) throws FileSystemException
 	{
-		boolean success = false;
-
 		try
 		{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file, append));
 			bw.write(content);
 			bw.close();
-
-			success = true;
 		}
 		catch (Exception e)
 		{
-			success = false;
-			e.printStackTrace();
+			throw new FileSystemException(e);
 		}
-
-		return success;
 	}
 
 	/**
@@ -264,11 +251,10 @@ public class FileUtils
 	 * @param file File to write to
 	 * @param lines List of strings to write
 	 * @param append True to append the lines to the file, false to write from the top
-	 * @return true on success, false otherwise
+	 * @throws FileSystemException 
 	 */
-	public static boolean writeLinesToFile(String file, List<String> lines, boolean append)
+	public static void writeLinesToFile(String file, List<String> lines, boolean append) throws FileSystemException
 	{
-		boolean success = false;
 		String term = SystemUtils.getNewline();
 
 		try
@@ -280,16 +266,11 @@ public class FileUtils
 				bw.write((String) lines.get(i) + term);
 			}
 			bw.close();
-
-			success = true;
 		}
 		catch (Exception e)
 		{
-			success = false;
-			e.printStackTrace();
+			throw new FileSystemException(e);
 		}
-
-		return success;
 	}
 
 	/**
@@ -297,37 +278,30 @@ public class FileUtils
 	 * 
 	 * @param file File to write to
 	 * @param lines List of strings to write to the file
-	 * @return true on success, false otherwise
+	 * @throws FileSystemException 
 	 */
-	public static boolean writeLinesToFile(String file, List<String> lines)
+	public static void writeLinesToFile(String file, List<String> lines) throws FileSystemException
 	{
-		return writeLinesToFile(file, lines, false);
+		writeLinesToFile(file, lines, false);
 	}
 
-	public static boolean writeObjectToFile(String file, Object content)
+	public static void writeObjectToFile(String file, Object content) throws FileSystemException
 	{
-		return writeObjectToFile(file, content, false);
+		writeObjectToFile(file, content, false);
 	}
 
-	public static boolean writeObjectToFile(String file, Object content, boolean append)
+	public static void writeObjectToFile(String file, Object content, boolean append) throws FileSystemException
 	{
-		boolean success = false;
-
 		try
 		{
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
 			oos.writeObject(content);
 			oos.close();
-
-			success = true;
 		}
 		catch (Exception e)
 		{
-			success = false;
-			e.printStackTrace();
+			throw new FileSystemException(e);
 		}
-
-		return success;
 	}
 
 	public static Object readObjectFromFile(String file) throws FileNotFoundException, IOException, ClassNotFoundException
@@ -337,15 +311,6 @@ public class FileUtils
 		ois.close();
 		return ret;
 	}
-
-	/*
-	 * For some reason these functions aren't working public static boolean
-	 * renameFile(String source, String destination) throws Exception { return
-	 * moveFile(source, destination); }
-	 * 
-	 * public static boolean renameFolder(String source, String destination)
-	 * throws Exception { return moveFolder(source, destination); }
-	 */
 
 	public static boolean deleteFile(String file)
 	{
@@ -398,10 +363,8 @@ public class FileUtils
 	 * Move a directory from one location to another (Note: Just calls the
 	 * moveFile() function)
 	 * 
-	 * @param source
-	 *            = Folder to move
-	 * @param destination
-	 *            = New folder
+	 * @param source Folder to move
+	 * @param destination New folder
 	 * @return true if the move works, false if it failes
 	 * @throws Exception
 	 */
@@ -415,11 +378,10 @@ public class FileUtils
 	 * 
 	 * @param source File to copy
 	 * @param destination Destination to copy the source file to
-	 * @throws Exception
+	 * @throws FileSystemException 
 	 */
-	public static boolean copyFile(String source, String destination)
+	public static void copyFile(String source, String destination) throws FileSystemException
 	{
-		boolean success = false;
 		File src;
 		File dst;
 
@@ -428,7 +390,7 @@ public class FileUtils
 			logger.debug("Copying \"{}\" to \"{}\"", source, destination);
 			if (new File(destination).exists() == false)
 			{
-				success = new File(destination).createNewFile();
+				new File(destination).createNewFile();
 			}
 
 			src = new File(source);
@@ -444,16 +406,11 @@ public class FileUtils
 			}
 			fis.close();
 			fos.close();
-
-			success = true;
 		}
 		catch (Exception e)
 		{
-			success = false;
-			e.printStackTrace();
+			throw new FileSystemException(e);
 		}
-
-		return success;
 	}
 
 	/**
@@ -462,10 +419,10 @@ public class FileUtils
 	 * @param files Array of full file names to concatenate together
 	 * @param outputFile The file to output them to
 	 * @return true on success
+	 * @throws FileSystemException 
 	 */
-	public static boolean concatFiles(String[] files, String outputFile)
+	public static void concatFiles(String[] files, String outputFile) throws FileSystemException
 	{
-		boolean success = false;
 		File src;
 		File dst;
 
@@ -474,7 +431,7 @@ public class FileUtils
 			dst = new File(outputFile);
 			if (dst.exists() == false)
 			{
-				success = new File(outputFile).createNewFile();
+				new File(outputFile).createNewFile();
 			}
 			FileOutputStream fos = new FileOutputStream(dst);
 
@@ -495,16 +452,11 @@ public class FileUtils
 				fis.close();
 			}
 			fos.close();
-
-			success = true;
 		}
 		catch (Exception e)
 		{
-			success = false;
-			e.printStackTrace();
+			throw new FileSystemException(e);
 		}
-
-		return success;
 	}
 
 	/**
@@ -513,23 +465,18 @@ public class FileUtils
 	 * 
 	 * @param source Folder to copy
 	 * @param destination Destination to copy the source folder to
-	 * @throws Exception
+	 * @throws FileSystemException 
 	 */
-	public static boolean copyFolder(String source, String destination)
+	public static void copyFolder(String source, String destination) throws FileSystemException
 	{
-		boolean success = false;
 		try
 		{
 			org.apache.commons.io.FileUtils.copyDirectory(new File(source), new File(destination));
-			success = true;
 		}
 		catch (IOException e)
 		{
-			success = false;
-			e.printStackTrace();
+			throw new FileSystemException(e);
 		}
-
-		return success;
 	}
 
 	/**
@@ -776,15 +723,12 @@ public class FileUtils
 		jar.close();
 	}
 
-	public static boolean replaceInFile(String file, String find, String replace)
+	public static void replaceInFile(String file, String find, String replace) throws FileSystemException
 	{
-		boolean success = false;
-
 		File theFile = new File(file);
 		if (theFile.exists() == false)
 		{
-			logger.warn("The file does not exist: {}", file);
-			return false;
+			throw new FileSystemException("File does not exist: " + file);
 		}
 
 		try
@@ -802,7 +746,7 @@ public class FileUtils
 			br.close();
 
 			// Delete the file because we're going to replace it
-			success = theFile.delete();
+			theFile.delete();
 
 			// Now write the contents of the original file with the changes
 			// needed
@@ -812,28 +756,19 @@ public class FileUtils
 				bw.write(writeLine.replaceAll(find, replace) + SystemUtils.getNewline());
 			}
 			bw.close();
-
-			// Set success flag
-			success = true;
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
-			success = false;
+			throw new FileSystemException(e);
 		}
-
-		return success;
 	}
 
-	public static boolean stripLinesInFileContaining(String file, String find)
+	public static void stripLinesInFileContaining(String file, String find) throws FileSystemException
 	{
-		boolean success = false;
-
 		File theFile = new File(file);
 		if (theFile.exists() == false)
 		{
-			logger.warn("The file does not exist: {}", file);
-			return false;
+			throw new FileSystemException("File does not exist: " + file);
 		}
 
 		try
@@ -851,7 +786,7 @@ public class FileUtils
 			br.close();
 
 			// Delete the file because we're going to replace it
-			success = theFile.delete();
+			theFile.delete();
 
 			// Now write the contents of the original file with the changes
 			// needed
@@ -864,17 +799,11 @@ public class FileUtils
 				}
 			}
 			bw.close();
-
-			// Set success flag
-			success = true;
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
-			success = false;
+			throw new FileSystemException(e);
 		}
-
-		return success;
 	}
 
 	public static String getDateStampedFileName(String prefix, String suffix)

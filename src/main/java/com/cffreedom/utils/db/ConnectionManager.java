@@ -212,7 +212,7 @@ public class ConnectionManager
 		}
 	}
 	
-	private boolean save()
+	private boolean save() throws FileSystemException
 	{
 		if (this.file == null)
 		{
@@ -257,7 +257,8 @@ public class ConnectionManager
 				}
 			}
 			
-			return FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
+			FileUtils.writeLinesToFile(this.getConnectionFile(), lines);
+			return true;
 		}
 	}
 	
@@ -422,7 +423,7 @@ public class ConnectionManager
 		return conn;
 	}
 	
-	public boolean addConnection(String key, DbConn dbconn)
+	public boolean addConnection(String key, DbConn dbconn) throws FileSystemException
 	{
 		if (this.conns.containsKey(key) == false)
 		{
@@ -438,14 +439,14 @@ public class ConnectionManager
 		}
 	}
 	
-	public boolean updateConnection(String key, DbConn dbconn)
+	public boolean updateConnection(String key, DbConn dbconn) throws FileSystemException
 	{
 		logger.debug("Updating: {}", key);
 		deleteConnection(key);
 		return addConnection(key, dbconn);
 	}
 	
-	public boolean deleteConnection(String key)
+	public boolean deleteConnection(String key) throws FileSystemException
 	{
 		if (this.conns.containsKey(key) == true)
 		{

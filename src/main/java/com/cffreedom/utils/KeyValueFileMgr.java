@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cffreedom.exceptions.FileSystemException;
 import com.cffreedom.utils.file.FileUtils;
 import com.cffreedom.utils.security.SecurityCipher;
 
@@ -109,7 +110,7 @@ public class KeyValueFileMgr
 		return val;
 	}
 		
-	public boolean addEntry(String key, Object value)
+	public boolean addEntry(String key, Object value) throws FileSystemException
 	{
 		if (this.keyExists(key) == false)
 		{
@@ -123,7 +124,7 @@ public class KeyValueFileMgr
 		}
 	}
 	
-	public boolean addEntry(String key, String value)
+	public boolean addEntry(String key, String value) throws FileSystemException
 	{
 		if (this.encryptVals() == true)
 		{
@@ -132,7 +133,7 @@ public class KeyValueFileMgr
 		return this.addEntry(key, (Object)value);
 	}
 	
-	public boolean updateEntry(String key, Object value)
+	public boolean updateEntry(String key, Object value) throws FileSystemException
 	{
 		if (this.keyExists(key) == true)
 		{
@@ -145,7 +146,7 @@ public class KeyValueFileMgr
 		}
 	}
 	
-	public boolean updateEntry(String key, String value)
+	public boolean updateEntry(String key, String value) throws FileSystemException
 	{
 		if (this.keyExists(key) == true)
 		{
@@ -158,7 +159,7 @@ public class KeyValueFileMgr
 		}
 	}
 	
-	public boolean removeEntry(String key)
+	public boolean removeEntry(String key) throws FileSystemException
 	{
 		if (this.keyExists(key) == true)
 		{
@@ -172,7 +173,7 @@ public class KeyValueFileMgr
 		}
 	}
 	
-	private void saveFile()
+	private void saveFile() throws FileSystemException
 	{
 		logger.debug("Saving to file: {}", this.file);
 		FileUtils.writeObjectToFile(this.file, this.map);

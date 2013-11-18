@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.cffreedom.beans.DbConn;
 import com.cffreedom.beans.DbDriver;
 import com.cffreedom.beans.DbType;
+import com.cffreedom.exceptions.FileSystemException;
 import com.cffreedom.exceptions.InfrastructureException;
 import com.cffreedom.exceptions.ProcessingException;
 import com.cffreedom.exceptions.ValidationException;
@@ -56,7 +57,7 @@ public class Db2Utils
 		{
 			execCommands(TYPE_EXPORT, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
-		catch (ProcessingException | ValidationException | InfrastructureException e)
+		catch (ProcessingException | ValidationException | InfrastructureException | FileSystemException e)
 		{
 			logger.error("Error during processing: " + e.getMessage(), e);
 			throw new ProcessingException(e);
@@ -69,7 +70,7 @@ public class Db2Utils
 		{
 			execCommands(TYPE_IMPORT, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
-		catch (ProcessingException | ValidationException | InfrastructureException e)
+		catch (ProcessingException | ValidationException | InfrastructureException | FileSystemException e)
 		{
 			logger.error("Error during processing: " + e.getMessage(), e);
 			throw new ProcessingException(e);
@@ -88,7 +89,7 @@ public class Db2Utils
 		{
 			execCommands(TYPE_RUNSTATS, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
-		catch (ProcessingException | ValidationException | InfrastructureException e)
+		catch (ProcessingException | ValidationException | InfrastructureException | FileSystemException e)
 		{
 			logger.error("Error during processing: " + e.getMessage(), e);
 			throw new ProcessingException(e);
@@ -107,7 +108,7 @@ public class Db2Utils
 		{
 			execCommands(TYPE_REORG, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
-		catch (ProcessingException | ValidationException | InfrastructureException e)
+		catch (ProcessingException | ValidationException | InfrastructureException | FileSystemException e)
 		{
 			logger.error("Error during processing: " + e.getMessage(), e);
 			throw new ProcessingException(e);
@@ -126,7 +127,7 @@ public class Db2Utils
 		{
 			execCommands(TYPE_TRUNCATE, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
-		catch (ProcessingException | ValidationException | InfrastructureException e)
+		catch (ProcessingException | ValidationException | InfrastructureException | FileSystemException e)
 		{
 			logger.error("Error during processing: " + e.getMessage(), e);
 			throw new ProcessingException(e);
@@ -148,14 +149,14 @@ public class Db2Utils
 		{
 			execCommands(TYPE_RAW, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
-		catch (ProcessingException | ValidationException | InfrastructureException e)
+		catch (ProcessingException | ValidationException | InfrastructureException | FileSystemException e)
 		{
 			logger.error("Error during processing: " + e.getMessage(), e);
 			throw new ProcessingException(e);
 		}
 	}
 	
-	private static void execCommands(String type, String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn, boolean connectToAlias) throws ProcessingException, ValidationException, InfrastructureException
+	private static void execCommands(String type, String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn, boolean connectToAlias) throws ProcessingException, ValidationException, InfrastructureException, FileSystemException
 	{
 		int execRet = -1;
 		List<String> filesToDelete = new ArrayList<String>();

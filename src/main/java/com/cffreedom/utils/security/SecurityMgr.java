@@ -145,7 +145,7 @@ public class SecurityMgr
 		}
 	}
 	
-	private boolean save()
+	private boolean save() throws FileSystemException
 	{
 		if (this.file == null)
 		{
@@ -185,7 +185,8 @@ public class SecurityMgr
 				}
 			}
 			
-			return FileUtils.writeLinesToFile(this.getFile(), lines);
+			FileUtils.writeLinesToFile(this.getFile(), lines);
+			return true;
 		}
 	}
 	
@@ -264,7 +265,7 @@ public class SecurityMgr
 		}
 	}
 	
-	public boolean addEntry(String key, String username, String password, String note)
+	public boolean addEntry(String key, String username, String password, String note) throws FileSystemException
 	{
 		if (this.entries.containsKey(key) == false)
 		{
@@ -279,13 +280,13 @@ public class SecurityMgr
 		}
 	}
 	
-	public boolean updateEntry(String key, String username, String password, String note)
+	public boolean updateEntry(String key, String username, String password, String note) throws FileSystemException
 	{
 		deleteEntry(key);
 		return addEntry(key, username, password, note);
 	}
 	
-	public boolean deleteEntry(String key)
+	public boolean deleteEntry(String key) throws FileSystemException
 	{
 		if (this.entries.containsKey(key) == true)
 		{

@@ -29,6 +29,7 @@ import com.cffreedom.beans.DbConn;
 import com.cffreedom.beans.DbDriver;
 import com.cffreedom.beans.DbType;
 import com.cffreedom.exceptions.DbException;
+import com.cffreedom.exceptions.FileSystemException;
 import com.cffreedom.exceptions.InfrastructureException;
 import com.cffreedom.utils.Utils;
 import com.cffreedom.utils.file.FileUtils;
@@ -276,21 +277,13 @@ public class DbUtils
 			{
 				ResultSet rs = stmt.getResultSet();
 				outputResultSet(rs, outputTo, format);
-				try { rs.close(); } catch (Exception e) {}
+				cleanup(null, null, rs);
 			}
 			
 			stmt.close();
 			success = true;
 		}
-		catch (SQLException e)
-		{
-			success = false;
-		}
-		catch (IOException e)
-		{
-			success = false;
-		}
-		catch (ClassNotFoundException e)
+		catch (SQLException | IOException | ClassNotFoundException | FileSystemException e)
 		{
 			success = false;
 		}
@@ -331,8 +324,9 @@ public class DbUtils
 	 * @throws SQLException
 	 * @throws IOException
 	 * @throws ClassNotFoundException
+	 * @throws FileSystemException 
 	 */
-	public static void outputResultSet(ResultSet rs, String file, FORMAT format) throws SQLException, IOException, ClassNotFoundException
+	public static void outputResultSet(ResultSet rs, String file, FORMAT format) throws SQLException, IOException, ClassNotFoundException, FileSystemException
 	{		
 		if (rs != null)
 		{

@@ -5,6 +5,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cffreedom.exceptions.FileSystemException;
 import com.cffreedom.utils.file.FileUtils;
 import com.cffreedom.utils.file.FilterNameEnd;
 
@@ -28,7 +29,7 @@ public class AudioUtils
 {
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.AudioUtils");
 	
-	public static int batchMp3Append(String srcDir, String appendFile, String outputDir) {return batchMp3Append(srcDir, appendFile, outputDir, "");}
+	public static int batchMp3Append(String srcDir, String appendFile, String outputDir) throws FileSystemException {return batchMp3Append(srcDir, appendFile, outputDir, "");}
 	/**
 	 * Append appendFile to all the mp3 files in srcDir one at a time, and output the 
 	 * resulting files to outputDir
@@ -37,8 +38,9 @@ public class AudioUtils
 	 * @param outputDir Directory to put joined files
 	 * @param joinedFileNamePrefix A string to prepend to the joined filename
 	 * @return The number of files joined
+	 * @throws FileSystemException 
 	 */
-	public static int batchMp3Append(String srcDir, String appendFile, String outputDir, String joinedFileNamePrefix)
+	public static int batchMp3Append(String srcDir, String appendFile, String outputDir, String joinedFileNamePrefix) throws FileSystemException
 	{
 		int count = 0;
 		File dir = new File(srcDir);
@@ -64,7 +66,7 @@ public class AudioUtils
 	}
 	
 	
-	public static int batchMp3Prepend(String srcDir, String prependFile, String outputDir) { return batchMp3Prepend(srcDir, prependFile, outputDir, ""); } 
+	public static int batchMp3Prepend(String srcDir, String prependFile, String outputDir) throws FileSystemException { return batchMp3Prepend(srcDir, prependFile, outputDir, ""); } 
 	
 	/**
 	 * Prepend prependFile to all the mp3 files in srcDir one at a time, and output the 
@@ -74,8 +76,9 @@ public class AudioUtils
 	 * @param outputDir Directory to put joined files
 	 * @param joinedFileNamePrefix A string to prepend to the joined filename
 	 * @return The number of files joined
+	 * @throws FileSystemException 
 	 */
-	public static int batchMp3Prepend(String srcDir, String prependFile, String outputDir, String joinedFileNamePrefix)
+	public static int batchMp3Prepend(String srcDir, String prependFile, String outputDir, String joinedFileNamePrefix) throws FileSystemException
 	{
 		int count = 0;
 		File dir = new File(srcDir);
