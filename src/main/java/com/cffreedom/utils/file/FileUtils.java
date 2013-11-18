@@ -13,7 +13,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,10 +191,10 @@ public class FileUtils
 	}
 
 	/**
-	 * Get the contents of a file line by line into an ArrayList
+	 * Get the contents of a file line by line into an List
 	 * 
 	 * @param file File to get contents of
-	 * @return ArrayList of lines in the file
+	 * @return List of lines in the file
 	 */
 	public static List<String> getFileLines(String file)
 	{
@@ -258,7 +259,7 @@ public class FileUtils
 	}
 
 	/**
-	 * Write the contents of an ArrayList to a file
+	 * Write the contents of a List to a file
 	 * 
 	 * @param file File to write to
 	 * @param lines List of strings to write
@@ -292,10 +293,10 @@ public class FileUtils
 	}
 
 	/**
-	 * rite the contents of an ArrayList to a file (does NOT append)
+	 * Write the contents of a List to a file (does NOT append)
 	 * 
 	 * @param file File to write to
-	 * @param lines ArrayList of strings to write to the file
+	 * @param lines List of strings to write to the file
 	 * @return true on success, false otherwise
 	 */
 	public static boolean writeLinesToFile(String file, List<String> lines)

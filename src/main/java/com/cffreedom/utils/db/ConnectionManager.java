@@ -7,9 +7,9 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -221,7 +221,7 @@ public class ConnectionManager
 		}
 		else
 		{
-			ArrayList<String> lines = new ArrayList<String>();
+			List<String> lines = new ArrayList<String>();
 			logger.debug("Saving to file {}", this.getConnectionFile());
 			
 			lines.add("#--------------------------------------------------------------------------------------");
