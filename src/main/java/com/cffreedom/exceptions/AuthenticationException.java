@@ -16,21 +16,21 @@ package com.cffreedom.exceptions;
  * Changes:
  * 2013-11-21	markjacobsen.net 	Created
  */
-public class SecurityException extends Exception
+public class AuthenticationException extends Exception
 {
 	private static final long serialVersionUID = 1L;
 
-	public SecurityException(Throwable exception)
+	public AuthenticationException(Throwable exception)
 	{
 		super(exception);
 	}
 	
-	public SecurityException(String message, Throwable exception)
+	public AuthenticationException(String message, Throwable exception)
 	{
 		super(message, exception);
 	}
 	
-	public SecurityException(String message)
+	public AuthenticationException(String message)
 	{
 		super(message);
 	}
