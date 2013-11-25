@@ -1,6 +1,9 @@
 package com.cffreedom.utils.security;
 
+import java.security.NoSuchAlgorithmException;
+
 import com.cffreedom.exceptions.FileSystemException;
+import com.cffreedom.utils.Convert;
 import com.cffreedom.utils.file.FileUtils;
 
 /**
@@ -58,5 +61,28 @@ public class SecurityUtils
 	public static String getPasswordFromFile(String file)
 	{
 		return encryptDecrypt(FileUtils.getFileContents(file));
+	}
+	
+	/**
+	 * Not very secure but can do the job
+	 * @param password
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 */
+	public static String encryptMD5(String password) throws NoSuchAlgorithmException
+	{
+		return Convert.toMd5(password);
+	}
+	
+	/**
+	 * Return very secure 1 way hash. Might also want to consider BCrypt
+	 * @param password
+	 * @param salt
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 */
+	public static String encryptSHA512(String password, String salt) throws NoSuchAlgorithmException
+	{
+		return Convert.toSHA512(password, salt);
 	}
 }

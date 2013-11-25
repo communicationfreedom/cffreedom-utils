@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
  * 2013-10-06 	markjacobsen.net 	Added toCents()
  * 2013-10-07 	MarkJacobsen.net	Added toBigDecimal()
  * 2013-11-18 	MarkJacobsen.net 	Changed toArrayListOfStrings() to toListOfStrings()
+ * 2013-11-24 	MarkJacobsen.net	Added toSHA512()
  */
 public class Convert
 {
@@ -56,6 +57,19 @@ public class Convert
 	public static String toBase64(String val)
 	{
 		return new String(Base64.encodeBase64(val.getBytes()));
+	}
+	
+	public static String toSHA512(String val, String salt) throws NoSuchAlgorithmException
+	{
+	    MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.update(salt.getBytes());
+        byte[] bytes = md.digest(val.getBytes());
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i< bytes.length ;i++)
+        {
+            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
 	}
 
 	public static String toMd5(String val) throws NoSuchAlgorithmException
