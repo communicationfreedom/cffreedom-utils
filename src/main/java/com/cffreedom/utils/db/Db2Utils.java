@@ -1,5 +1,8 @@
 package com.cffreedom.utils.db;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,6 +38,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-09-01 	markjacobsen.net 	Created
  * 2013-10-01	MarkJacobsen.net 	Added connectToAlias option necessary for catalog entries on remote servers
  * 2013-10-17 	MarkJacobsen.net 	Improvements for when running on windows vs *nux
+ * 2013-11-26 	MarkJacobsen.net 	Added runRawSql() and resetIdentities()
  */
 public class Db2Utils
 {
@@ -64,11 +68,88 @@ public class Db2Utils
 		}
 	}
 	
+	/**
+	 * Given a Map with key=table and value=column, reset the IDENTITY pointer to MAX(column)+1 on table
+	 * @param fileDirectory
+	 * @param name
+	 * @param tableColumnMap
+	 * @param dbconn
+	 * @param connectToAlias
+	 * @throws ProcessingException
+	 */
+	public static void resetIdentities(String fileDirectory, String name, Map<String, String> tableColumnMap, DbConn dbconn, boolean connectToAlias) throws ProcessingException
+	{
+		try
+		{
+			StringBuffer sb = new StringBuffer();
+			int counter = 0;
+			for (String table : tableColumnMap.keySet())
+			{
+				counter++;
+				String column = tableColumnMap.get(table);
+				sb.append("SELECT 'ALTER TABLE " + table + " ALTER COLUMN " + column + " RESTART WITH ' || TRIM(CHAR(MAX(COALESCE(" + column + ", 0)) + 1)) AS SQL_X FROM " + table + " ");
+				if (counter < tableColumnMap.size())
+				{
+					sb.append("UNION ");
+				}
+			}
+			
+			String url = DbUtils.getUrl(dbconn.getType(), dbconn.getHost(), dbconn.getDb(), dbconn.getPort());
+			Connection conn = DbUtils.getConnection(dbconn.getDriver(), url, dbconn.getUser(), dbconn.getPassword());
+			PreparedStatement stmt = conn.prepareStatement(sb.toString());
+			ResultSet rs = stmt.executeQuery();
+			
+			ArrayList<String> alterSql = new ArrayList<String>();
+			while (rs.next() == true)
+			{
+				alterSql.add(rs.getString("SQL_X"));
+				logger.debug(alterSql.get(alterSql.size() - 1));
+			}
+			
+			runRawSql(fileDirectory, name, alterSql, dbconn, connectToAlias);
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getClass().getSimpleName() + " during processing: " + e.getMessage(), e);
+			throw new ProcessingException(e);
+		}
+	}
+	
 	public static void importFromFile(String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn, boolean connectToAlias) throws ProcessingException
 	{
 		try
 		{
 			execCommands(TYPE_IMPORT, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
+		}
+		catch (ProcessingException | ValidationException | InfrastructureException | FileSystemException e)
+		{
+			logger.error("Error during processing: " + e.getMessage(), e);
+			throw new ProcessingException(e);
+		}
+	}
+	
+	/**
+	 * Run the SQL statements in the sql ArrayList
+	 * @param fileDirectory
+	 * @param name
+	 * @param sql
+	 * @param dbconn
+	 * @param connectToAlias
+	 * @throws ProcessingException
+	 */
+	public static void runRawSql(String fileDirectory, String name, ArrayList<String> sql, DbConn dbconn, boolean connectToAlias) throws ProcessingException
+	{
+		Map<String, String> nameSqlMap = new LinkedHashMap<String, String>(); // LinkedHashMap to maintain order
+		int stmtCnt = 0;
+		for (String curSql : sql)
+		{
+			stmtCnt++;
+			nameSqlMap.put("stmt-" + stmtCnt, curSql);
+		}
+		
+		try
+		{
+			execCommands(TYPE_RAW, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
 		}
 		catch (ProcessingException | ValidationException | InfrastructureException | FileSystemException e)
 		{
@@ -199,11 +280,11 @@ public class Db2Utils
 		if ((connectToAlias == true) && (dbconn.getAlias() != null)) { connectTo = dbconn.getAlias(); }
 		lines.add("connect to "+connectTo+" user "+dbconn.getUser()+" using \""+dbconn.getPassword()+"\";");
 		lines.add("");
-		for (String curName : nameSqlMap.keySet())
+		for (String mapKey : nameSqlMap.keySet())
 		{
-			String sql = nameSqlMap.get(curName);
-			String dataFileName = FileUtils.buildPath(fileDirectory, name + ".data." + curName + ".ixf");
-			String dataLogFileName = FileUtils.buildPath(fileDirectory, name + ".data." + curName + "." + type + ".log");
+			String mapValue = nameSqlMap.get(mapKey);
+			String dataFileName = FileUtils.buildPath(fileDirectory, name + ".data." + mapKey + ".ixf");
+			String dataLogFileName = FileUtils.buildPath(fileDirectory, name + ".data." + mapKey + "." + type + ".log");
 			
 			if (type.equalsIgnoreCase(TYPE_EXPORT) == true)
 			{
@@ -228,18 +309,18 @@ public class Db2Utils
 			}
 			
 			if (type.equalsIgnoreCase(TYPE_EXPORT) == true) {
-				lines.add("export to "+dataFileName+" of ixf messages "+dataLogFileName+" "+sql+";");
+				lines.add("export to "+dataFileName+" of ixf messages "+dataLogFileName+" "+mapValue+";");
 			} else if (type.equalsIgnoreCase(TYPE_IMPORT) == true) {
-				lines.add("import from "+dataFileName+" of ixf commitcount 20000 messages "+dataLogFileName+" "+sql+";");
+				lines.add("import from "+dataFileName+" of ixf commitcount 20000 messages "+dataLogFileName+" "+mapValue+";");
 			} else if (type.equalsIgnoreCase(TYPE_RUNSTATS) == true) {
-				lines.add("RUNSTATS ON TABLE "+curName+" ON KEY COLUMNS WITH DISTRIBUTION ON ALL COLUMNS AND INDEX ALL ALLOW READ ACCESS;");
+				lines.add("RUNSTATS ON TABLE "+mapKey+" ON KEY COLUMNS WITH DISTRIBUTION ON ALL COLUMNS AND INDEX ALL ALLOW READ ACCESS;");
 			} else if (type.equalsIgnoreCase(TYPE_REORG) == true) {
-				lines.add("REORG TABLE "+curName+" ALLOW READ ACCESS;");
+				lines.add("REORG TABLE "+mapKey+" ALLOW READ ACCESS;");
 			} else if (type.equalsIgnoreCase(TYPE_TRUNCATE) == true) {
-				lines.add("TRUNCATE TABLE "+curName+" IMMEDIATE;");
+				lines.add("TRUNCATE TABLE "+mapKey+" IMMEDIATE;");
 				lines.add("COMMIT;");
 			} else if (type.equalsIgnoreCase(TYPE_RAW) == true) {
-				lines.add(sql);
+				lines.add(mapValue+";");
 			}
 			lastDataLogFileName = dataLogFileName;
 			
