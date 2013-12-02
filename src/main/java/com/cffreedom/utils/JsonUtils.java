@@ -17,15 +17,17 @@ import org.json.simple.parser.ParseException;
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
  * 3) Linking to: http://visit.markjacobsen.net
+ * 
+ * Changes:
+ * 2013-12-01 	MarkJacobsen.net 	Added getJsonObjectBooleanVal()
  */
 public class JsonUtils
 {
-	public static JSONObject getJsonObject(String jsonText)
-			throws ParseException
+	public static JSONObject getJsonObject(String jsonText)	throws ParseException
 	{
 		JSONParser parser = new JSONParser();
 		Object obj = parser.parse(jsonText);
-		JSONObject jsonObj = (JSONObject) obj;
+		JSONObject jsonObj = (JSONObject)obj;
 		return jsonObj;
 	}
 
@@ -33,28 +35,32 @@ public class JsonUtils
 	{
 		JSONParser parser = new JSONParser();
 		Object obj = parser.parse(jsonText);
-		JSONArray jsonArray = (JSONArray) obj;
+		JSONArray jsonArray = (JSONArray)obj;
 		return jsonArray;
 	}
 
 	public static JSONObject getJsonObject(JSONObject jsonObj, String key)
 	{
-		return (JSONObject) jsonObj.get(key);
+		return (JSONObject)jsonObj.get(key);
 	}
 
 	public static JSONArray getJsonArray(JSONObject jsonObj, String key)
 	{
-		return (JSONArray) jsonObj.get(key);
+		return (JSONArray)jsonObj.get(key);
 	}
 
 	public static String getJsonObjectStringVal(JSONObject jsonObj, String key)
 	{
-		return (String) jsonObj.get(key);
+		return (String)jsonObj.get(key);
 	}
 
 	public static Long getJsonObjectLongVal(JSONObject jsonObj, String key)
 	{
-		
 		return (Long)jsonObj.get(key);
+	}
+	
+	public static boolean getJsonObjectBooleanVal(JSONObject jsonObj, String key)
+	{
+		return (boolean)jsonObj.get(key);
 	}
 }
