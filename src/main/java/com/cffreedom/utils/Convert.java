@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * 2013-10-07 	MarkJacobsen.net	Added toBigDecimal()
  * 2013-11-18 	MarkJacobsen.net 	Changed toArrayListOfStrings() to toListOfStrings()
  * 2013-11-24 	MarkJacobsen.net	Added toSHA512()
+ * 2013-12-01	MarkJacobsen.net	Additional toBigDecimal() converters
  */
 public class Convert
 {
@@ -437,6 +438,26 @@ public class Convert
     public static BigDecimal toBigDecimal(String val)
     {
     	return new BigDecimal(val);
+    }
+    
+    public static BigDecimal toBigDecimal(int val)
+    {
+    	return new BigDecimal(val);
+    }
+    
+    public static BigDecimal toBigDecimal(long val)
+    {
+    	return new BigDecimal(val);
+    }
+    
+    public static BigDecimal toBigDecimal(double val)
+    {
+    	return BigDecimal.valueOf(val);
+    }
+    
+    public static BigDecimal toBigDecimalFromCents(long cents)
+    {
+    	return toBigDecimal(cents).divide(toBigDecimal(100));
     }
     
     public static BigInteger toBigInteger(long val)
