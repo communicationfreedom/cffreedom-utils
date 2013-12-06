@@ -64,7 +64,7 @@ public class HttpUtilsTest
 		url = "http://www.somesite.com/?this=that&that=theOtherThing";
 		qs = HttpUtils.getQueryString(url);
 		assertEquals("this=that&that=theOtherThing", qs);
-		
+				
 		url = "http://www.somesite.com/page.txt?";
 		qs = HttpUtils.getQueryString(url);
 		assertEquals("", qs);
@@ -78,5 +78,17 @@ public class HttpUtilsTest
 		assertEquals(1, vals.size());
 		assertEquals("this", vals.get(0).getCode());
 		assertEquals("that", vals.get(0).getValue());
+		
+		url = "http://www.somesite.com/test.cfm?this= that ";
+		vals = HttpUtils.getQueryStringValues(url);
+		assertEquals(1, vals.size());
+		assertEquals("this", vals.get(0).getCode());
+		assertEquals("that", vals.get(0).getValue());
+		
+		url = "http://www.somesite.com/test.cfm?this=that=joe";
+		vals = HttpUtils.getQueryStringValues(url);
+		assertEquals(1, vals.size());
+		assertEquals("this", vals.get(0).getCode());
+		assertEquals("that=joe", vals.get(0).getValue());
 	}
 }

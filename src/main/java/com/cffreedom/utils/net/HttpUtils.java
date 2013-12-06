@@ -49,6 +49,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-07-04 	markjacobsen.net 	httpGetResponse() is now httpGet()
  * 2013-07-06 	markjacobsen.net 	Using slf4j
  * 2013-10-07 	MarkJacobsen.net	Added getParamAsInt()
+ * 2013-12-06 	MarkJacobsen.net 	Added getProtocol(), getDomain(), getScript(), getQueryString(), and getQueryStringValues()
  */
 public class HttpUtils
 {
@@ -439,13 +440,14 @@ public class HttpUtils
 			{
 				Container val = null;
 				String[] pair = pairs[x].split("=");
+				String key = pair[0].trim();
 				if (pair.length == 1)
 				{
-					val = new Container(pair[0], null);
+					val = new Container(key, null);
 				}
 				else if (pair.length == 2)
 				{
-					val = new Container(pair[0], pair[1]);
+					val = new Container(key, pair[1].trim());
 				}
 				else if (pair.length > 2)
 				{
@@ -454,7 +456,7 @@ public class HttpUtils
 					{
 						tmp += pair[y] + "=";
 					}
-					val = new Container(pair[0], tmp.substring(0, tmp.length() - 1));
+					val = new Container(key, tmp.substring(0, tmp.length() - 1).trim());
 				}
 				vals.add(val);
 			}
