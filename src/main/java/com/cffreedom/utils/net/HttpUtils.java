@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cffreedom.beans.Container;
 import com.cffreedom.beans.EmailMessage;
 import com.cffreedom.beans.Response;
 import com.cffreedom.exceptions.GeneralException;
@@ -350,5 +353,113 @@ public class HttpUtils
 		{
 			throw new ValidationException("Unable to get int value for " + param, e);
 		}
+	}
+	
+	/**
+	 * Given a URL, return the protocol (ex: http)
+	 * @param url
+	 * @return
+	 */
+	public static String getProtocol(String url)
+	{
+		return url.split(":")[0].toLowerCase();
+	}
+	
+	/**
+	 * Given a URL, return the domain name
+	 * @param url
+	 * @return
+	 */
+	public static String getDomain(String url)
+	{
+		String protocol = getProtocol(url);
+		url = url.substring(protocol.length() + 3); // + 3 to get rid of ://
+		return url.split("\\/")[0];
+	}
+	
+	/**
+	 * Given a URL, return only the script (ex: /some/page.txt)
+	 * @param url
+	 * @return
+	 */
+	public static String getScript(String url)
+	{
+		String protocol = getProtocol(url);
+		String domain = getDomain(url);
+		String qs = getQueryString(url);
+		
+		url = url.replace(protocol + "://" + domain, "");
+		
+		if (qs.length() > 0)
+		{
+			url = url.replace("?" + qs, "");
+		}
+		else if (url.substring(url.length() - 1).equalsIgnoreCase("?") == true)
+		{
+			url = url.substring(0, url.length() - 1);
+		}
+		
+		return url;
+	}
+	
+	/**
+	 * Given a URL, return the query string (i.e. everything after the ?)
+	 * @param url URL to extract query string from
+	 * @return Query String, or zero length string if none
+	 */
+	public static String getQueryString(String url)
+	{
+		int start = url.indexOf("?");
+		if (start >= 0)
+		{
+			return url.substring(start+1);
+		}
+		else
+		{
+			return "";
+		}
+	}
+	
+	/**
+	 * Given a URL, strip out the query string (assuming the value passed is a query string
+	 * if one is not pulled out), and return a List of the key value pairs in Container objects
+	 * @param url
+	 * @return
+	 */
+	public static List<Container> getQueryStringValues(String url)
+	{
+		List<Container> vals = new ArrayList<Container>();
+		String queryStr = getQueryString(url);
+		if (queryStr.length() == 0) { queryStr = url; }
+		
+		String[] pairs = queryStr.split("&");
+		for (int x = 0; x < pairs.length; x++)
+		{
+			if (pairs[x].length() > 0)
+			{
+				Container val = null;
+				String[] pair = pairs[x].split("=");
+				if (pair.length == 1)
+				{
+					val = new Container(pair[0], null);
+				}
+				else if (pair.length == 2)
+				{
+					val = new Container(pair[0], pair[1]);
+				}
+				else if (pair.length > 2)
+				{
+					String tmp = "";
+					for (int y = 1; y < pair.length; y++)
+					{
+						tmp += pair[y] + "=";
+					}
+					val = new Container(pair[0], tmp.substring(0, tmp.length() - 1));
+				}
+				vals.add(val);
+			}
+		}
+		
+		return vals;
 	}
 }
