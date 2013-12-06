@@ -1,7 +1,14 @@
 package com.cffreedom.utils;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -62,5 +69,22 @@ public class JsonUtils
 	public static boolean getJsonObjectBooleanVal(JSONObject jsonObj, String key)
 	{
 		return (boolean)jsonObj.get(key);
+	}
+	
+	public static String getJsonString(String key, String value)
+	{		
+		Map obj = new HashMap();
+		obj.put(key, value);
+		return getJsonString(obj);
+	}
+	
+	public static String getJsonString(Map obj)
+	{
+		return JSONValue.toJSONString(obj);
+	}
+	
+	public static String getJsonString(List obj)
+	{
+		return JSONValue.toJSONString(obj);
 	}
 }
