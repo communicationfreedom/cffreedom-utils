@@ -30,6 +30,12 @@ import org.json.simple.parser.ParseException;
  */
 public class JsonUtils
 {
+	/**
+	 * Given JSON text, return a JSONObject
+	 * @param jsonText
+	 * @return
+	 * @throws ParseException
+	 */
 	public static JSONObject getJsonObject(String jsonText)	throws ParseException
 	{
 		JSONParser parser = new JSONParser();
@@ -38,6 +44,12 @@ public class JsonUtils
 		return jsonObj;
 	}
 
+	/**
+	 * Given JSON text, return a JSONArray
+	 * @param jsonText
+	 * @return
+	 * @throws ParseException
+	 */
 	public static JSONArray getJsonArray(String jsonText) throws ParseException
 	{
 		JSONParser parser = new JSONParser();
@@ -46,44 +58,132 @@ public class JsonUtils
 		return jsonArray;
 	}
 
+	/**
+	 * Given a JSONObject, return a JSONObject in the object for the key specified
+	 * @param jsonObj
+	 * @param key
+	 * @return
+	 */
 	public static JSONObject getJsonObject(JSONObject jsonObj, String key)
 	{
 		return (JSONObject)jsonObj.get(key);
 	}
 
+	/**
+	 * Given a JSONObject, return a JSONArray in the object for the key specified
+	 * @param jsonObj
+	 * @param key
+	 * @return
+	 */
 	public static JSONArray getJsonArray(JSONObject jsonObj, String key)
 	{
 		return (JSONArray)jsonObj.get(key);
 	}
 
-	public static String getJsonObjectStringVal(JSONObject jsonObj, String key)
+	/**
+	 * Given a JSONObject, return a String in the object for the key specified
+	 * @param jsonObj
+	 * @param key
+	 * @return
+	 */
+	public static String getString(JSONObject jsonObj, String key)
 	{
 		return (String)jsonObj.get(key);
 	}
 
-	public static Long getJsonObjectLongVal(JSONObject jsonObj, String key)
+	/**
+	 * Given a JSONObject, return a Long in the object for the key specified
+	 * @param jsonObj
+	 * @param key
+	 * @return
+	 */
+	public static Long getLong(JSONObject jsonObj, String key)
 	{
 		return (Long)jsonObj.get(key);
 	}
 	
-	public static boolean getJsonObjectBooleanVal(JSONObject jsonObj, String key)
+	/**
+	 * Given a JSONObject, return a boolean in the object for the key specified
+	 * @param jsonObj
+	 * @param key
+	 * @return
+	 */
+	public static boolean getBoolean(JSONObject jsonObj, String key)
 	{
 		return (boolean)jsonObj.get(key);
 	}
 	
-	public static String getJsonString(String key, String value)
+	/**
+	 * Given a JSONObject, return a Map in the object for the key specified
+	 * @param jsonObj
+	 * @param key
+	 * @return
+	 */
+	public static Map getMap(JSONObject jsonObj, String key)
+	{
+		return (Map)jsonObj.get(key);
+	}
+	
+	/**
+	 * Given a JSONObject, return it as a Map
+	 * @param jsonObj
+	 * @return
+	 */
+	public static Map getMap(JSONObject jsonObj)
+	{
+		return (Map)jsonObj;
+	}
+	
+	/**
+	 * Given a JSONObject, return a List in the object for the key specified
+	 * @param jsonObj
+	 * @param key
+	 * @return
+	 */
+	public static List getList(JSONObject jsonObj, String key)
+	{
+		return (List)jsonObj.get(key);
+	}
+	
+	/**
+	 * Given a JSONArray, return it as a List
+	 * @param jsonObj
+	 * @return
+	 */
+	public static List getList(JSONArray jsonObj)
+	{
+		return (List)jsonObj;
+	}
+	
+	/**
+	 * Return a JSON representation of a key value pair
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public static String getJson(String key, String value)
 	{		
 		Map obj = new HashMap();
 		obj.put(key, value);
-		return getJsonString(obj);
+		return getJson(obj);
 	}
 	
-	public static String getJsonString(Map obj)
+	/**
+	 * Return a JSON representation of a Map
+	 * @param obj
+	 * @return
+	 */
+	public static String getJson(Map obj)
 	{
 		return JSONValue.toJSONString(obj);
 	}
 	
-	public static String getJsonString(List obj)
+	/**
+	 * Return a JSON representation of a List
+	 * @param obj
+	 * @return
+	 */
+	public static String getJson(List obj)
 	{
 		return JSONValue.toJSONString(obj);
 	}
