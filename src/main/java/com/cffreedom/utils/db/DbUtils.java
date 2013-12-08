@@ -74,6 +74,7 @@ public class DbUtils
 	public final static String SQL_LIST_TABLES_DB2 = "SELECT TRIM(CREATOR)||\'.\'||TRIM(NAME) AS TABLE_NM FROM SYSIBM.SYSTABLES WHERE TYPE = \'T\' AND CREATOR NOT IN (\'SYSIBM\', \'SYSPROC\') ORDER BY CREATOR, NAME";
 	public final static String SQL_LIST_TABLES_SQLSERVER = "SELECT TABLE_SCHEMA+\'.\'+TABLE_NAME AS TABLE_NM FROM information_schema.tables WHERE TABLE_TYPE = \'BASE TABLE\' ORDER BY TABLE_SCHEMA, TABLE_NAME";
 	public final static String SQL_LIST_TABLES_MYSQL = "SELECT CONCAT(TABLE_SCHEMA, \'.\', TABLE_NAME) AS TABLE_NM FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = \'BASE TABLE\' ORDER BY TABLE_SCHEMA, TABLE_NAME";
+	public final static String SQL_LIST_TABLES_HSQLDB = "SELECT TABLE_NAME AS TABLE_NM FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = \'TABLE\' ORDER BY TABLE_NAME";
 	
 	public static List<String> getJndiDataSourceNames()
 	{
@@ -505,6 +506,10 @@ public class DbUtils
 		{
 			return DbDriver.SQLITE.value;
 		}
+		else if (dbType == DbType.HSQLDB)
+		{
+			return DbDriver.HSQLDB.value;
+		}
 		else
 		{
 			return "";
@@ -553,6 +558,10 @@ public class DbUtils
 			} else {
 				return "jdbc:sqlite:" + db;
 			}
+		}
+		else if (dbType == DbType.HSQLDB)
+		{
+			return "jdbc:hsqldb:file:" + db;
 		}
 		else
 		{
@@ -662,6 +671,10 @@ public class DbUtils
 		{
 			return DbUtils.SQL_LIST_TABLES_MYSQL;
 		}
+		else if (dbType == DbType.HSQLDB)
+		{
+			return DbUtils.SQL_LIST_TABLES_HSQLDB;
+		}
 		else
 		{
 			return null;
@@ -677,6 +690,14 @@ public class DbUtils
 		else if (dbType == DbType.SQL_SERVER)
 		{
 			return DbUtils.SQL_TEST_SQLSERVER;
+		}
+		else if (dbType == DbType.HSQLDB)
+		{
+			return DbUtils.SQL_LIST_TABLES_HSQLDB;
+		}
+		else if (dbType == DbType.MYSQL)
+		{
+			return DbUtils.SQL_LIST_TABLES_MYSQL;
 		}
 		else
 		{
