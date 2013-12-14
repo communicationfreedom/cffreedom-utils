@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
  * 2013-11-18 	MarkJacobsen.net 	Changed toArrayListOfStrings() to toListOfStrings()
  * 2013-11-24 	MarkJacobsen.net	Added toSHA512()
  * 2013-12-01	MarkJacobsen.net	Additional toBigDecimal() converters
+ * 2013-12-13 	MarkJacobsen.net 	Added toString(boolean val)
  */
 public class Convert
 {
@@ -145,6 +146,17 @@ public class Convert
 	public static String toString(byte[] val)
 	{
 		return new String(val);
+	}
+	
+	/**
+	 * Return val as a string (lower case)
+	 * @param val
+	 * @return
+	 */
+	public static String toString(boolean val)
+	{
+		if (val == true) { return "true"; }
+		else { return "false"; }
 	}
 	
 	public static String toString(char val)
