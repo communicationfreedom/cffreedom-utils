@@ -49,6 +49,7 @@ public class Db2Utils
 	
 	private static final Logger logger = LoggerFactory.getLogger(Db2Utils.class);
 	private static final String TYPE_IMPORT = "import";
+	private static final String TYPE_IMPORT_WITH_WRITE = "importWithWrite";
 	private static final String TYPE_EXPORT = "export";
 	private static final String TYPE_RUNSTATS = "runstats";
 	private static final String TYPE_REORG = "reorg";
@@ -115,11 +116,18 @@ public class Db2Utils
 		}
 	}
 	
-	public static void importFromFile(String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn, boolean connectToAlias) throws ProcessingException
+	public static void importFromFile(String fileDirectory, String name, Map<String, String> nameSqlMap, DbConn dbconn, boolean connectToAlias, boolean withWriteAccess) throws ProcessingException
 	{
 		try
 		{
-			execCommands(TYPE_IMPORT, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
+			if (withWriteAccess == true)
+			{
+				execCommands(TYPE_IMPORT, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
+			}
+			else
+			{
+				execCommands(TYPE_IMPORT_WITH_WRITE, fileDirectory, name, nameSqlMap, dbconn, connectToAlias);
+			}
 		}
 		catch (ProcessingException | ValidationException | InfrastructureException | FileSystemException e)
 		{
@@ -245,6 +253,7 @@ public class Db2Utils
 		if (
 			(type.equalsIgnoreCase(TYPE_EXPORT) == false) &&
 			(type.equalsIgnoreCase(TYPE_IMPORT) == false) &&
+			(type.equalsIgnoreCase(TYPE_IMPORT_WITH_WRITE) == false) &&
 			(type.equalsIgnoreCase(TYPE_RUNSTATS) == false) &&
 			(type.equalsIgnoreCase(TYPE_REORG) == false) &&
 			(type.equalsIgnoreCase(TYPE_TRUNCATE) == false) &&
@@ -312,6 +321,12 @@ public class Db2Utils
 				lines.add("export to "+dataFileName+" of ixf messages "+dataLogFileName+" "+mapValue+";");
 			} else if (type.equalsIgnoreCase(TYPE_IMPORT) == true) {
 				lines.add("import from "+dataFileName+" of ixf commitcount 20000 messages "+dataLogFileName+" "+mapValue+";");
+				lines.add("COMMIT;");
+			} else if (type.equalsIgnoreCase(TYPE_IMPORT_WITH_WRITE) == true) {
+				// 2013-12-17 - MarkJacobsen.net - Added "ALLOW WRITE ACCESS" so import doesn't attempt to acquire exclusive lock
+				// See: http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=%2Fcom.ibm.db2.udb.admin.doc%2Fdoc%2Fc0004583.htm
+				lines.add("import from "+dataFileName+" of ixf ALLOW WRITE ACCESS commitcount 20000 messages "+dataLogFileName+" "+mapValue+";");
+				lines.add("COMMIT;");
 			} else if (type.equalsIgnoreCase(TYPE_RUNSTATS) == true) {
 				lines.add("RUNSTATS ON TABLE "+mapKey+" ON KEY COLUMNS WITH DISTRIBUTION ON ALL COLUMNS AND INDEX ALL ALLOW READ ACCESS;");
 			} else if (type.equalsIgnoreCase(TYPE_REORG) == true) {
@@ -379,6 +394,7 @@ public class Db2Utils
 		String logToWaitFor = dbCommandLogFile;
 		if  (
 			(type.equalsIgnoreCase(TYPE_IMPORT) == true) ||
+			(type.equalsIgnoreCase(TYPE_IMPORT_WITH_WRITE) == true) ||
 			(type.equalsIgnoreCase(TYPE_EXPORT) == true)
 			)
 		{
