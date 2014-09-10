@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-07-06 	markjacobsen.net 	Using slf4j
  * 2013-10-07 	MarkJacobsen.net	Added getParamAsInt()
  * 2013-12-06 	MarkJacobsen.net 	Added getProtocol(), getDomain(), getScript(), getQueryString(), and getQueryStringValues()
+ * 2014-09-10 	MarkJacobsen.net 	Added writeServletTextResponse()
  */
 public class HttpUtils
 {
@@ -346,13 +348,22 @@ public class HttpUtils
 	
 	public static int getParamAsInt(HttpServletRequest request, String param) throws ValidationException
 	{
+		String paramVal = null;
 		try
 		{
-			return Convert.toInt(request.getParameter(param));
+			paramVal = request.getParameter(param);
+			if (paramVal != null)
+			{
+				return Convert.toInt(paramVal);
+			}
+			else
+			{
+				throw new ValidationException("No parameter named: " + param);
+			}
 		}
 		catch (Exception e)
 		{
-			throw new ValidationException("Unable to get int value for " + param, e);
+			throw new ValidationException("Unable to get int value for " + param + " = " + paramVal, e);
 		}
 	}
 	
@@ -463,5 +474,12 @@ public class HttpUtils
 		}
 		
 		return vals;
+	}
+	
+	public static void writeServletTextResponse(HttpServletResponse response, String body) throws IOException
+	{
+		response.setContentType("text/html;charset=UTF-8");
+	    response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(body);
 	}
 }
