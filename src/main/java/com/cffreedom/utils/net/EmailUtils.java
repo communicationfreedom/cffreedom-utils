@@ -1,8 +1,10 @@
 package com.cffreedom.utils.net;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.mail.Message;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.*;
@@ -32,6 +34,7 @@ import com.cffreedom.utils.Utils;
  * 2013-05-18 	markjacobsen.net 	Added htmlBody options
  * 2013-10-05 	markjacobsen.net 	Additional sendEmail()
  * 2013-11-05 	MarkJacobsen.net 	Fix in sendEmail() for CC and BCC
+ * 2014-09-13 	MarkJacobsen.net 	Added support for attachments
  */
 public class EmailUtils
 {
@@ -117,10 +120,61 @@ public class EmailUtils
 		
 		message.setSubject(msg.getSubject());
 		
-		if ((msg.getBodyHtml() != null) && (msg.getBodyHtml().trim().length() > 0)){
-			message.setText(msg.getBodyHtml(), "utf-8", "html");
-		}else{
-			message.setText(msg.getBody());
+		try
+		{
+			if ((msg.getAttachments() != null) && (msg.getAttachments().length > 0))
+			{
+				// Adapeted From: http://www.codejava.net/java-ee/javamail/send-e-mail-with-attachment-in-java
+				
+				// creates message part
+		        MimeBodyPart messageBodyPart = new MimeBodyPart();
+		        messageBodyPart.setContent(message, "text/html");
+		 
+		        // creates multi-part
+		        Multipart multipart = new MimeMultipart();
+		        multipart.addBodyPart(messageBodyPart);
+		 
+		        // adds attachments
+	            for (String[] attachment : msg.getAttachments()) 
+	            {
+	            	MimeBodyPart attachPart = new MimeBodyPart();
+	 
+	                try {
+	                	String file = attachment[0];
+	                    attachPart.attachFile(file);
+	                    
+	                    if (attachment.length > 1)
+	                    {
+		                    String name = attachment[1];
+		                    attachPart.setFileName(name);
+	                    }
+	                } catch (IOException ex) {
+	                    ex.printStackTrace();
+	                }
+	 
+	                multipart.addBodyPart(attachPart);
+	            }
+		 
+		        // sets the multi-part as e-mail's content
+		        message.setContent(multipart);
+			}
+			else
+			{
+				if ((msg.getBodyHtml() != null) && (msg.getBodyHtml().trim().length() > 0)){
+					message.setText(msg.getBodyHtml(), "utf-8", "html");
+				}else{
+					message.setText(msg.getBody());
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			// this is what was working so use it as a fallback
+			if ((msg.getBodyHtml() != null) && (msg.getBodyHtml().trim().length() > 0)){
+				message.setText(msg.getBodyHtml(), "utf-8", "html");
+			}else{
+				message.setText(msg.getBody());
+			}
 		}
         
 		logger.trace("Sending message to {}, cc {}, bcc {}, from {} w/ subject: {}", msg.getTo(), msg.getCc(), msg.getBcc(), msg.getFrom(), msg.getSubject());
