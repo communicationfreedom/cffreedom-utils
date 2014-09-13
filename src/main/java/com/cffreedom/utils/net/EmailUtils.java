@@ -146,7 +146,9 @@ public class EmailUtils
 	                    if (attachment.length > 1)
 	                    {
 		                    String name = attachment[1];
-		                    attachPart.setFileName(name);
+		                    if (Utils.hasLength(name) == true) {
+		                    	attachPart.setFileName(name);
+		                    }
 	                    }
 	                } catch (IOException ex) {
 	                    ex.printStackTrace();
