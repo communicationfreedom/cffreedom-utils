@@ -1,12 +1,19 @@
 package com.cffreedom.utils.net;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +59,7 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-10-07 	MarkJacobsen.net	Added getParamAsInt()
  * 2013-12-06 	MarkJacobsen.net 	Added getProtocol(), getDomain(), getScript(), getQueryString(), and getQueryStringValues()
  * 2014-09-10 	MarkJacobsen.net 	Added writeServletTextResponse()
+ * 2014-09-16 	MarkJacobsen.net	Added downloadFile()
  */
 public class HttpUtils
 {
@@ -73,6 +81,42 @@ public class HttpUtils
 			urlStr = null;
 		}
 		return urlStr;
+	}
+	
+	/**
+	 * Download a file from a URL to the local machine
+	 * @param url
+	 * @param localFile
+	 * @throws NetworkException
+	 */
+	public static void downloadFile(String url, String localFile) throws NetworkException
+	{
+		URL urlObject = null;
+		URLConnection connection = null;
+		InputStream stream = null;
+		OutputStream out = null;
+		
+		try
+		{
+			urlObject = new URL(url);
+			connection = urlObject.openConnection();
+			stream = connection.getInputStream();
+	        out = new FileOutputStream(localFile);
+	        byte buf[]= new byte[512];
+	        int read;
+	        while ((read = stream.read(buf)) > 0)
+	        {
+                out.write(buf, 0, read);
+	        }
+		}
+		catch (IOException e)
+		{
+			throw new NetworkException("Error during downloadFile: " + e.getMessage(), e);
+		}
+		finally
+		{
+			try{ out.close(); }	catch (IOException e) {}
+		}
 	}
 	
 	public static Response httpGet(String urlStr) throws NetworkException { return httpGet(urlStr, null); }

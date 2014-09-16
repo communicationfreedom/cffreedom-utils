@@ -9,9 +9,21 @@ import org.junit.Test;
 import com.cffreedom.beans.Container;
 import com.cffreedom.beans.Response;
 import com.cffreedom.exceptions.NetworkException;
+import com.cffreedom.utils.file.FileUtils;
 
 public class HttpUtilsTest
 {
+	@Test
+	public void testDownload() throws NetworkException
+	{
+		String url = "http://www.google.com/robots.txt";
+		String localFile = "c:/temp/downloadTest.txt";
+		FileUtils.deleteFile(localFile);
+		assertFalse(FileUtils.fileExists(localFile));
+		HttpUtils.downloadFile(url, localFile);
+		assertTrue(FileUtils.fileExists(localFile));
+	}
+	
 	@Test
 	public void testHttpGet() throws NetworkException
 	{
