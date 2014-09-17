@@ -106,18 +106,19 @@ public class HttpUtils
 	public static void downloadFile(String url, String localFile) throws NetworkException
 	{
 		URL urlObject = null;
-		URLConnection connection = null;
+		HttpURLConnection connection = null;
 		InputStream stream = null;
 		OutputStream out = null;
 		
 		try
 		{
 			urlObject = new URL(url);
-			connection = urlObject.openConnection();
+			connection = (HttpURLConnection)urlObject.openConnection();
 			stream = connection.getInputStream();
 	        out = new FileOutputStream(localFile);
 	        byte buf[]= new byte[4096];
 	        int read = -1;
+	        logger.trace("Start downloading {} to {}", url, localFile);
 	        while ((read = stream.read(buf)) != -1)
 	        {
 	        	if (read > 0)
@@ -125,6 +126,7 @@ public class HttpUtils
 	        		out.write(buf, 0, read);
 	        	}
 	        }
+	        logger.trace("Finished downloading {} to {}", url, localFile);
 		}
 		catch (IOException e)
 		{
@@ -132,7 +134,9 @@ public class HttpUtils
 		}
 		finally
 		{
-			try{ out.close(); }	catch (IOException e) {}
+			try{ out.close(); }	catch (Exception e) {}
+			try{ stream.close(); }	catch (Exception e) {}
+			try{ connection.disconnect(); }	catch (Exception e) {}
 		}
 	}
 	

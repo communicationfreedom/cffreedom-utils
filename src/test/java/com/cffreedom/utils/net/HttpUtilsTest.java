@@ -17,7 +17,7 @@ public class HttpUtilsTest
 	public void testDownload() throws NetworkException
 	{
 		String url = "http://www.google.com/robots.txt";
-		String localFile = "c:/temp/downloadTest.txt";
+		String localFile = "c:/temp/downloadTest.mp3";
 		FileUtils.deleteFile(localFile);
 		assertFalse(FileUtils.fileExists(localFile));
 		HttpUtils.downloadFile(url, localFile);
