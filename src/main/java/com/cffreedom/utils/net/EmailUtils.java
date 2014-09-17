@@ -3,6 +3,9 @@ package com.cffreedom.utils.net;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.Session;
@@ -125,23 +128,25 @@ public class EmailUtils
 			if ((msg.getAttachments() != null) && (msg.getAttachments().length > 0))
 			{
 				// Adapeted From: http://www.codejava.net/java-ee/javamail/send-e-mail-with-attachment-in-java
+				MimeMultipart multipart = new MimeMultipart();
 				
-				// creates message part
-		        MimeBodyPart messageBodyPart = new MimeBodyPart();
+		        // add text part
+				MimeBodyPart messageBodyPart = new MimeBodyPart();
 		        messageBodyPart.setContent(message, "text/html");
-		 
-		        // creates multi-part
-		        Multipart multipart = new MimeMultipart();
+		        messageBodyPart.setText(msg.getBody());
 		        multipart.addBodyPart(messageBodyPart);
 		 
 		        // adds attachments
 	            for (String[] attachment : msg.getAttachments()) 
 	            {
 	            	MimeBodyPart attachPart = new MimeBodyPart();
-	 
-	                try {
+	            	attachPart.setContent(message, "multipart/mixed");
+	            	
+	                try 
+	                {
 	                	String file = attachment[0];
-	                    attachPart.attachFile(file);
+	                	DataSource source = new FileDataSource(file);
+	                    attachPart.setDataHandler(new DataHandler(source));
 	                    
 	                    if (attachment.length > 1)
 	                    {
@@ -150,11 +155,11 @@ public class EmailUtils
 		                    	attachPart.setFileName(name);
 		                    }
 	                    }
-	                } catch (IOException ex) {
+	                    
+	                    multipart.addBodyPart(attachPart);
+	                } catch (Exception ex) {
 	                    ex.printStackTrace();
 	                }
-	 
-	                multipart.addBodyPart(attachPart);
 	            }
 		 
 		        // sets the multi-part as e-mail's content
