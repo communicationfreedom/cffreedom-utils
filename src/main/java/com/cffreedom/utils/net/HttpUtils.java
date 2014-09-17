@@ -116,11 +116,14 @@ public class HttpUtils
 			connection = urlObject.openConnection();
 			stream = connection.getInputStream();
 	        out = new FileOutputStream(localFile);
-	        byte buf[]= new byte[512];
-	        int read;
-	        while ((read = stream.read(buf)) > 0)
+	        byte buf[]= new byte[4096];
+	        int read = -1;
+	        while ((read = stream.read(buf)) != -1)
 	        {
-                out.write(buf, 0, read);
+	        	if (read > 0)
+	        	{
+	        		out.write(buf, 0, read);
+	        	}
 	        }
 		}
 		catch (IOException e)

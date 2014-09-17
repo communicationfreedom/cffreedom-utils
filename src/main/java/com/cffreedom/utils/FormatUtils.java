@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
  * 2013-04-30 	markjacobsne.net 	Fixed repeatString()
  * 2013-06-12 	markjacobsen.net 	Consolidated date masks here
  * 2013-10-05 	markjacobsen.net 	Fixed formatBigDecimal()
+ * 2014-09-16 	MarkJacobsen.net 	Changed format of MASK_FILE_TIMESTAMP
  */
 public class FormatUtils
 {
@@ -40,7 +41,7 @@ public class FormatUtils
     public static final String MASK_TIME_12_HOUR = "h:mm a";
     public static final String MASK_TIME_24_HOUR = "H:mm";
     public static final String MASK_FILE_DATESTAMP = "yyyy-MM-dd";
-    public static final String MASK_FILE_TIMESTAMP = MASK_FULL_TIMESTAMP;
+    public static final String MASK_FILE_TIMESTAMP = "yyyy-MM-dd_HH-mm-ss";
     public static final String MASK_DB2_TIMESTAMP = MASK_FULL_TIMESTAMP;
     public static final String MASK_MMDDYY = "MMddyy";
 	
