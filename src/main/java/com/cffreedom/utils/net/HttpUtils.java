@@ -1,9 +1,7 @@
 package com.cffreedom.utils.net;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +9,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -60,10 +57,27 @@ import com.cffreedom.utils.SystemUtils;
  * 2013-12-06 	MarkJacobsen.net 	Added getProtocol(), getDomain(), getScript(), getQueryString(), and getQueryStringValues()
  * 2014-09-10 	MarkJacobsen.net 	Added writeServletTextResponse()
  * 2014-09-16 	MarkJacobsen.net	Added downloadFile()
+ * 2014-09-16 	MarkJacobsen.net 	Added getUrl()
  */
 public class HttpUtils
 {
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.net.HttpUtils");
+	
+	/**
+	 * Given a HttpServletRequest, get the full URL
+	 * @param request
+	 * @param includeQueryString
+	 * @return
+	 */
+	public static String getUrl(HttpServletRequest request, boolean includeQueryString)
+	{
+		StringBuffer url = request.getRequestURL();
+		if ((includeQueryString == true) && (request.getQueryString() != null)) {
+			url.append("?");
+			url.append(request.getQueryString());
+		}
+		return url.toString();
+	}
 	
 	public static String buildUrl(String urlStr, Map<String, String> queryParams)
 	{
