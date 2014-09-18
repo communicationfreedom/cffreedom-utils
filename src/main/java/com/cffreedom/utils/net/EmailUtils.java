@@ -130,12 +130,26 @@ public class EmailUtils
 				// Adapeted From: http://www.codejava.net/java-ee/javamail/send-e-mail-with-attachment-in-java
 				MimeMultipart multipart = new MimeMultipart();
 				
-		        // add text part
-				MimeBodyPart messageBodyPart = new MimeBodyPart();
-		        messageBodyPart.setContent(message, "text/html");
-		        messageBodyPart.setText(msg.getBody());
-		        multipart.addBodyPart(messageBodyPart);
-		 
+		        // add plain text body part
+				if (Utils.hasLength(msg.getBody()) == true)
+				{
+					logger.trace("Adding Plain Text Body");
+					MimeBodyPart messageBodyPart = new MimeBodyPart();
+			        messageBodyPart.setContent(message, "text/plain");
+			        messageBodyPart.setText(msg.getBody());
+			        multipart.addBodyPart(messageBodyPart);
+				}
+				
+				// add html body part
+				if (Utils.hasLength(msg.getBodyHtml()) == true)
+				{
+					logger.trace("Adding HTML Body");
+					MimeBodyPart messageBodyPart = new MimeBodyPart();
+			        messageBodyPart.setContent(message, "text/html");
+			        messageBodyPart.setText(msg.getBodyHtml());
+			        multipart.addBodyPart(messageBodyPart);
+				}
+				
 		        // adds attachments
 	            for (String[] attachment : msg.getAttachments()) 
 	            {
@@ -145,6 +159,7 @@ public class EmailUtils
 	                try 
 	                {
 	                	String file = attachment[0];
+	                	logger.trace("Adding attachment: {}", file);
 	                	DataSource source = new FileDataSource(file);
 	                    attachPart.setDataHandler(new DataHandler(source));
 	                    
@@ -167,7 +182,7 @@ public class EmailUtils
 			}
 			else
 			{
-				if ((msg.getBodyHtml() != null) && (msg.getBodyHtml().trim().length() > 0)){
+				if (Utils.hasLength(msg.getBodyHtml()) == true){
 					message.setText(msg.getBodyHtml(), "utf-8", "html");
 				}else{
 					message.setText(msg.getBody());
