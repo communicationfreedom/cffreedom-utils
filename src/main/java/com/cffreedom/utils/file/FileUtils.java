@@ -1087,6 +1087,26 @@ public class FileUtils
 			throw new FileSystemException("Unable to chmod "+octalCode+" "+path, e);
 		}
 	}
+	
+	public static Map<String, Integer> getLineCounts(String file)
+	{
+		Map<String, Integer> ret = new HashMap<String, Integer>();
+		List<String> lines = getFileLines(file);
+		
+		for (String line : lines)
+		{
+			if (ret.containsKey(line) == false)
+			{
+				ret.put(line, 1);
+			}
+			else
+			{
+				ret.put(line, ret.get(line) + 1);
+			}
+		}
+		
+		return ret;
+	}
 }
 
 class DirFilter implements FilenameFilter
