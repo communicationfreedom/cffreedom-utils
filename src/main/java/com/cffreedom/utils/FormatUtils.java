@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
  * 2013-06-12 	markjacobsen.net 	Consolidated date masks here
  * 2013-10-05 	markjacobsen.net 	Fixed formatBigDecimal()
  * 2014-09-16 	MarkJacobsen.net 	Changed format of MASK_FILE_TIMESTAMP
+ * 2014-09-24 	MarkJacobsen.net 	stripNonNumeric() will return null if the input is null
  */
 public class FormatUtils
 {
@@ -136,15 +137,22 @@ public class FormatUtils
 
 	public static String stripNonNumeric(String source)
 	{
-		String ret = "";
-		for (int x = 0; x < source.length(); x++)
+		if (source == null)
 		{
-			if (Character.isDigit(source.charAt(x)) == true)
-			{
-				ret += source.charAt(x);
-			}
+			return source;
 		}
-		return ret;
+		else
+		{
+			String ret = "";
+			for (int x = 0; x < source.length(); x++)
+			{
+				if (Character.isDigit(source.charAt(x)) == true)
+				{
+					ret += source.charAt(x);
+				}
+			}
+			return ret;
+		}
 	}
 
 	public static String stripCrLf(String source)
