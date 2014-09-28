@@ -447,6 +447,11 @@ public class Convert
         return new java.sql.Timestamp(val.getTime());
     }
     
+    public static java.sql.Timestamp toTimestamp(java.util.Calendar val)
+    {
+    	return toTimestamp(Convert.toDate(val));
+    }
+    
     public static BigDecimal toBigDecimal(String val)
     {
     	return new BigDecimal(val);
