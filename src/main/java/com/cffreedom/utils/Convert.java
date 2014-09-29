@@ -444,7 +444,11 @@ public class Convert
     */
     public static java.sql.Timestamp toTimestamp(java.util.Date val)
     {
-        return new java.sql.Timestamp(val.getTime());
+    	if (val == null) {
+    		return null;
+    	} else {
+    		return new java.sql.Timestamp(val.getTime());
+    	}
     }
     
     public static java.sql.Timestamp toTimestamp(java.util.Calendar val)
