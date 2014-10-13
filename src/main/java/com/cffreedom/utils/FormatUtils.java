@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
  * 2013-10-05 	markjacobsen.net 	Fixed formatBigDecimal()
  * 2014-09-16 	MarkJacobsen.net 	Changed format of MASK_FILE_TIMESTAMP
  * 2014-09-24 	MarkJacobsen.net 	stripNonNumeric() will return null if the input is null
+ * 2014-10-13 	MarkJacobsen.net 	Added maxLenString()
  */
 public class FormatUtils
 {
@@ -163,6 +164,14 @@ public class FormatUtils
 	public static String stripExtraSpaces(String source)
 	{
 		return source.replaceAll("\\s+", " ").trim();
+	}
+	
+	public static String maxLenString(String val, int maxLen)
+	{
+		if ((val != null) && (val.length() > maxLen)) {
+			val = val.substring(0, maxLen);
+		}
+		return val;
 	}
 
 	public static String replace(String source, String find, String replace)
