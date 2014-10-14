@@ -24,4 +24,13 @@ public class FormatUtilsTest
 	{
 		Assert.assertEquals("Mark Jacobsen", FormatUtils.stripExtraSpaces("Mark  Jacobsen"));
 	}
+	
+	@Test
+	public void maxLenStringTest()
+	{
+		String test = "hi there";
+		Assert.assertEquals(test, FormatUtils.maxLenString(test, 5000));
+		Assert.assertEquals("hi", FormatUtils.maxLenString(test, 2));
+		Assert.assertNull(FormatUtils.maxLenString(null, 20));
+	}
 }
