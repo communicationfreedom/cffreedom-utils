@@ -1,13 +1,21 @@
 package com.cffreedom.utils;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.cffreedom.exceptions.InfrastructureException;
+import com.cffreedom.utils.db.ConnectionManager;
+import com.cffreedom.utils.file.FileUtils;
 
 /**
  * Original Class: com.cffreedom.utils.Utils
@@ -28,6 +36,7 @@ import org.slf4j.LoggerFactory;
  * 2013-05-21 	markjacobsen.net 	Added appendToStringArray() and appendToIntArray()
  * 2013-07-19	markjacobsen.net 	Added hasLength()
  * 2013-09-15 	markjacobsen.net 	Added getRandomString()
+ * 2014-10-22 	MarkJacobsen.net 	Added getProperties()
  */
 public class Utils
 {
@@ -267,5 +276,50 @@ public class Utils
 			ret += ALPHA_NUM.charAt(random.nextInt(ALPHA_NUM.length()));
 		}
 		return ret;
+	}
+	
+	/**
+	 * Allows you to get properties from a file on the file system or in the classpath. 
+	 * Will use file system first. 
+	 * @param file Full path to a properties file or the name of a properties file to pull off the classpath
+	 * @return The properties from the file
+	 * @throws InfrastructureException 
+	 */
+	public static Properties getProperties(String file) throws InfrastructureException
+	{
+		InputStream inputStream = null;
+		Properties props = new Properties();
+		
+		try
+		{
+			if (FileUtils.fileExists(file) == true)
+			{
+				logger.info("Loading from passed in file: {}", file);
+				inputStream = new FileInputStream(file);
+			}
+			else
+			{
+				logger.info("Attempting to find file on classpath: {}", ConnectionManager.PROP_FILE);
+				inputStream = Utils.class.getClassLoader().getResourceAsStream(ConnectionManager.PROP_FILE);
+			}
+			
+			if (inputStream == null)
+			{
+				throw new InfrastructureException("Properties file not found: "+file);
+			}
+			else
+			{
+				logger.debug("Loading property file");
+				
+				props.load(inputStream);
+				inputStream.close();
+			}
+		}
+		catch (IOException e)
+		{
+			throw new InfrastructureException("Error getting properties from: "+file, e);
+		}
+		
+		return props;
 	}
 }
