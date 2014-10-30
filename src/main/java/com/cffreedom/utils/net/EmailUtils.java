@@ -145,7 +145,7 @@ public class EmailUtils
 				{
 					logger.trace("Adding HTML Body");
 					MimeBodyPart messageBodyPart = new MimeBodyPart();
-			        messageBodyPart.setContent(message, "text/html");
+			        messageBodyPart.setContent(message, "text/html; charset=utf-8");
 			        messageBodyPart.setText(msg.getBodyHtml());
 			        multipart.addBodyPart(messageBodyPart);
 				}
