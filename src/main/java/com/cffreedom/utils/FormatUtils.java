@@ -60,15 +60,24 @@ public class FormatUtils
 		if (format.equalsIgnoreCase(PHONE_10) == true)
 		{
 			phoneNumber = stripNonNumeric(phoneNumber);
+			if (phoneNumber.length() > 10) {
+				phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+			}
 		}
 		else if (format.equalsIgnoreCase(PHONE_DASH) == true)
 		{
 			phoneNumber = stripNonNumeric(phoneNumber);
+			if (phoneNumber.length() > 10) {
+				phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+			}
 			phoneNumber = phoneNumber.substring(0, 3) + "-" + phoneNumber.substring(3, 6) + "-" + phoneNumber.substring(6, 10);
 		}
 		else if (format.equalsIgnoreCase(PHONE_DOT) == true)
 		{
 			phoneNumber = stripNonNumeric(phoneNumber);
+			if (phoneNumber.length() > 10) {
+				phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+			}
 			phoneNumber = phoneNumber.substring(0, 3) + "." + phoneNumber.substring(3, 6) + "." + phoneNumber.substring(6, 10);
 		}
 		else if (format.equalsIgnoreCase(PHONE_INT) == true)

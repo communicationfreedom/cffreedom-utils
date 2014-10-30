@@ -299,8 +299,8 @@ public class Utils
 			}
 			else
 			{
-				logger.info("Attempting to find file on classpath: {}", ConnectionManager.PROP_FILE);
-				inputStream = Utils.class.getClassLoader().getResourceAsStream(ConnectionManager.PROP_FILE);
+				logger.info("Attempting to find file on classpath: {}", file);
+				inputStream = Utils.class.getClassLoader().getResourceAsStream(file);
 			}
 			
 			if (inputStream == null)
