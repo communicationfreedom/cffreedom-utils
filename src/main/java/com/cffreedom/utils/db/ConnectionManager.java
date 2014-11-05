@@ -54,6 +54,7 @@ import com.cffreedom.utils.security.SecurityCipher;
  * 2013-09-09	markjacobsen.net 	printKeys() prints keys in sorted order
  * 2013-09-20	markjacobsen.net 	Updates to testConnection()
  * 2013-11-08	MarkJacobsen.net	Enhanced connection pooling
+ * 2014-11-05 	MarkJacobsen.net 	Added getKeys()
  */
 public class ConnectionManager
 {
@@ -522,5 +523,19 @@ public class ConnectionManager
 			success = false;
 		}
 		return success;
+	}
+	
+	/**
+	 * Get a list of the keys
+	 * @return
+	 */
+	public List<String> getKeys()
+	{
+		List<String> keys = new ArrayList<String>();
+		for (String key : this.conns.keySet())
+		{
+			keys.add(key);
+		}
+		return keys;
 	}
 }
