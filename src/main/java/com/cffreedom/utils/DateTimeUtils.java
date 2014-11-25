@@ -207,7 +207,7 @@ public class DateTimeUtils extends FormatUtils
 	*/
     public static Calendar dateAdd(Calendar date, int interval, char datePart)
     {
-    	Calendar cal = date;
+    	Calendar cal = (Calendar)date.clone();
    
         switch (datePart)
         {

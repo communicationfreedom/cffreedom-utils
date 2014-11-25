@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -34,5 +36,16 @@ public class ConvertTest {
 		BigDecimal expected = Convert.toBigDecimal(1.53);
 		BigDecimal actual = Convert.toBigDecimalFromCents(153);
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testToStringList()
+	{
+		List<String> vals = new ArrayList<String>();
+		vals.add("A");
+		vals.add("B");
+		vals.add("C");
+		String expected = "A,B,C";
+		assertEquals(expected, Convert.toStringList(vals, ","));
 	}
 }

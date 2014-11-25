@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
  * 2013-11-24 	MarkJacobsen.net	Added toSHA512()
  * 2013-12-01	MarkJacobsen.net	Additional toBigDecimal() converters
  * 2013-12-13 	MarkJacobsen.net 	Added toString(boolean val)
+ * 2014-11-25 	MarkJacobsen.net 	Added toStringList(List<String>, delimiter)
  */
 public class Convert
 {
@@ -178,6 +179,25 @@ public class Convert
 			sb.append(line);
 		}
 		return sb.toString();
+	}
+	
+	/**
+	 * Return a delimited string list of values
+	 * @param vals
+	 * @return
+	 */
+	public static String toStringList(List<String> vals, String delimiter)
+	{
+		if (vals == null) { return null; }
+		
+		String ret = "";
+		
+		for (String val : vals)
+		{
+			ret += val + delimiter;
+		}
+		
+		return ret.substring(0, ret.length() - delimiter.length());
 	}
 	
 	public static List<String> toListOfStrings(String[] vals)
