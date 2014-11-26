@@ -47,5 +47,10 @@ public class ConvertTest {
 		vals.add("C");
 		String expected = "A,B,C";
 		assertEquals(expected, Convert.toStringList(vals, ","));
+		
+		assertNull(Convert.toStringList(null, ","));
+		
+		expected = "";
+		assertEquals(expected, Convert.toStringList(new ArrayList<String>(), ","));
 	}
 }

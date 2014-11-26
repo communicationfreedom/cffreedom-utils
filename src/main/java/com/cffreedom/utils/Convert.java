@@ -192,12 +192,19 @@ public class Convert
 		
 		String ret = "";
 		
-		for (String val : vals)
+		if (vals.size() > 0)
 		{
-			ret += val + delimiter;
+			for (String val : vals)
+			{
+				ret += val + delimiter;
+			}
+			
+			return ret.substring(0, ret.length() - delimiter.length());
 		}
-		
-		return ret.substring(0, ret.length() - delimiter.length());
+		else
+		{
+			return "";
+		}
 	}
 	
 	public static List<String> toListOfStrings(String[] vals)
