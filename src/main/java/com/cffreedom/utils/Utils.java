@@ -67,8 +67,7 @@ public class Utils
      */
     public static boolean isNumeric(String val)
     {
-        if (val.length() == 0)
-        {
+        if (hasLength(val) == false) {
             return false;
         }
        
@@ -78,7 +77,7 @@ public class Utils
             {
                 return false;
             }
-      }
+        }
         return true;
     }
    
