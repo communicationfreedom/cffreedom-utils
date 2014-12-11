@@ -47,29 +47,32 @@ import com.cffreedom.utils.Utils;
  * 2013-08-01 	markjacobsen.net 	Much more efficient getLastXLines() added getLastLine()
  * 2013-09-12 	markjacobsen.net 	Added getDuplicateLines()
  * 2013-10-17 	markjacobsen.net 	Added chmod()
+ * 2014-12-11 	MarkJacobsen.net 	Added getLinesFromLastOccurence()
  */
 public class FileUtils
 {
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.file.FileUtils");
 
 	/**
-	 * Get the file extension
+	 * Get the file extension. If there is no period return a zero length string.
 	 * 
 	 * @param file File to get the extension for
-	 * @return the file extension
+	 * @return the file extension (does NOT include the .)
 	 */
 	public static String getFileExtension(String file)
 	{
 		int period = file.lastIndexOf(".");
-		return file.substring(period + 1, file.length());
+		if (period < 0) {
+			return "";
+		} else {
+			return file.substring(period + 1, file.length());
+		}
 	}
 
 	/**
-	 * Get just the file name from a full path ex: c:\temp\junk.txt would return
-	 * junk.txt
+	 * Get just the file name from a full path ex: c:\temp\junk.txt would return junk.txt
 	 * 
-	 * @param fullPath
-	 *            Full path of the file to get the file name for
+	 * @param fullPath Full path of the file to get the file name for
 	 * @return File name
 	 */
 	public static String getFileName(String fullPath)
@@ -89,8 +92,11 @@ public class FileUtils
 		String ret;
 		File file = new File(fullPath);
 		ret = file.getName();
-		ret = ret.substring(0, ret.length() - (getFileExtension(fullPath).length() + 1));
-		return ret;
+		if (getFileExtension(ret) == "") {
+			return ret;
+		} else {
+			return ret.substring(0, ret.length() - (getFileExtension(fullPath).length() + 1));
+		}
 	}
 
 	/**
@@ -1088,6 +1094,11 @@ public class FileUtils
 		}
 	}
 	
+	/**
+	 * Return a Map for each unique line in a file along with how many times that line is found in the file  
+	 * @param file File to read
+	 * @return Map of unique lines in file w how many times that line is found
+	 */
 	public static Map<String, Integer> getLineCounts(String file)
 	{
 		Map<String, Integer> ret = new HashMap<String, Integer>();
@@ -1105,6 +1116,116 @@ public class FileUtils
 			}
 		}
 		
+		return ret;
+	}
+
+	/**
+	 * Get the lines in the file specified after finding the last occurrence of the string passed in (includes line w/ String).
+	 * Does not include/return empty lines at the end of the file.
+	 * 
+	 * @param file File to read
+	 * @param find String to search backwards in the file for
+	 * @return The lines in the file specified
+	 */
+	public static List<String> getLinesFromLastOccurence(String file, String find) throws IOException
+	{
+		List<String> ret = new ArrayList<String>();
+		boolean foundIt = false;
+		boolean foundNewlineInBuffer = false;
+		RandomAccessFile raf = new RandomAccessFile(file, "r");
+		int bufferSize = 500;
+		byte[] byteBuffer = new byte[bufferSize];
+		StringBuilder lastLine = new StringBuilder(1000);
+		long lastFilePointer = raf.length();
+		
+		logger.trace("File size: {}", lastFilePointer);
+		while (true)
+		{
+			long seekTo = lastFilePointer - bufferSize;
+			if (seekTo <= 0){
+				logger.trace("Last chunk");
+				seekTo = 0;
+			}
+			logger.trace("Seeking back to {}", seekTo);
+			raf.seek(seekTo);
+			lastFilePointer = raf.getFilePointer();
+
+			// read from the file
+			raf.read(byteBuffer);
+			String buffer = new String(byteBuffer, "UTF-8");
+
+			if (raf.getFilePointer() == 0)
+			{
+				String tmp = buffer.substring(0, buffer.length());
+				lastLine.insert(0, tmp);
+				ret.add(lastLine.toString().trim());
+				logger.trace("Breaking because either hit the beginning of the file or the file is empty");
+				break; // out of the while loop
+			}
+
+			foundNewlineInBuffer = false;
+			int lastBufferStop = buffer.length();
+			for (int i = buffer.length() - 1; i >= 0; i--)
+			{
+				if ((buffer.charAt(i) == '\n') && (i < lastBufferStop))
+				{
+					foundNewlineInBuffer = true;
+					
+					logger.trace("Found newline at position {} of the buffer", i);
+					String tmp = buffer.substring(i, lastBufferStop);
+					lastLine.insert(0, tmp);
+					String addThis = lastLine.toString().trim();
+					if ((ret.size() == 0) && (addThis.length() == 0)){
+						logger.trace("Skipping because last line is blank");
+					}else{
+						logger.trace("Adding line: {}", addThis);
+						ret.add(addThis);
+					}
+
+					if (addThis.indexOf(find) >= 0)
+					{
+						foundIt = true;
+						logger.debug("Found \"{}\" so breaking", find);
+						break; // out of for loop
+					}
+					else
+					{
+						logger.trace("Searched {} lines. Looking for more.", ret.size());
+						lastLine = new StringBuilder(1000);
+						lastBufferStop = i;
+					}
+				} // end of newline processing
+			} // end of looping over the buffer
+
+			if (foundIt != true)
+			{
+				if (foundNewlineInBuffer == false)
+				{
+					logger.trace("Didn't find a newline in the buffer so saving the entire buffer");
+					lastLine.insert(0, buffer);
+				}
+				else if (lastBufferStop > 0)
+				{
+					String tmp = buffer.substring(0, lastBufferStop);
+					logger.trace("Last buffer stop at {}, so saving buffer up to that point: {}", lastBufferStop, tmp);
+					lastLine.append(tmp);
+				}
+				
+				if (lastFilePointer <= 0)
+				{
+					logger.trace("We would read past the beginning of the file so stopping here");
+					break;  // out of while loop
+				}
+			}
+			else
+			{
+				logger.trace("We have everything we need. Breaking out of while loop.");
+				break;
+			}
+		}
+
+		raf.close();
+
 		return ret;
 	}
 }

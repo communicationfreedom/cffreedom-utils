@@ -40,4 +40,26 @@ public class FileUtilsTest
 		assertEquals("This is line 1", lines.get(0));
 		assertEquals("This is line 2", lines.get(1));
 	}
+	
+	@Test
+	public void testGetFileExtension()
+	{
+		assertEquals("txt", FileUtils.getFileExtension("somefile.txt"));
+		assertEquals("txt", FileUtils.getFileExtension("somefile.withextradot.txt"));
+		assertEquals("", FileUtils.getFileExtension("somefile"));
+	}
+	
+	@Test
+	public void testGtLinesFromLastOccurence() throws IOException
+	{
+		File file = new File("src/test/java/com/cffreedom/utils/file/test.txt");
+		assertEquals(2, FileUtils.getLinesFromLastOccurence(file.getAbsolutePath(), "line 2").size());
+	}
+	
+	@Test
+	public void testGetFileNameWithoutExtension()
+	{
+		assertEquals("test", FileUtils.getFileNameWithoutExtension("utils/file/test.txt"));
+		assertEquals("test", FileUtils.getFileNameWithoutExtension("utils/file/test"));
+	}
 }
