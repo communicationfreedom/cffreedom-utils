@@ -1,5 +1,6 @@
 package com.cffreedom.utils;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -28,7 +29,9 @@ import java.text.SimpleDateFormat;
  * 2014-09-16 	MarkJacobsen.net 	Changed format of MASK_FILE_TIMESTAMP
  * 2014-09-24 	MarkJacobsen.net 	stripNonNumeric() will return null if the input is null
  * 2014-10-13 	MarkJacobsen.net 	Added maxLenString()
+ * 2014-12-20 	MarkJacobsen.net 	Deprecated class in favor of new Format class
  */
+@Deprecated
 public class FormatUtils
 {
 	public final static String PHONE_10 = "PHONE_10";
@@ -39,6 +42,7 @@ public class FormatUtils
 	public static final String MASK_DEFAULT_DATE = "MM/dd/yyyy";
     public static final String MASK_FULL_DATE_TIME = "MM/dd/yyyy hh:mm a";
     public static final String MASK_FULL_TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
+    public static final String MASK_XML_TIMESTAMP = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String MASK_YYYYMM = "yyyyMM";
     public static final String MASK_YYYYMMDD = "yyyyMMdd";
     public static final String MASK_YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
@@ -49,265 +53,105 @@ public class FormatUtils
     public static final String MASK_DB2_TIMESTAMP = MASK_FULL_TIMESTAMP;
     public static final String MASK_MMDDYY = "MMddyy";
 	
+    @Deprecated
 	public static String formatDate(String format, Date date)
 	{
-		DateFormat dateformat = new SimpleDateFormat(format);
-		return dateformat.format(date);
+		return Format.date(format, date);
 	}
 	
+    @Deprecated
+	public static String formatDate(String format, Calendar date)
+	{
+		return Format.date(format, date);
+	}
+	
+    @Deprecated
 	public static String formatPhoneNumber(String format, String phoneNumber)
 	{
-		if (format.equalsIgnoreCase(PHONE_10) == true)
-		{
-			phoneNumber = stripNonNumeric(phoneNumber);
-			if (phoneNumber.length() > 10) {
-				phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
-			}
-		}
-		else if (format.equalsIgnoreCase(PHONE_DASH) == true)
-		{
-			phoneNumber = stripNonNumeric(phoneNumber);
-			if (phoneNumber.length() > 10) {
-				phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
-			}
-			phoneNumber = phoneNumber.substring(0, 3) + "-" + phoneNumber.substring(3, 6) + "-" + phoneNumber.substring(6, 10);
-		}
-		else if (format.equalsIgnoreCase(PHONE_DOT) == true)
-		{
-			phoneNumber = stripNonNumeric(phoneNumber);
-			if (phoneNumber.length() > 10) {
-				phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
-			}
-			phoneNumber = phoneNumber.substring(0, 3) + "." + phoneNumber.substring(3, 6) + "." + phoneNumber.substring(6, 10);
-		}
-		else if (format.equalsIgnoreCase(PHONE_INT) == true)
-		{
-			phoneNumber = stripNonNumeric(phoneNumber);
-			if (phoneNumber.length() == 10)
-			{
-				phoneNumber = "+1" + phoneNumber;
-			}
-			else if (phoneNumber.length() == 11)
-			{
-				phoneNumber = "+" + phoneNumber;
-			}
-		}
-
-		return phoneNumber;
+		return Format.phoneNumber(format, phoneNumber);
 	}
 
+    @Deprecated
 	public static String formatBigDecimal(BigDecimal n, int decimalPlaces)
 	{
-		return formatBigDecimal(n, decimalPlaces, true);
+		return Format.number(n, decimalPlaces);
 	}
 
+    @Deprecated
 	public static String formatBigDecimal(BigDecimal n, int decimalPlaces, boolean includeThousandsSeparator)
 	{
-		String format = null;
-		String decimalFormat = "";
-		
-		if (decimalPlaces > 0)
-		{
-			decimalFormat = "." + repeatString("0", decimalPlaces);
-		}
-		
-		if (includeThousandsSeparator == false)
-		{
-			format = "#0" + decimalFormat;
-		}
-		else
-		{
-			format = "#,##0" + decimalFormat;
-		}
-
-		NumberFormat formatter = new DecimalFormat(format);
-		return formatter.format(n);
+		return Format.number(n, decimalPlaces, includeThousandsSeparator);
 	}
 
+    @Deprecated
 	public static String repeatString(String repeatThis, int repeatTimes)
 	{
-		StringBuffer buffer = new StringBuffer();
-		for (int x = 0; x < repeatTimes; x++)
-		{
-			buffer.append(repeatThis);
-		}
-		return buffer.toString();
+		return Format.repeatString(repeatThis, repeatTimes);
 	}
 
+    @Deprecated
 	public static String upperCaseFirstChar(String value)
 	{
-		if (value.trim().length() == 0)
-		{
-			return value;
-		}
-		char[] titleCase = value.toCharArray();
-		titleCase[0] = ("" + titleCase[0]).toUpperCase().charAt(0);
-		return new String(titleCase);
+		return Format.upperCaseFirstChar(value);
 	}
 
+    @Deprecated
 	public static String stripNonNumeric(String source)
 	{
-		if (source == null)
-		{
-			return source;
-		}
-		else
-		{
-			String ret = "";
-			for (int x = 0; x < source.length(); x++)
-			{
-				if (Character.isDigit(source.charAt(x)) == true)
-				{
-					ret += source.charAt(x);
-				}
-			}
-			return ret;
-		}
+		return Format.stripNonNumeric(source);
 	}
 
+    @Deprecated
 	public static String stripCrLf(String source)
 	{
-		return replace(replace(source, "\n", ""), "\r", "");
+		return Format.stripCrLf(source);
 	}
 	
+    @Deprecated
 	public static String stripExtraSpaces(String source)
 	{
-		return source.replaceAll("\\s+", " ").trim();
+		return Format.stripExtraSpaces(source);
 	}
 	
+    @Deprecated
 	public static String maxLenString(String val, int maxLen)
 	{
-		if ((val != null) && (val.length() > maxLen)) {
-			val = val.substring(0, maxLen);
-		}
-		return val;
+		return Format.maxLenString(val, maxLen);
 	}
 
+    @Deprecated
 	public static String replace(String source, String find, String replace)
 	{
-		return replace(source, find, replace, false);
+		return Format.replace(source, find, replace);
 	}
 
+    @Deprecated
 	public static String replace(String source, String find, String replace, boolean caseSensative)
 	{
-		if (source != null)
-		{
-			final int len = find.length();
-			StringBuffer sb = new StringBuffer();
-			int found = -1;
-			int start = 0;
-
-			if (caseSensative == true)
-			{
-				found = source.indexOf(find, start);
-			}
-			else
-			{
-				found = source.toLowerCase().indexOf(find.toLowerCase(), start);
-			}
-
-			while (found != -1)
-			{
-				sb.append(source.substring(start, found));
-				sb.append(replace);
-				start = found + len;
-
-				if (caseSensative == true)
-				{
-					found = source.indexOf(find, start);
-				}
-				else
-				{
-					found = source.toLowerCase().indexOf(find.toLowerCase(), start);
-				}
-			}
-
-			sb.append(source.substring(start));
-
-			return sb.toString();
-		}
-		else
-		{
-			return "";
-		}
+		return Format.replace(source, find, replace, caseSensative);
 	}
 
+    @Deprecated
 	public static String replaceSpan(String source, String findStart, String findEnd, String replace)
 	{
-		return replaceSpan(source, findStart, findEnd, replace, false);
+		return Format.replaceSpan(source, findStart, findEnd, replace);
 	}
 
-	/**
-	 * Replace a span of text with the replace value. Useful for stripping html.
-	 * 
-	 * @param source The string to strip from
-	 * @param findStart What you want to replace starts with
-	 * @param findEnd What you want to replace ends with
-	 * @param replace What to replace the span with
-	 * @param caseSensative True if we want to perform a case sensative search
-	 * @return String with all instances of the span stripped out
-	 */
+    @Deprecated
 	public static String replaceSpan(String source, String findStart, String findEnd, String replace, boolean caseSensative)
 	{
-		if (source != null)
-		{
-			int findEndLen = findEnd.length();
-			StringBuffer sb = new StringBuffer();
-			int foundStart = -1;
-			int foundEnd = -1;
-			int start = 0;
-
-			if (caseSensative == true)
-			{
-				foundStart = source.indexOf(findStart, start);
-				foundEnd = source.indexOf(findEnd, start);
-			}
-			else
-			{
-				foundStart = source.toLowerCase().indexOf(findStart.toLowerCase(), start);
-				foundEnd = source.toLowerCase().indexOf(findEnd.toLowerCase(), start);
-			}
-
-			while ((foundStart != -1) && (foundEnd != -1))
-			{
-				sb.append(source.substring(start, foundStart));
-				sb.append(replace);
-				foundStart = foundEnd + findEndLen;
-				start = foundStart;
-
-				if (caseSensative == true)
-				{
-					foundStart = source.indexOf(findStart, start);
-					foundEnd = source.indexOf(findEnd, start);
-				}
-				else
-				{
-					foundStart = source.toLowerCase().indexOf(findStart.toLowerCase(), start);
-					foundEnd = source.toLowerCase().indexOf(findEnd.toLowerCase(), start);
-				}
-			}
-
-			sb.append(source.substring(start));
-
-			return sb.toString();
-		}
-		else
-		{
-			return "";
-		}
+		return Format.replaceSpan(source, findStart, findEnd, replace, caseSensative);
 	}
 	
-	public static String pad(String val, int totalChars) { return pad(val, totalChars, " "); }
-	public static String pad(String val, int totalChars, String padChar) { return pad(val, totalChars, padChar, true); }
+    @Deprecated
+	public static String pad(String val, int totalChars) { return Format.pad(val, totalChars, " "); }
+	
+    @Deprecated
+    public static String pad(String val, int totalChars, String padChar) { return Format.pad(val, totalChars, padChar, true); }
+    
+    @Deprecated
 	public static String pad(String val, int totalChars, String padChar, boolean padRight)
 	{
-		int len = val.length();
-		if (len < totalChars)
-		{
-			String pad = repeatString(padChar, totalChars - len);
-			if (padRight == true) { val += pad; }
-			else { val = pad + val; }
-		}
-		return val;
+		return Format.pad(val, totalChars, padChar, padRight);
 	}
 }

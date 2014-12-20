@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.cffreedom.exceptions.FileSystemException;
 import com.cffreedom.exceptions.ValidationException;
-import com.cffreedom.utils.DateTimeUtils;
+import com.cffreedom.utils.Format;
 import com.cffreedom.utils.SystemUtils;
 import com.cffreedom.utils.Utils;
 
@@ -824,7 +824,7 @@ public class FileUtils
 
 	public static String getTimeStampedFileName(String prefix, String suffix, String mask)
 	{
-		return prefix + DateTimeUtils.formatDate(mask, new Date()) + suffix;
+		return prefix + Format.date(mask, new Date()) + suffix;
 	}
 
 	public static boolean touch(String file)

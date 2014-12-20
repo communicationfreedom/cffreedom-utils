@@ -123,10 +123,10 @@ public class Convert
 		return ret.substring(0, ret.length() - 1);
 	}
 	
-	public static String toString(Date val) { return toString(val, FormatUtils.MASK_FULL_TIMESTAMP); }
+	public static String toString(Date val) { return toString(val, Format.DATE_TIMESTAMP); }
 	public static String toString(Date val, String mask)
 	{
-		return FormatUtils.formatDate(mask, val);
+		return Format.date(mask, val);
 	}
 
 	public static String toString(Long val)
@@ -342,7 +342,7 @@ public class Convert
    
     public static java.util.Date toDate(String val)
     {
-    	return toDate(val, DateTimeUtils.MASK_DEFAULT_DATE);
+    	return toDate(val, Format.DATE_DEFAULT);
     }
     
     public static java.util.Date toDate(long val)
@@ -356,7 +356,7 @@ public class Convert
        
         try
         {
-        	if (mask.compareTo(DateTimeUtils.MASK_DEFAULT_DATE) == 0)
+        	if (mask.compareTo(Format.DATE_DEFAULT) == 0)
             {
         		String[] parts = val.split("/"); // split(a_sVal, "/");
                 if ( (parts.length == 3) && (parts[2].length() != 4) )
@@ -367,13 +367,13 @@ public class Convert
                     retVal = parts[0] + "/" + parts[1] + "/" + year;
                 }
             }
-        	else if (mask.compareTo(DateTimeUtils.MASK_FILE_DATESTAMP) == 0)
+        	else if (mask.compareTo(Format.DATE_FILE_TIMESTAMP) == 0)
         	{
         		String tmp = val.substring(5, val.length()) + "-" + val.substring(0, 4);
         		retVal = tmp.replace('-', '/');
-        		mask = DateTimeUtils.MASK_DEFAULT_DATE; // Have to reset it to parse correctly
+        		mask = Format.DATE_DEFAULT; // Have to reset it to parse correctly
         	}
-        	else if (mask.compareTo(DateTimeUtils.MASK_FULL_TIMESTAMP) == 0)
+        	else if (mask.compareTo(Format.DATE_TIMESTAMP) == 0)
         	{
         		String tmp = val.substring(5, 10) + "-" + val.substring(0, 4) + " " + val.substring(11, val.length());
         		retVal = tmp.replace('-', '/');
@@ -393,7 +393,7 @@ public class Convert
    
     public static java.util.Date[] toDateArray(String[] vals) throws ParseException
     {
-        return toDateArray(vals, DateTimeUtils.MASK_DEFAULT_DATE);
+        return toDateArray(vals, Format.DATE_DEFAULT);
     }
                
     public static java.util.Date[] toDateArray(String[] vals, String mask) throws ParseException
@@ -424,7 +424,7 @@ public class Convert
     public static java.util.Date toTime(String val) throws Exception
     {
         try {
-        	DateFormat df = new SimpleDateFormat(DateTimeUtils.MASK_TIME_12_HOUR);
+        	DateFormat df = new SimpleDateFormat(Format.DATE_TIME_12_HOUR);
             return df.parse(val);
         } catch (Exception e) { return null; }
     }

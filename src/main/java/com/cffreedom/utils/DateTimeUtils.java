@@ -25,7 +25,7 @@ import java.util.TimeZone;
  * 2013-08-19	markjacobsen.net 	Added dayOfYear()
  * 2013-09-03 	markjacobsen.net 	Added hourMinAsInt()
  */
-public class DateTimeUtils extends FormatUtils
+public class DateTimeUtils extends Format
 {
     public static final char DATE_PART_SECOND = 's';
     public static final char DATE_PART_MINUTE = 'n';
@@ -87,7 +87,7 @@ public class DateTimeUtils extends FormatUtils
     
     public static int hourMinAsInt(Date date)
     {
-    	return Convert.toInt(FormatUtils.formatDate("Hmm", date));
+    	return Convert.toInt(Format.date("Hmm", date));
     }
    
     public static int day(Calendar date)
@@ -155,7 +155,7 @@ public class DateTimeUtils extends FormatUtils
         	time = hours + ":" + minutes;
         }
                
-        return Convert.toDate(time, MASK_TIME_24_HOUR);
+        return Convert.toDate(time, Format.DATE_TIME_24_HOUR);
     }
    
     public static Date[] minutesToTimeArray(int[] minutes) throws Exception
@@ -304,33 +304,33 @@ public class DateTimeUtils extends FormatUtils
    
     public static String dayOfWeekAsString(Date date)
     {
-    	return formatDate("EEEE", date);
+    	return Format.date("EEEE", date);
     }
    
     public static String monthAsString(Date date)
     {
-    	return formatDate("MMMM", date);
+    	return Format.date("MMMM", date);
     }
    
     public static String monthAsString(int month) throws Exception
     {
         Date date = Convert.toDate(month + "/1/2000");
-        return formatDate("MMMM", date);
+        return Format.date("MMMM", date);
     }
     
     public static String timeFormat(Date date)
     {
-    	return formatDate(MASK_TIME_12_HOUR, date);
+    	return Format.date(Format.DATE_TIME_12_HOUR, date);
     }
     
     public static String dateFormat(Date date)
     {
-        return formatDate(MASK_DEFAULT_DATE, date);
+        return Format.date(Format.DATE_DEFAULT, date);
     }
     
     public static String dateTimeFormat(Date date)
     {
-        return formatDate(MASK_FULL_DATE_TIME, date);
+        return Format.date(Format.DATE_HUMAN, date);
     }
     
     public static int dateAsEpoc(Date date)

@@ -2,7 +2,6 @@ package com.cffreedom.utils.db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Map;
 
 import org.slf4j.Logger;
