@@ -77,6 +77,12 @@ public class Cacher
 		}
 	}
 	
+	public int size()
+	{
+		this.cleanupExpiredItems();
+		return cache.size();
+	}
+	
 	/**
 	 * Clear all cached items
 	 */
