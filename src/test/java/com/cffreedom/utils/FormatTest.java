@@ -1,6 +1,7 @@
 package com.cffreedom.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.math.BigDecimal;
 
@@ -79,5 +80,18 @@ public class FormatTest
 		assertEquals(expected, Format.phoneNumber(Format.PHONE_DOT, "(517) 803-2254"));
 		assertEquals(expected, Format.phoneNumber(Format.PHONE_DOT, "+15178032254"));
 		assertEquals(expected, Format.phoneNumber(Format.PHONE_DOT, "1-517-803-2254"));
+	}
+	
+	@Test
+	public void upperCaseFirstCharAllWords()
+	{
+		assertNull(Format.upperCaseFirstCharAllWords(null));
+		assertEquals("", Format.upperCaseFirstCharAllWords(""));
+		assertEquals("", Format.upperCaseFirstCharAllWords(" "));
+		assertEquals("The", Format.upperCaseFirstCharAllWords("the"));
+		assertEquals("The", Format.upperCaseFirstCharAllWords(" the "));
+		assertEquals("The Blue Goose Flies At Dawn", Format.upperCaseFirstCharAllWords("the Blue goose flies at dawn"));
+		assertEquals("Hi There", Format.upperCaseFirstCharAllWords("hi  there "));
+		assertEquals("I Live At 123 Main St.", Format.upperCaseFirstCharAllWords("i live at 123 main st."));
 	}
 }

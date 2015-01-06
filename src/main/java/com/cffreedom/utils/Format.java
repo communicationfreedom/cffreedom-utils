@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
  * 2014-09-16 	MarkJacobsen.net 	Changed format of MASK_FILE_TIMESTAMP
  * 2014-09-24 	MarkJacobsen.net 	stripNonNumeric() will return null if the input is null
  * 2014-10-13 	MarkJacobsen.net 	Added maxLenString()
+ * 2015-01-05 	MarkJacobsen.net 	Added upperCaseFirstCharAllWords()
  */
 public class Format
 {
@@ -169,13 +170,32 @@ public class Format
 
 	public static String upperCaseFirstChar(String value)
 	{
-		if (value.trim().length() == 0)
+		if (Utils.hasLength(value) == false)
 		{
 			return value;
 		}
 		char[] titleCase = value.toCharArray();
 		titleCase[0] = ("" + titleCase[0]).toUpperCase().charAt(0);
 		return new String(titleCase);
+	}
+
+	public static String upperCaseFirstCharAllWords(String value)
+	{
+		if (Utils.hasLength(value) == false)
+		{
+			return value;
+		}
+		StringBuffer sb = new StringBuffer();
+		String[] words = value.split(" ");
+		for (int x = 0; x < words.length; x++) {
+			char[] titleCase = words[x].toCharArray();
+			if (titleCase.length >= 1) {
+				titleCase[0] = ("" + titleCase[0]).toUpperCase().charAt(0);
+				sb.append(new String(titleCase).trim());
+				sb.append(" ");
+			}
+		}
+		return sb.toString().trim();
 	}
 
 	public static String stripNonNumeric(String source)
