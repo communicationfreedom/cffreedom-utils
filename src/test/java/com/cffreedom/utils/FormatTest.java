@@ -93,5 +93,6 @@ public class FormatTest
 		assertEquals("The Blue Goose Flies At Dawn", Format.upperCaseFirstCharAllWords("the Blue goose flies at dawn"));
 		assertEquals("Hi There", Format.upperCaseFirstCharAllWords("hi  there "));
 		assertEquals("I Live At 123 Main St.", Format.upperCaseFirstCharAllWords("i live at 123 main st."));
+		assertEquals("Hi There You", Format.upperCaseFirstCharAllWords("HI THERE YOU"));
 	}
 }
