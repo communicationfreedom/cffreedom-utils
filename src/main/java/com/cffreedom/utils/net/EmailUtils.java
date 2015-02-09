@@ -183,7 +183,7 @@ public class EmailUtils
 			else
 			{
 				if (Utils.hasLength(msg.getBodyHtml()) == true){
-					message.setText(msg.getBodyHtml(), "utf-8", "html");
+					message.setContent(msg.getBodyHtml(), "text/html; charset=utf-8");
 				}else{
 					message.setText(msg.getBody());
 				}
