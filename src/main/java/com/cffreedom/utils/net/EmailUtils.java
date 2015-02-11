@@ -103,7 +103,12 @@ public class EmailUtils
 		Session session = Session.getDefaultInstance(sysProps, null);
         
 		MimeMessage message = new MimeMessage(session);
-		message.setFrom(new InternetAddress(msg.getFrom()));
+		
+		if (Utils.hasLength(msg.getFromName()) == true) {
+			message.setFrom(new InternetAddress(msg.getFrom(), msg.getFromName()));
+		} else {
+			message.setFrom(new InternetAddress(msg.getFrom()));
+		}
 		
 		for (int y = 0; y < toArray.length; y++) {
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(toArray[y]));
