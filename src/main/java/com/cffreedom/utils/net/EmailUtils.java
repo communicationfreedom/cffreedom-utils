@@ -38,6 +38,7 @@ import com.cffreedom.utils.Utils;
  * 2013-10-05 	markjacobsen.net 	Additional sendEmail()
  * 2013-11-05 	MarkJacobsen.net 	Fix in sendEmail() for CC and BCC
  * 2014-09-13 	MarkJacobsen.net 	Added support for attachments
+ * 2015-03-03 	MarkJacobsen.net 	Fix for html body w/ attachments
  */
 public class EmailUtils
 {
@@ -135,25 +136,14 @@ public class EmailUtils
 				// Adapeted From: http://www.codejava.net/java-ee/javamail/send-e-mail-with-attachment-in-java
 				MimeMultipart multipart = new MimeMultipart();
 				
-		        // add plain text body part
-				if (Utils.hasLength(msg.getBody()) == true)
-				{
-					logger.trace("Adding Plain Text Body");
-					MimeBodyPart messageBodyPart = new MimeBodyPart();
-			        messageBodyPart.setContent(message, "text/plain");
-			        messageBodyPart.setText(msg.getBody());
-			        multipart.addBodyPart(messageBodyPart);
+		        // add text body part
+				MimeBodyPart messageBodyPart = new MimeBodyPart();
+				if (Utils.hasLength(msg.getBodyHtml()) == true){
+					messageBodyPart.setContent(msg.getBodyHtml(), "text/html; charset=utf-8");
+				}else{
+					messageBodyPart.setText(msg.getBody());
 				}
-				
-				// add html body part
-				if (Utils.hasLength(msg.getBodyHtml()) == true)
-				{
-					logger.trace("Adding HTML Body");
-					MimeBodyPart messageBodyPart = new MimeBodyPart();
-			        messageBodyPart.setContent(message, "text/html; charset=utf-8");
-			        messageBodyPart.setText(msg.getBodyHtml());
-			        multipart.addBodyPart(messageBodyPart);
-				}
+		        multipart.addBodyPart(messageBodyPart);
 				
 		        // adds attachments
 	            for (String[] attachment : msg.getAttachments()) 

@@ -563,6 +563,10 @@ public class DbUtils
 		{
 			return "jdbc:hsqldb:file:" + db;
 		}
+		else if (dbType == DbType.MONGO)
+		{
+			return "mongodb://" + host + ":" + port + "/" + db;
+		}
 		else
 		{
 			return "";
@@ -586,6 +590,10 @@ public class DbUtils
 		else if (dbType == DbType.DB2)
 		{
 			return 50000;
+		}
+		else if (dbType == DbType.MONGO)
+		{
+			return 27017;
 		}
 		else
 		{
