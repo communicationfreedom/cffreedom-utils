@@ -27,24 +27,41 @@ public class Db2TableInfo
 	private static ConnectionManager cm = null;
 	private static String dbConnFile = SystemUtils.getDirConfig() + SystemUtils.getPathSeparator() + "dbconn.properties";
 	
+	/**
+	 * Here mostly for testing. You should call the run method
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
+		String outputFolder = SystemUtils.getDirWork();
 		String[] dbKeys = {"DBKEY"};  // A key from the DB Connection Manager
 		String[] dbSchemas = {"XX"}; // DB Schemas to get details for
-		String outputFolder = "D:/temp/";
 		String username = "";
 		String password = "";
 		
+		Db2TableInfo.run(outputFolder, dbKeys, dbSchemas, username, password);
+	}
+	
+	/**
+	 * What you want to get info for, and where to place the output
+	 * @param outputDir
+	 * @param dbKeys
+	 * @param dbSchemas
+	 * @param username
+	 * @param password
+	 */
+	public static void run(String outputDir, String[] dbKeys, String[] dbSchemas, String username, String password)
+	{
 		for (int x = 0; x < dbKeys.length; x++)
 		{
 			String dbKey = dbKeys[x];
-			String outputFile = outputFolder+dbKey+"-"+Format.date(Format.DATE_FILE_TIMESTAMP, new Date())+"-table-info.csv";
+			String outputFile = outputDir+dbKey+"-"+Format.date(Format.DATE_FILE_TIMESTAMP, new Date())+"-table-info.csv";
 			getInfo(outputFile, dbKey, dbSchemas, username, password);
 		}
 		log.debug("Done");
 	}
 	
-	public static void getInfo(String outputFile, String dbKey, String[] dbSchemas, String username, String password)
+	private static void getInfo(String outputFile, String dbKey, String[] dbSchemas, String username, String password)
 	{
 		Connection conn = null;
 		ResultSet rs = null;

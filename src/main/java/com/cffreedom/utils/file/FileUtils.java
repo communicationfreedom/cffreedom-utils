@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -16,6 +17,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.io.comparator.LastModifiedFileComparator;
+import org.apache.commons.io.comparator.NameFileComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +56,15 @@ public class FileUtils
 {
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.file.FileUtils");
 
+	public enum SORT
+	{
+		NONE,
+		DATE,
+		DATE_DECENDING,
+		NAME,
+		NAME_DECENDING;
+	}
+	
 	/**
 	 * Get the file extension. If there is no period return a zero length string.
 	 * 
@@ -534,77 +546,86 @@ public class FileUtils
 			return false;
 		}
 	}
-
+	
 	/**
 	 * Get a directory listing of file names (file name only)
 	 * 
 	 * @param folder Folder to get listing for
-	 * @return Array of file names in the folder
-	 * @throws Exception
-	 */
-	public static String[] list(String folder) throws Exception
-	{
-		File dir = new File(folder);
-		return dir.list();
-	}
-
-	/**
-	 * Get a directory listing w/ full paths (folder and file)
-	 * 
-	 * @param folder Folder to get listing for
-	 * @return Array of file paths in the folder
-	 * @throws Exception
-	 */
-	public static String[] listFullPath(String folder) throws Exception
-	{
-		File file;
-		String[] files = list(folder);
-
-		for (int x = 0; x < files.length; x++)
-		{
-			file = new File(folder, files[x]);
-			files[x] = file.getAbsolutePath();
-		}
-
-		return files;
-	}
-
-	/**
-	 * Get a directory listing of file names (file name only)
-	 * 
-	 * @param folder Folder to get listing for
-	 * @param filter Filter for files (ex: .log)
+	 * @param filter Filter for files (ex: .log) (pass null, a ZLS, or * to return all files), default = *
+	 * @param sort Order you want results returned (see SORT enum), default = NONE
+	 * @param includeFullPath true to include the full path, false for just file name
 	 * @return Array of file names in the folder matching the filter
 	 * @throws Exception
 	 */
-	public static String[] list(String folder, String filter) throws Exception
+	public static String[] list(String folder, String filter, SORT sort, boolean includeFullPath)
 	{
+		String[] ret = new String[0];
 		File dir = new File(folder);
-		return dir.list(new DirFilter(filter));
+		File[] files = dir.listFiles(new DirFilter(filter));
+		
+		if (files != null)
+		{
+			if (files.length == 1)
+			{
+				ret = new String[]{ files[0].getName() };
+			}
+			else if (files.length > 1)
+			{
+				if (sort != null)
+				{
+					if (sort.equals(SORT.DATE) == true) {
+						Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_COMPARATOR);
+					} else if (sort.equals(SORT.DATE_DECENDING) == true) {
+						Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+					} else if (sort.equals(SORT.NAME) == true) {
+						Arrays.sort(files, NameFileComparator.NAME_COMPARATOR);
+					} else if (sort.equals(SORT.NAME_DECENDING) == true) {
+						Arrays.sort(files, NameFileComparator.NAME_REVERSE);
+					}
+				}
+				
+				List<String> result = new ArrayList<String>();
+				for (File file : files){
+			    	result.add(file.getName());
+			    }
+				ret = result.toArray(new String[result.size()]);
+			}
+			
+			if ((includeFullPath == true) && (ret.length > 0))
+			{
+				for (int x = 0; x < ret.length; x++)
+				{
+					File file = new File(folder, ret[x]);
+					ret[x] = file.getAbsolutePath();
+				}
+			}
+		}
+		
+		return ret;
+	}
+		
+	@Deprecated
+	public static String[] list(String folder) 
+	{
+		return list(folder, null, SORT.NONE, false);
+	}
+	
+	@Deprecated
+	public static String[] list(String folder, String filter) 
+	{
+		return list(folder, filter, SORT.NONE, false);
 	}
 
-	/**
-	 * Get a directory listing w/ full paths (folder and file)
-	 * 
-	 * @param folder
-	 *            Folder to get listing for
-	 * @param filter
-	 *            Filter for files (ex: .log)
-	 * @return Array of file paths in the folder matching the filter
-	 * @throws Exception
-	 */
-	public static String[] listFullPath(String folder, String filter) throws Exception
+	@Deprecated
+	public static String[] listFullPath(String folder) 
 	{
-		File file;
-		String[] files = list(folder, filter);
+		return list(folder, null, SORT.NONE, true);
+	}
 
-		for (int x = 0; x < files.length; x++)
-		{
-			file = new File(folder, files[x]);
-			files[x] = file.getAbsolutePath();
-		}
-
-		return files;
+	@Deprecated
+	public static String[] listFullPath(String folder, String filter) 
+	{
+		return list(folder, filter, SORT.DATE, true);
 	}
 
 	/**
@@ -1232,17 +1253,24 @@ public class FileUtils
 
 class DirFilter implements FilenameFilter
 {
-	String afn;
+	String find;
 
-	DirFilter(String afn)
+	DirFilter(String find)
 	{
-		this.afn = afn;
+		this.find = find;
 	}
 
 	public boolean accept(File dir, String name)
 	{
-		// Strip path information:
-		String f = new File(name).getName();
-		return f.indexOf(afn) != -1;
+		boolean accept = false;
+		if ((Utils.hasLength(find) == false) || (find.equalsIgnoreCase("*") == true) || (find.equalsIgnoreCase("*.*") == true)) {
+			accept = true;
+		} else {
+			String f = new File(name).getName(); // Strip path information (get just the filename)
+			if (f.indexOf(find) != -1) {
+				accept = true;
+			}
+		}
+		return accept;
 	}
 }

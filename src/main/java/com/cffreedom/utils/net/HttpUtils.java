@@ -142,7 +142,8 @@ public class HttpUtils
 	
 	public static Response httpGet(String urlStr) throws NetworkException { return httpGet(urlStr, null); }
 	public static Response httpGet(String urlStr, Map<String, String> queryParams) throws NetworkException { return httpGet(urlStr, queryParams, true); }
-	public static Response httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws NetworkException
+	public static Response httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy) throws NetworkException { return httpGet(urlStr, queryParams, true, 0); }
+	public static Response httpGet(String urlStr, Map<String, String> queryParams, boolean setupProxy, int timeoutMS) throws NetworkException
 	{
 		try
 		{
@@ -154,6 +155,21 @@ public class HttpUtils
 			logger.trace("Getting: {}", urlStr);
 			URL url = new URL(urlStr);
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setInstanceFollowRedirects(true);
+			if (timeoutMS > 0) {
+				conn.setConnectTimeout(timeoutMS);
+				conn.setReadTimeout(timeoutMS);
+			}
+			conn.connect();
+			int resp = conn.getResponseCode();
+			
+			if ((resp == HttpURLConnection.HTTP_MOVED_TEMP) || (resp == HttpURLConnection.HTTP_MOVED_PERM) || (resp == HttpURLConnection.HTTP_MULT_CHOICE))
+			{
+				String redirectUrl = conn.getHeaderField("Location");
+				return httpGet(redirectUrl, queryParams, setupProxy);
+			}
+			
 			response.setIntCode(conn.getResponseCode());
 	
 			if (conn.getResponseCode() != 200) 

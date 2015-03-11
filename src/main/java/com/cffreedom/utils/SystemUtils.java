@@ -48,6 +48,10 @@ public class SystemUtils
 		}
 	}
 	
+	/**
+	 * Get the path to the logged in user home directory
+	 * @return Full path to users home directory
+	 */
 	public static String getDirHome()
 	{
 		String ret = null;
@@ -85,6 +89,10 @@ public class SystemUtils
 		}
 	}
 	
+	/**
+	 * Get the path to the CFConfig directory (found in users home dir)
+	 * @return Full path to CFConfig
+	 */
 	public static String getDirConfig()
 	{
 		String dir = getDirHome() + getPathSeparator() + "CFConfig";
@@ -92,6 +100,10 @@ public class SystemUtils
 		return dir;
 	}
 	
+	/**
+	 * Get the path to the CFWork directory (found in users home dir)
+	 * @return Full path to CFWork
+	 */
 	public static String getDirWork()
 	{
 		String dir = getDirHome() + getPathSeparator() + "CFWork";

@@ -13,7 +13,7 @@ import com.cffreedom.utils.file.FileUtils;
 
 public class HttpUtilsTest
 {
-	@Test
+	/*@Test
 	public void testDownload() throws NetworkException
 	{
 		String url = "http://www.google.com/robots.txt";
@@ -102,5 +102,5 @@ public class HttpUtilsTest
 		assertEquals(1, vals.size());
 		assertEquals("this", vals.get(0).getCode());
 		assertEquals("that=joe", vals.get(0).getValue());
-	}
+	}*/
 }
