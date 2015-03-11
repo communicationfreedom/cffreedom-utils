@@ -20,6 +20,19 @@ import com.cffreedom.utils.db.ConnectionManager;
 import com.cffreedom.utils.db.DbUtils;
 import com.cffreedom.utils.file.FileUtils;
 
+/**
+ * Original Class: com.cffreedom.utils.db.Db2TableInfo
+ * @author markjacobsen.net
+ * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
+ * 
+ * Free to use, modify, redistribute.  Must keep full class header including 
+ * copyright and note your modifications.
+ * 
+ * If this helped you out or saved you time, please consider...
+ * 1) My wishlist: http://markjacobsen.net/wishlist/
+ * 2) Following me on twitter: @MarkJacobsen or @cffreedom
+ * 3) Linking to: http://markjacobsen.net
+ */
 public class Db2TableInfo
 {
 	private static final Logger log = LoggerFactory.getLogger(Db2TableInfo.class);
@@ -55,10 +68,10 @@ public class Db2TableInfo
 		for (int x = 0; x < dbKeys.length; x++)
 		{
 			String dbKey = dbKeys[x];
-			String outputFile = outputDir+dbKey+"-"+Format.date(Format.DATE_FILE_TIMESTAMP, new Date())+"-table-info.csv";
+			String outputFile = FileUtils.buildPath(outputDir, dbKey+"-"+Format.date(Format.DATE_FILE_TIMESTAMP, new Date())+"-table-info.csv");
 			getInfo(outputFile, dbKey, dbSchemas, username, password);
 		}
-		log.debug("Done");
+		log.debug("Done. Output in {}", outputDir);
 	}
 	
 	private static void getInfo(String outputFile, String dbKey, String[] dbSchemas, String username, String password)

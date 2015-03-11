@@ -13,16 +13,16 @@ import com.cffreedom.exceptions.InfrastructureException;
 
 /**
  * Original Class: com.cffreedom.utils.db.SQLiteUtils
- * @author markjacobsen.net (http://mjg2.net/code)
+ * @author markjacobsen.net
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
  * Free to use, modify, redistribute.  Must keep full class header including 
  * copyright and note your modifications.
  * 
  * If this helped you out or saved you time, please consider...
- * 1) Donating: http://www.communicationfreedom.com/go/donate/
- * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
- * 3) Linking to: http://visit.markjacobsen.net
+ * 1) My wishlist: http://markjacobsen.net/wishlist/
+ * 2) Following me on twitter: @MarkJacobsen or @cffreedom
+ * 3) Linking to: http://markjacobsen.net
  * 
  * Changes:
  * 2013-11-08 	MarkJacobsen.net 	Created

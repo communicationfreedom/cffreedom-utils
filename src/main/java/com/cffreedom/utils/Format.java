@@ -54,8 +54,13 @@ public class Format
 	
 	public static String date(String format, Date date)
 	{
-		DateFormat dateformat = new SimpleDateFormat(format);
-		return dateformat.format(date);
+		String ret = null;
+		if (date != null)
+		{
+			DateFormat dateformat = new SimpleDateFormat(format);
+			ret = dateformat.format(date);
+		}
+		return ret;
 	}
 	
 	public static String date(String format, Calendar date)
