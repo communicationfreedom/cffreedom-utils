@@ -36,6 +36,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-07-19	markjacobsen.net 	Added hasLength()
  * 2013-09-15 	markjacobsen.net 	Added getRandomString()
  * 2014-10-22 	MarkJacobsen.net 	Added getProperties()
+ * 2015-03-29 	MarkJacobsen.net 	Added replaceLast()
  */
 public class Utils
 {
@@ -274,6 +275,21 @@ public class Utils
 			ret += ALPHA_NUM.charAt(random.nextInt(ALPHA_NUM.length()));
 		}
 		return ret;
+	}
+	
+	/**
+	 * Replace the last occurrence of a string
+	 * @param string String containing the value
+	 * @param from Value to find
+	 * @param to Value to change find to
+	 * @return
+	 */
+	public static String replaceLast(String string, String from, String to) 
+	{
+	     int lastIndex = string.lastIndexOf(from);
+	     if (lastIndex < 0) { return string; }
+	     String tail = string.substring(lastIndex).replaceFirst(from, to);
+	     return string.substring(0, lastIndex) + tail;
 	}
 	
 	/**
