@@ -44,6 +44,13 @@ public class FormatTest
 	}
 	
 	@Test
+	public void stripNumericTest()
+	{
+		assertEquals("Here", Format.stripNumeric("Here 31"));
+		assertEquals("", Format.stripNumeric("300"));
+	}
+	
+	@Test
 	public void upperCaseFirstCharTest()
 	{
 		assertEquals("Mark", Format.upperCaseFirstChar("mark"));

@@ -205,13 +205,10 @@ public class Format
 
 	public static String stripNonNumeric(String source)
 	{
-		if (source == null)
+		String ret = source;
+		if (Utils.hasLength(source) == true)
 		{
-			return source;
-		}
-		else
-		{
-			String ret = "";
+			ret = "";
 			for (int x = 0; x < source.length(); x++)
 			{
 				if (Character.isDigit(source.charAt(x)) == true)
@@ -219,8 +216,31 @@ public class Format
 					ret += source.charAt(x);
 				}
 			}
-			return ret;
 		}
+		return ret;
+	}
+
+	/**
+	 * String numeric values. Note: Will trim returned result
+	 * @param source
+	 * @return
+	 */
+	public static String stripNumeric(String source)
+	{
+		String ret = source;
+		if (Utils.hasLength(source) == true)
+		{
+			ret = "";
+			for (int x = 0; x < source.length(); x++)
+			{
+				if (Character.isDigit(source.charAt(x)) == false)
+				{
+					ret += source.charAt(x);
+				}
+			}
+			ret = ret.trim();
+		}
+		return ret;
 	}
 
 	public static String stripCrLf(String source)
