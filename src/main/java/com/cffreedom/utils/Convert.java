@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
  * 2013-12-01	MarkJacobsen.net	Additional toBigDecimal() converters
  * 2013-12-13 	MarkJacobsen.net 	Added toString(boolean val)
  * 2014-11-25 	MarkJacobsen.net 	Added toStringList(List<String>, delimiter)
+ * 2015-05-07 	MarkJacobsen.net 	Added toSqlDate(Calendar)
  */
 public class Convert
 {
@@ -418,6 +419,13 @@ public class Convert
     {
         try {
             return (java.sql.Date)val;
+        } catch (Exception e) { return null; }
+    }
+    
+    public static java.sql.Date toSqlDate(Calendar val)
+    {
+    	try {
+            return toSqlDate(toDate(val));
         } catch (Exception e) { return null; }
     }
    
