@@ -50,15 +50,17 @@ public class Utils
      */
 	public static boolean isInt(String val)
 	{
-		try
-		{
-			Convert.toInt(val);
-			return true;
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
+		boolean is = false;
+    	if (hasLength(val) == true)
+    	{
+			try
+			{
+				Convert.toInt(val);
+				is = true;
+			}
+			catch (Exception e){}
+    	}
+    	return is;
 	}
 	
 	/**
@@ -87,13 +89,16 @@ public class Utils
      */
     public static boolean isDate(String val)
     {
-        try
-        {
-            Convert.toDate(val);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
+    	boolean is = false;
+    	if (hasLength(val) == true)
+    	{
+	        try
+	        {
+	            Convert.toDate(val);
+	            is = true;
+	        }catch (Exception e){}
+    	}
+        return is;
     }
     
     /**
