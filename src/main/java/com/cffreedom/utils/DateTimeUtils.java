@@ -24,6 +24,7 @@ import java.util.TimeZone;
  * 2013-06-13	markjacobsen.net 	Added gmtToLocal()
  * 2013-08-19	markjacobsen.net 	Added dayOfYear()
  * 2013-09-03 	markjacobsen.net 	Added hourMinAsInt()
+ * 2015-06-07   MarkJacobsen.net 	Added setTime()
  */
 public class DateTimeUtils extends Format
 {
@@ -355,6 +356,15 @@ public class DateTimeUtils extends Format
     	Calendar dateCal = Convert.toCalendar(dateDate);
     	dateCal.setTime(timeDate);
     	return Convert.toDate(dateCal);
+    }
+    
+    public static Calendar setTime(Calendar date, int hour24, int minute, int second, int millisecond)
+    {
+    	date.set(Calendar.HOUR_OF_DAY, hour24);
+    	date.set(Calendar.MINUTE, minute);
+    	date.set(Calendar.SECOND, second);
+    	date.set(Calendar.MILLISECOND, millisecond);
+    	return date;
     }
     
     /**
