@@ -178,6 +178,40 @@ public class DateTimeUtils extends Format
     {
     	return month(Convert.toCalendar(date));
     }
+    
+    public static int month(String date)
+    {
+    	if (date.length() >= 3)
+    	{
+    		date = date.trim().substring(0, 3).toUpperCase();
+	    	if (date.equals("JAN") == true) { return 1; }
+	    	else if (date.equals("FEB") == true) { return 2; }
+	    	else if (date.equals("MAR") == true) { return 3; }
+	    	else if (date.equals("APR") == true) { return 4; }
+	    	else if (date.equals("MAY") == true) { return 5; }
+	    	else if (date.equals("JUN") == true) { return 6; }
+	    	else if (date.equals("JUL") == true) { return 7; }
+	    	else if (date.equals("AUG") == true) { return 8; }
+	    	else if (date.equals("SEP") == true) { return 9; }
+	    	else if (date.equals("OCT") == true) { return 10; }
+	    	else if (date.equals("NOV") == true) { return 11; } 
+	    	else if (date.equals("DEC") == true) { return 12; } 
+	    	else { return -1;	}
+    	}
+    	else if (Utils.isInt(date) == true)
+    	{
+    		int val = Convert.toInt(date);
+    		if ((val >= 1) && (val <= 12)) {
+    			return val;
+    		} else {
+    			return -1;
+    		}
+    	}
+    	else
+    	{
+    		return -1;
+    	}
+    }
    
     public static int month()
     {
@@ -358,8 +392,26 @@ public class DateTimeUtils extends Format
     	return Convert.toDate(dateCal);
     }
     
+    public static Calendar setDate(int year, int month, int day)
+    {
+    	return setDateTime(year, month, day, 0, 0, 0, 0);
+    }
+    
     public static Calendar setTime(Calendar date, int hour24, int minute, int second, int millisecond)
     {
+    	date.set(Calendar.HOUR_OF_DAY, hour24);
+    	date.set(Calendar.MINUTE, minute);
+    	date.set(Calendar.SECOND, second);
+    	date.set(Calendar.MILLISECOND, millisecond);
+    	return date;
+    }
+    
+    public static Calendar setDateTime(int year, int month, int day, int hour24, int minute, int second, int millisecond)
+    {
+    	Calendar date = Calendar.getInstance();
+    	date.set(Calendar.MONTH, month -1);
+    	date.set(Calendar.DAY_OF_MONTH, day);
+    	date.set(Calendar.YEAR, year);
     	date.set(Calendar.HOUR_OF_DAY, hour24);
     	date.set(Calendar.MINUTE, minute);
     	date.set(Calendar.SECOND, second);

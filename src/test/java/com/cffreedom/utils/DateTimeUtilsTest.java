@@ -1,11 +1,11 @@
 package com.cffreedom.utils;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.util.Date;
 
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 public class DateTimeUtilsTest
 {
@@ -14,11 +14,18 @@ public class DateTimeUtilsTest
 	{
 		Date date = Convert.toDate("01/02/2012");
 		int doy = DateTimeUtils.dayOfYear(date);
-		Assert.assertEquals(2, doy);
+		assertEquals(2, doy);
 		
 		date = Convert.toDate("02/02/2012");
 		doy = DateTimeUtils.dayOfYear(date);
-		Assert.assertEquals(33, doy);
+		assertEquals(33, doy);
 	}
 
+	@Test
+	public void testMonth()
+	{
+		assertEquals(DateTimeUtils.month("January"), 1);
+		assertEquals(DateTimeUtils.month("feb"), 2);
+		assertEquals(DateTimeUtils.month("lkasdflj"), -1);
+	}
 }
