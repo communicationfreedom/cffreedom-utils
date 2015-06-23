@@ -208,14 +208,45 @@ public class Convert
 		}
 	}
 	
+	/**
+	 * Return an array of Strings as a List of Strings. Note: if value passed in is null, an empty List is returned.
+	 * @param vals
+	 * @return
+	 */
 	public static List<String> toListOfStrings(String[] vals)
 	{
 		List<String> ret = new ArrayList<String>();
-		for (int x = 0; x < vals.length; x++)
+		if (vals != null)
 		{
-			ret.add(vals[x]);
+			for (int x = 0; x < vals.length; x++)
+			{
+				ret.add(vals[x]);
+			}
 		}
 		return ret;
+	}
+	
+	/**
+	 * Takes a delimited list of strings and returns the elements as a List of Strings
+	 * @param val
+	 * @param regexDelimiter
+	 * @param trimWhiteSpace
+	 * @return
+	 */
+	public static List<String> toListOfStrings(String val, String regexDelimiter, boolean trimWhiteSpace)
+	{
+		String[] vals = null;
+		if (val != null)
+		{
+			vals = val.split(regexDelimiter);
+			if (trimWhiteSpace == true)
+			{
+				for (int x = 0; x < vals.length; x++) {
+					vals[x] = vals[x].trim();
+				}
+			}
+		}
+		return Convert.toListOfStrings(vals);
 	}
 	
 	//------------------------------------------------------------------
