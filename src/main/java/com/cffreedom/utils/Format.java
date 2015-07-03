@@ -248,6 +248,20 @@ public class Format
 		return Format.replace(replace(source, "\n", ""), "\r", "");
 	}
 	
+	/**
+	 * String all HTML tags, and trim the result
+	 * @param source
+	 * @return
+	 */
+	public static String stripHtml(String source)
+	{
+		String ret = source;
+		if (Utils.hasLength(source) == true) {
+			ret = source.replaceAll("\\<[^>]*>", "").trim();
+		}
+		return ret;
+	}
+	
 	public static String stripExtraSpaces(String source)
 	{
 		return source.replaceAll("\\s+", " ").trim();
