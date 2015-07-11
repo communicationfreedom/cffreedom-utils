@@ -579,4 +579,14 @@ public class Convert
     {
     	return toInt(dollarAmount * 100);
     }
+    
+    /**
+     * Right now just replaces line breaks with <br/> tags
+     * @param text
+     * @return
+     */
+    public static String toHtml(String text)
+    {
+    	return text.replaceAll("(\r\n|\n)", "<br />");
+    }
 }
