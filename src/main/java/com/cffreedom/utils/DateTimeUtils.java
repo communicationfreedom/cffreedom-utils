@@ -392,6 +392,18 @@ public class DateTimeUtils extends Format
     	return Convert.toDate(dateCal);
     }
     
+    public static Calendar stripTime(Calendar date)
+    {
+    	return setDate(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH));
+    }
+    
+    /**
+     * Sets a date, stripping out all time values
+     * @param year
+     * @param month
+     * @param day
+     * @return
+     */
     public static Calendar setDate(int year, int month, int day)
     {
     	return setDateTime(year, month, day, 0, 0, 0, 0);
