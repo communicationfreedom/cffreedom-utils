@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Original Class: com.cffreedom.utils.Cacher
@@ -98,6 +99,10 @@ public class Cacher
 	public void remove(String key)
 	{
 		cache.remove(key);
+	}
+	
+	public Set<String> keySet() {
+		return cache.keySet();
 	}
 	
 	/**
