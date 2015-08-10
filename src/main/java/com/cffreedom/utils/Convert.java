@@ -413,6 +413,7 @@ public class Convert
         	}
                    
             DateFormat df = new SimpleDateFormat(mask);
+            df.setLenient(false);
             return df.parse(retVal);
         }
         catch (Exception e) { e.printStackTrace(); return null; }

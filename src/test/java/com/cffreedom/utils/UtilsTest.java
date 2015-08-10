@@ -1,6 +1,8 @@
 package com.cffreedom.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
@@ -21,5 +23,12 @@ public class UtilsTest
 		actual = Utils.replaceLast(str, "asdlfaslkf", "widget");
 		expected = "This is my test string";
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void isDateTest()
+	{
+		assertTrue(Utils.isDate("01/13/2015"));
+		assertFalse(Utils.isDate("13/13/2015"));
 	}
 }

@@ -94,8 +94,9 @@ public class Utils
     	{
 	        try
 	        {
-	            Convert.toDate(val);
-	            is = true;
+	            if (Convert.toDate(val) != null) {
+	            	is = true;
+	            }
 	        }catch (Exception e){}
     	}
         return is;
