@@ -560,50 +560,55 @@ public class FileUtils
 	public static String[] list(String folder, String filter, SORT sort, boolean includeFullPath)
 	{
 		String[] ret = new String[0];
-		File dir = new File(folder);
-		File[] files = null;
 		
-		if (FileUtils.folderExists(folder) == false) {
-			logger.warn("{} is not a valid folder", folder);
-		} else {
-			files =  dir.listFiles(new DirFilter(filter));
-			if (files != null)
-			{
-				if (files.length == 1)
+		try {
+			File[] files = null;
+			File dir = new File(folder);
+			
+			if (FileUtils.folderExists(folder) == false) {
+				logger.warn("{} is not a valid folder", folder);
+			} else {
+				files =  dir.listFiles(new DirFilter(filter));
+				if (files != null)
 				{
-					ret = new String[]{ files[0].getName() };
-				}
-				else if (files.length > 1)
-				{
-					if (sort != null)
+					if (files.length == 1)
 					{
-						if (sort.equals(SORT.DATE) == true) {
-							Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_COMPARATOR);
-						} else if (sort.equals(SORT.DATE_DECENDING) == true) {
-							Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
-						} else if (sort.equals(SORT.NAME) == true) {
-							Arrays.sort(files, NameFileComparator.NAME_COMPARATOR);
-						} else if (sort.equals(SORT.NAME_DECENDING) == true) {
-							Arrays.sort(files, NameFileComparator.NAME_REVERSE);
+						ret = new String[]{ files[0].getName() };
+					}
+					else if (files.length > 1)
+					{
+						if (sort != null)
+						{
+							if (sort.equals(SORT.DATE) == true) {
+								Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_COMPARATOR);
+							} else if (sort.equals(SORT.DATE_DECENDING) == true) {
+								Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+							} else if (sort.equals(SORT.NAME) == true) {
+								Arrays.sort(files, NameFileComparator.NAME_SYSTEM_COMPARATOR);
+							} else if (sort.equals(SORT.NAME_DECENDING) == true) {
+								Arrays.sort(files, NameFileComparator.NAME_SYSTEM_REVERSE);
+							}
 						}
+						
+						List<String> result = new ArrayList<String>();
+						for (File file : files){
+					    	result.add(file.getName());
+					    }
+						ret = result.toArray(new String[result.size()]);
 					}
 					
-					List<String> result = new ArrayList<String>();
-					for (File file : files){
-				    	result.add(file.getName());
-				    }
-					ret = result.toArray(new String[result.size()]);
-				}
-				
-				if ((includeFullPath == true) && (ret.length > 0))
-				{
-					for (int x = 0; x < ret.length; x++)
+					if ((includeFullPath == true) && (ret.length > 0))
 					{
-						File file = new File(folder, ret[x]);
-						ret[x] = file.getAbsolutePath();
+						for (int x = 0; x < ret.length; x++)
+						{
+							File file = new File(folder, ret[x]);
+							ret[x] = file.getAbsolutePath();
+						}
 					}
 				}
 			}
+		} catch (Exception e) {
+			logger.error(e.getClass().getSimpleName() + " attempting to get file list: " + e.getMessage(), e);
 		}
 		
 		return ret;
