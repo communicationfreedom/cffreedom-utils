@@ -416,7 +416,7 @@ public class Convert
             df.setLenient(false);
             return df.parse(retVal);
         }
-        catch (Exception e) { e.printStackTrace(); return null; }
+        catch (Exception e) { return null; }
     }
     
     public static java.util.Date toDateNoTime(java.util.Date val)
@@ -454,10 +454,10 @@ public class Convert
         } catch (Exception e) { return null; }
     }
     
-    public static java.sql.Date toSqlDate(Calendar val)
+    public static java.sql.Date toSqlDate(java.util.Calendar val)
     {
-    	try {
-            return toSqlDate(toDate(val));
+        try {
+            return new java.sql.Date(val.getTimeInMillis());
         } catch (Exception e) { return null; }
     }
    

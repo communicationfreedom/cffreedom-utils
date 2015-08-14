@@ -89,17 +89,19 @@ public class Utils
      */
     public static boolean isDate(String val)
     {
-    	boolean is = false;
+    	boolean isDate = false;
     	if (hasLength(val) == true)
     	{
 	        try
 	        {
-	            if (Convert.toDate(val) != null) {
-	            	is = true;
+	        	if (Convert.toDate(val, Format.DATE_DEFAULT) != null) {
+	            	isDate = true;
+	            } else if (Convert.toDate(val, Format.DATE_FILE) != null) {
+	            	isDate = true;
 	            }
 	        }catch (Exception e){}
     	}
-        return is;
+        return isDate;
     }
     
     /**

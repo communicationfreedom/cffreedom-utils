@@ -26,9 +26,13 @@ public class UtilsTest
 	}
 	
 	@Test
-	public void isDateTest()
+	public final void isDateTest()
 	{
-		assertTrue(Utils.isDate("01/13/2015"));
-		assertFalse(Utils.isDate("13/13/2015"));
+		assertFalse(Utils.isDate("kajsdfljsdf"));
+		assertFalse(Utils.isDate("13/02/2015"));
+		assertTrue(Utils.isDate("01/02/2015"));
+		assertTrue(Utils.isDate("12/31/9999"));
+		assertTrue(Utils.isDate("01/01/1900"));
+		assertTrue(Utils.isDate("2015-01-05"));
 	}
 }
