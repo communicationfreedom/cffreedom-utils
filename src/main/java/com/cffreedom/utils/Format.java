@@ -68,6 +68,28 @@ public class Format
 		return Format.date(format, Convert.toDate(date));
 	}
 	
+	public static String bigDecimal(BigDecimal n, int decimalPlaces)
+	{
+		return bigDecimal(n, decimalPlaces, true);
+	}
+
+	public static String bigDecimal(BigDecimal n, int decimalPlaces, boolean includeThousandsSeparator)
+	{
+		String format = null;
+
+		if (includeThousandsSeparator == false)
+		{
+			format = "#0." + repeatString("0", decimalPlaces - 1);
+		}
+		else
+		{
+			format = "#,##0." + repeatString("0", decimalPlaces - 1);
+		}
+
+		NumberFormat formatter = new DecimalFormat(format);
+		return formatter.format(n);
+	}
+	
 	public static String phoneNumber(String format, String phoneNumber)
 	{
 		if (format.equalsIgnoreCase(PHONE_10) == true)
