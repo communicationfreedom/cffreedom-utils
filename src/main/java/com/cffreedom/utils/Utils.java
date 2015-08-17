@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -105,22 +106,41 @@ public class Utils
     }
     
     /**
-     * Determine if a string has length (and account for nulls)
+     * Determine if a string has length and is not null
      * @param val The value to evaluate
      * @return True if it is not null and has length, false otherwise
      */
     public static boolean hasLength(String val)
     {
+    	boolean hasLen = false;
     	try
     	{
     		if ((val != null) && (val.length() > 0)){
-    			return true;
-    		}else{
-    			return false;
+    			hasLen = true;
     		}
     	}catch (NullPointerException e){
-    		return false;
+    		// Do nothing
     	}
+    	return hasLen;
+    }
+    
+    /**
+     * Determine if a collection contains elements and is not null
+     * @param val The collection to evaluate
+     * @return True if it is not null and has contains 1 or more elements, false otherwise
+     */
+    public static boolean hasLength(Collection<?> val)
+    {
+    	boolean hasLen = false;
+    	try
+    	{
+    		if ((val != null) && (val.isEmpty() == false)){
+    			hasLen = true;
+    		}
+    	}catch (NullPointerException e){
+    		// Do nothing
+    	}
+    	return hasLen;
     }
     
     /**
