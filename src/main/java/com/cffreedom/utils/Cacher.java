@@ -2,6 +2,7 @@ package com.cffreedom.utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -22,15 +23,22 @@ import java.util.Set;
  * 
  * Changes:
  * 2014-04-28 	markjacobsen.net 	Created
+ * 2015-10-27   MarkJacobsen.net 	Added maintainOrder option
  */
 public class Cacher
 {
-	private static final int DEFAULT_CACHE_MIN = 60;
+	public static final int DEFAULT_CACHE_MIN = 60;
 	private static int defaultCacheMin = DEFAULT_CACHE_MIN;
 	private Map<String, CachedObject> cache = new HashMap<String, CachedObject>();
 	
 	public Cacher(){}
-	public Cacher(int defaultCacheMinutes){ defaultCacheMin = defaultCacheMinutes; }
+	public Cacher(int defaultCacheMinutes) { this(defaultCacheMinutes, false); }
+	public Cacher(int defaultCacheMinutes, boolean maintainOrder) { 
+		defaultCacheMin = defaultCacheMinutes;
+		if (maintainOrder == true) {
+			cache = new LinkedHashMap<String, CachedObject>();
+		}
+	}
 	
 	/**
 	 * Put an item into the cache (with the default cache minutes)

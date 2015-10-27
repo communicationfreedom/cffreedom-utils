@@ -580,7 +580,9 @@ public class FileUtils
 						if (sort != null)
 						{
 							if (sort.equals(SORT.DATE) == true) {
+								logger.debug("sort date start");
 								Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_COMPARATOR);
+								logger.debug("sort date done");
 							} else if (sort.equals(SORT.DATE_DECENDING) == true) {
 								Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
 							} else if (sort.equals(SORT.NAME) == true) {
@@ -599,6 +601,7 @@ public class FileUtils
 					
 					if ((includeFullPath == true) && (ret.length > 0))
 					{
+						logger.trace("Adding full path");
 						for (int x = 0; x < ret.length; x++)
 						{
 							File file = new File(folder, ret[x]);
