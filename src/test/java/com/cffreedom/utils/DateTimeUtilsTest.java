@@ -7,9 +7,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DateTimeUtilsTest
 {
+	private static final Logger LOG = LoggerFactory.getLogger(DateTimeUtilsTest.class);
+	
 	@Test
 	public void testDayOfYear() throws IOException
 	{
@@ -34,6 +38,7 @@ public class DateTimeUtilsTest
 	public void testSetValues() {
 		Calendar today = Calendar.getInstance();
 		Calendar noTime = DateTimeUtils.stripTime(today);
+		//LOG.debug("{}-{}", today.get(Calendar.MONTH), noTime.get(Calendar.MONTH));
 		assertEquals(today.get(Calendar.MONTH), noTime.get(Calendar.MONTH));
 	}
 }
