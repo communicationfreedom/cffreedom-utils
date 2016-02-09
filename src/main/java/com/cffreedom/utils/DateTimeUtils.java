@@ -406,6 +406,7 @@ public class DateTimeUtils extends Format
      */
     public static Calendar setDate(int year, int month, int day)
     {
+    	month = month--; // To set the right value
     	return setDateTime(year, month, day, 0, 0, 0, 0);
     }
     
@@ -421,7 +422,7 @@ public class DateTimeUtils extends Format
     public static Calendar setDateTime(int year, int month, int day, int hour24, int minute, int second, int millisecond)
     {
     	Calendar date = Calendar.getInstance();
-    	date.set(Calendar.MONTH, month -1);
+    	date.set(Calendar.MONTH, month);
     	date.set(Calendar.DAY_OF_MONTH, day);
     	date.set(Calendar.YEAR, year);
     	date.set(Calendar.HOUR_OF_DAY, hour24);

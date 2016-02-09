@@ -3,6 +3,7 @@ package com.cffreedom.utils;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.Test;
@@ -27,5 +28,12 @@ public class DateTimeUtilsTest
 		assertEquals(DateTimeUtils.month("January"), 1);
 		assertEquals(DateTimeUtils.month("feb"), 2);
 		assertEquals(DateTimeUtils.month("lkasdflj"), -1);
+	}
+	
+	@Test
+	public void testSetValues() {
+		Calendar today = Calendar.getInstance();
+		Calendar noTime = DateTimeUtils.stripTime(today);
+		assertEquals(today.get(Calendar.MONTH), noTime.get(Calendar.MONTH));
 	}
 }
