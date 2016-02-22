@@ -557,6 +557,12 @@ public class HttpUtils
 		return vals;
 	}
 	
+	public static String getGoogleMapsLink(String address, String city, String state, String zip) {
+		String qs = address+" "+city+", "+state+" "+zip;
+		address = address.replace(" ", "+");
+		return "http://maps.google.com/?q="+qs;
+	}
+	
 	public static void writeServletTextResponse(HttpServletResponse response, String body) throws IOException
 	{
 		response.setContentType("text/html;charset=UTF-8");
