@@ -90,44 +90,46 @@ public class Format
 		return formatter.format(n);
 	}
 	
+	/**
+	 * Format a phone number. If the phone number is null or less than 2 characters, 
+	 * just return the value passed in
+	 * @param format
+	 * @param phoneNumber
+	 * @return
+	 */
 	public static String phoneNumber(String format, String phoneNumber)
 	{
-		if (format.equalsIgnoreCase(PHONE_10) == true)
-		{
-			phoneNumber = stripNonNumeric(phoneNumber);
-			if (phoneNumber.length() > 10) {
-				phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+		if ((Utils.hasLength(phoneNumber) == true) && (phoneNumber.length() > 2)) {
+			if (format.equalsIgnoreCase(PHONE_10) == true) {
+				phoneNumber = stripNonNumeric(phoneNumber);
+				if (phoneNumber.length() > 10) {
+					phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+				}
+			} else if (format.equalsIgnoreCase(PHONE_DASH) == true) {
+				phoneNumber = stripNonNumeric(phoneNumber);
+				if (phoneNumber.length() > 10) {
+					phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+				}
+				phoneNumber = phoneNumber.substring(0, 3) + "-" + phoneNumber.substring(3, 6) + "-" + phoneNumber.substring(6, 10);
+			} else if (format.equalsIgnoreCase(PHONE_DOT) == true) {
+				phoneNumber = stripNonNumeric(phoneNumber);
+				if (phoneNumber.length() > 10) {
+					phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+				}
+				phoneNumber = phoneNumber.substring(0, 3) + "." + phoneNumber.substring(3, 6) + "." + phoneNumber.substring(6, 10);
+			} else if (format.equalsIgnoreCase(PHONE_INT) == true) {
+				phoneNumber = stripNonNumeric(phoneNumber);
+				if (phoneNumber.length() == 10)
+				{
+					phoneNumber = "+1" + phoneNumber;
+				}
+				else if (phoneNumber.length() == 11)
+				{
+					phoneNumber = "+" + phoneNumber;
+				}
 			}
 		}
-		else if (format.equalsIgnoreCase(PHONE_DASH) == true)
-		{
-			phoneNumber = stripNonNumeric(phoneNumber);
-			if (phoneNumber.length() > 10) {
-				phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
-			}
-			phoneNumber = phoneNumber.substring(0, 3) + "-" + phoneNumber.substring(3, 6) + "-" + phoneNumber.substring(6, 10);
-		}
-		else if (format.equalsIgnoreCase(PHONE_DOT) == true)
-		{
-			phoneNumber = stripNonNumeric(phoneNumber);
-			if (phoneNumber.length() > 10) {
-				phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
-			}
-			phoneNumber = phoneNumber.substring(0, 3) + "." + phoneNumber.substring(3, 6) + "." + phoneNumber.substring(6, 10);
-		}
-		else if (format.equalsIgnoreCase(PHONE_INT) == true)
-		{
-			phoneNumber = stripNonNumeric(phoneNumber);
-			if (phoneNumber.length() == 10)
-			{
-				phoneNumber = "+1" + phoneNumber;
-			}
-			else if (phoneNumber.length() == 11)
-			{
-				phoneNumber = "+" + phoneNumber;
-			}
-		}
-
+		
 		return phoneNumber;
 	}
 	
