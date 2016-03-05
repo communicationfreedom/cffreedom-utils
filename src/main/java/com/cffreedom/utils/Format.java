@@ -288,7 +288,11 @@ public class Format
 	
 	public static String stripExtraSpaces(String source)
 	{
-		return source.replaceAll("\\s+", " ").trim();
+		String val = source;
+		if (source != null) {
+			val = source.replaceAll("\\s+", " ").trim();
+		}
+		return val;
 	}
 	
 	public static String maxLenString(String val, int maxLen)
