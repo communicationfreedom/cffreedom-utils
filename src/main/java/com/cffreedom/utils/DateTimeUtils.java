@@ -328,13 +328,39 @@ public class DateTimeUtils extends Format
         return dateDiff(Convert.toDate(dayOne), Convert.toDate(dayTwo), datePart);
     }
    
-    public static boolean datesEqual(Date dayOne, Date date2)
-    {
-    	if (dayOne.compareTo(date2) == 0){
+    public static boolean datesEqual(Date date1, Date date2) {
+    	if ((date1 != null) && (date2 != null) && (date1.compareTo(date2) == 0)){
     		return true;
-        }else{
+        } else {
         	return false;
         }
+    }
+    
+    public static boolean dateEqual(Calendar date1, Calendar date2) {
+    	if ((date1 != null) && (date2 != null) && (date1.compareTo(date2) == 0)) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
+    
+    /**
+     * Determine if a date is between (inclusive) 2 dates
+     * @param dateToCheck
+     * @param lowerDate
+     * @param upperDate
+     * @return
+     */
+    public static boolean dateBetween(Calendar dateToCheck, Calendar lowerDate, Calendar upperDate) {
+    	if (
+    		(dateToCheck.after(lowerDate) && dateToCheck.before(upperDate)) ||
+    		(dateEqual(dateToCheck, lowerDate)) ||
+    		(dateEqual(dateToCheck, upperDate))) 
+    	{
+    		return true;
+    	} else {
+    		return false;
+    	}
     }
    
     public static String dayOfWeekAsString(Date date)
