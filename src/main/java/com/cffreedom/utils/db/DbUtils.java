@@ -451,12 +451,12 @@ public class DbUtils
     }
 	
 	/**
-	 * Convert a ArrayList of Strings to a SQL IN clause values ex: 'val 1', 'val 2', 'something else'
-	 * @param vals ArrayList of strings
+	 * Convert a List of Strings to a SQL IN clause values ex: 'val 1', 'val 2', 'something else'
+	 * @param vals List of strings
 	 * @param stringList true if you want values surrounded by single quotes
 	 * @return String containing SQL IN clause values
 	 */
-	public static String toInClausItems(ArrayList<String> vals, boolean stringList)
+	public static String toInClause(List<String> vals, boolean stringList)
 	{
 		StringBuffer retVal = new StringBuffer();
 		String valPrefix = "";
