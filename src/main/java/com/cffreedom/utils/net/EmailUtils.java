@@ -1,7 +1,11 @@
 package com.cffreedom.utils.net;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -215,6 +219,25 @@ public class EmailUtils
 			returnArray = recipients.split(";");
 		}
 		return returnArray;
+    }
+    
+    /**
+     * Return all email addresses contained in a block of text
+     * @param text
+     * @return
+     */
+    public static List<String> getEmailAddresses(String text) {
+    	List<String> emails = new ArrayList<String>();
+    	
+    	if (Utils.hasLength(text) == true) {
+	    	Pattern p = Pattern.compile("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b", Pattern.CASE_INSENSITIVE);
+			Matcher matcher = p.matcher(text);
+			while(matcher.find()) {
+				emails.add(matcher.group());
+			}
+    	}
+    		
+    	return emails;
     }
 }
 
