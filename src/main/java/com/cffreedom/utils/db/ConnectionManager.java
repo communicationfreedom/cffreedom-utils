@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -370,7 +370,7 @@ public class ConnectionManager
 			    bds.setPassword(dbconn.getPassword());
 			    bds.setPoolPreparedStatements(true);
 			    bds.setMaxOpenPreparedStatements(30);
-			    bds.setMaxWait(30 * 1000); // seconds * 1000 = milliseconds
+			    bds.setMaxWaitMillis(30 * 1000); // seconds * 1000 = milliseconds
 			    
 			    String validationSql = DbUtils.getTestSql(dbconn.getType());
 			    if (Utils.hasLength(validationSql) == true)
