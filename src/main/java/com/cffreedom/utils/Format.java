@@ -2,6 +2,10 @@ package com.cffreedom.utils;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -33,6 +37,8 @@ import java.text.SimpleDateFormat;
  */
 public class Format
 {
+	private static final Logger logger = LoggerFactory.getLogger(Format.class);
+	
 	public final static String PHONE_10 = "PHONE_10";
 	public final static String PHONE_DASH = "PHONE_DASH";
 	public final static String PHONE_DOT = "PHONE_DOT";
@@ -99,35 +105,39 @@ public class Format
 	 */
 	public static String phoneNumber(String format, String phoneNumber)
 	{
-		if ((Utils.hasLength(phoneNumber) == true) && (phoneNumber.length() > 2)) {
-			if (format.equalsIgnoreCase(PHONE_10) == true) {
-				phoneNumber = stripNonNumeric(phoneNumber);
-				if (phoneNumber.length() > 10) {
-					phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
-				}
-			} else if (format.equalsIgnoreCase(PHONE_DASH) == true) {
-				phoneNumber = stripNonNumeric(phoneNumber);
-				if (phoneNumber.length() > 10) {
-					phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
-				}
-				phoneNumber = phoneNumber.substring(0, 3) + "-" + phoneNumber.substring(3, 6) + "-" + phoneNumber.substring(6, 10);
-			} else if (format.equalsIgnoreCase(PHONE_DOT) == true) {
-				phoneNumber = stripNonNumeric(phoneNumber);
-				if (phoneNumber.length() > 10) {
-					phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
-				}
-				phoneNumber = phoneNumber.substring(0, 3) + "." + phoneNumber.substring(3, 6) + "." + phoneNumber.substring(6, 10);
-			} else if (format.equalsIgnoreCase(PHONE_INT) == true) {
-				phoneNumber = stripNonNumeric(phoneNumber);
-				if (phoneNumber.length() == 10)
-				{
-					phoneNumber = "+1" + phoneNumber;
-				}
-				else if (phoneNumber.length() == 11)
-				{
-					phoneNumber = "+" + phoneNumber;
+		try {
+			if ((Utils.hasLength(phoneNumber) == true) && (phoneNumber.length() > 2)) {
+				if (format.equalsIgnoreCase(PHONE_10) == true) {
+					phoneNumber = stripNonNumeric(phoneNumber);
+					if (phoneNumber.length() > 10) {
+						phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+					}
+				} else if (format.equalsIgnoreCase(PHONE_DASH) == true) {
+					phoneNumber = stripNonNumeric(phoneNumber);
+					if (phoneNumber.length() > 10) {
+						phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+					}
+					phoneNumber = phoneNumber.substring(0, 3) + "-" + phoneNumber.substring(3, 6) + "-" + phoneNumber.substring(6, 10);
+				} else if (format.equalsIgnoreCase(PHONE_DOT) == true) {
+					phoneNumber = stripNonNumeric(phoneNumber);
+					if (phoneNumber.length() > 10) {
+						phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+					}
+					phoneNumber = phoneNumber.substring(0, 3) + "." + phoneNumber.substring(3, 6) + "." + phoneNumber.substring(6, 10);
+				} else if (format.equalsIgnoreCase(PHONE_INT) == true) {
+					phoneNumber = stripNonNumeric(phoneNumber);
+					if (phoneNumber.length() == 10)
+					{
+						phoneNumber = "+1" + phoneNumber;
+					}
+					else if (phoneNumber.length() == 11)
+					{
+						phoneNumber = "+" + phoneNumber;
+					}
 				}
 			}
+		} catch(Exception e) {
+			logger.warn("Problems formatting "+phoneNumber+". Returning as is.");
 		}
 		
 		return phoneNumber;
