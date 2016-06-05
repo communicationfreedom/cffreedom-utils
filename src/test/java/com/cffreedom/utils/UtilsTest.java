@@ -35,4 +35,16 @@ public class UtilsTest
 		assertTrue(Utils.isDate("01/01/1900"));
 		assertTrue(Utils.isDate("2015-01-05"));
 	}
+	
+	@Test
+	public final void isPhoneNumberTest() {
+		assertTrue(Utils.isPhoneNumber("234-456-4987"));
+		assertTrue(Utils.isPhoneNumber("(234) 456-4987"));
+		assertTrue(Utils.isPhoneNumber("234.456.4987"));
+		assertTrue(Utils.isPhoneNumber("+1 234-456-4987"));
+		
+		assertFalse(Utils.isPhoneNumber("234-456-498"));
+		assertFalse(Utils.isPhoneNumber("234-G56-4987"));
+		assertFalse(Utils.isPhoneNumber("456-4987"));
+	}
 }

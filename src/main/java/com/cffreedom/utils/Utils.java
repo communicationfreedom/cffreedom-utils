@@ -83,6 +83,22 @@ public class Utils
         }
         return true;
     }
+    
+    /**
+     * @param val The value to evaluate
+     * @return true if a phone number, false otherwise
+     */
+    public static boolean isPhoneNumber(String val) {
+    	boolean result = false;
+    	if (Utils.hasLength(val) == true) {
+	    	String tmp = Format.phoneNumber(Format.PHONE_INT, val);
+	    	String numbersOnly = Format.stripNonNumeric(tmp);
+	    	if ((tmp.startsWith("+") == true) && (tmp.length() >= 12) && (numbersOnly.length() >= 11)) {
+	    		result = true;
+	    	}
+    	}
+    	return result;
+    }
    
     /**
      * @param val The date to evaluate
