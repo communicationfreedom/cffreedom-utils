@@ -72,6 +72,9 @@ public class HttpUtils
 	public static String getUrl(HttpServletRequest request, boolean includeQueryString)
 	{
 		StringBuffer url = request.getRequestURL();
+		if (request.isSecure() == true) {
+			url = new StringBuffer(url.toString().replace("http:", "https:"));
+		}
 		if ((includeQueryString == true) && (request.getQueryString() != null)) {
 			url.append("?");
 			url.append(request.getQueryString());
