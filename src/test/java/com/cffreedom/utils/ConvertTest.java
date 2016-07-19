@@ -53,4 +53,12 @@ public class ConvertTest {
 		expected = "";
 		assertEquals(expected, Convert.toStringList(new ArrayList<String>(), ","));
 	}
+	
+	@Test
+	public void testToHtml() {
+		String txt = "Don\'t you think that's fun?\n\nRight.";
+		String html = "Don't you think that's fun?<br /><br />Right.";
+		//Utils.output(Convert.toHtml(txt));
+		assertEquals(html, Convert.toHtml(txt));
+	}
 }

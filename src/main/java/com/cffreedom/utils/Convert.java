@@ -588,6 +588,6 @@ public class Convert
      */
     public static String toHtml(String text)
     {
-    	return text.replaceAll("(\r\n|\n)", "<br />");
+    	return text.replaceAll("(\r\n|\n)", "<br />").replace("\\'", "'");
     }
 }
