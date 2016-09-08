@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.exceptions.InfrastructureException;
+import com.cffreedom.exceptions.ValidationException;
 import com.cffreedom.utils.file.FileUtils;
 
 /**
@@ -379,5 +381,32 @@ public class Utils
 		}
 		
 		return props;
+	}
+	
+	public static String replaceNull(String val, String defaultVal) throws ValidationException {
+		if (defaultVal == null) {
+			throw new ValidationException("Default value pass in is null");
+		} else if (val == null) {
+			val = defaultVal;
+		}
+		return val;
+	}
+	
+	public static BigDecimal replaceNull(BigDecimal val, BigDecimal defaultVal) throws ValidationException {
+		if (defaultVal == null) {
+			throw new ValidationException("Default value pass in is null");
+		} else if (val == null) {
+			val = defaultVal;
+		}
+		return val;
+	}
+	
+	public static Integer replaceNull(Integer val, Integer defaultVal) throws ValidationException {
+		if (defaultVal == null) {
+			throw new ValidationException("Default value pass in is null");
+		} else if (val == null) {
+			val = defaultVal;
+		}
+		return val;
 	}
 }
