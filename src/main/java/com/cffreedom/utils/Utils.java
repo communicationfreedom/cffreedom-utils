@@ -383,28 +383,40 @@ public class Utils
 		return props;
 	}
 	
-	public static String replaceNull(String val, String defaultVal) throws ValidationException {
-		if (defaultVal == null) {
-			throw new ValidationException("Default value pass in is null");
-		} else if (val == null) {
+	/**
+	 * If val is null, return defaultVal. If not null, just return val
+	 * @param val The value to check for null
+	 * @param defaultVal The value to replace val with if it is null
+	 * @return
+	 */
+	public static String replaceNull(String val, String defaultVal) {
+		if (val == null) {
 			val = defaultVal;
 		}
 		return val;
 	}
 	
-	public static BigDecimal replaceNull(BigDecimal val, BigDecimal defaultVal) throws ValidationException {
-		if (defaultVal == null) {
-			throw new ValidationException("Default value pass in is null");
-		} else if (val == null) {
+	/**
+	 * If val is null, return defaultVal. If not null, just return val
+	 * @param val The value to check for null
+	 * @param defaultVal The value to replace val with if it is null
+	 * @return
+	 */
+	public static BigDecimal replaceNull(BigDecimal val, BigDecimal defaultVal) {
+		if (val == null) {
 			val = defaultVal;
 		}
 		return val;
 	}
 	
-	public static Integer replaceNull(Integer val, Integer defaultVal) throws ValidationException {
-		if (defaultVal == null) {
-			throw new ValidationException("Default value pass in is null");
-		} else if (val == null) {
+	/**
+	 * If val is null, return defaultVal. If not null, just return val
+	 * @param val The value to check for null
+	 * @param defaultVal The value to replace val with if it is null
+	 * @return
+	 */
+	public static Integer replaceNull(Integer val, Integer defaultVal) {
+		if (val == null) {
 			val = defaultVal;
 		}
 		return val;
