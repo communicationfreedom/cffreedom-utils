@@ -12,8 +12,7 @@ import org.junit.Test;
 public class ConvertTest {
 
 	@Test
-	public void testToBigInteger()
-	{
+	public void testToBigInteger() {
 		long convert = 2;
 		BigInteger converted = Convert.toBigInteger(convert);
 		assertEquals(convert, converted.longValue());
@@ -21,26 +20,32 @@ public class ConvertTest {
 		int convert2 = 5;
 		BigInteger converted2 = Convert.toBigInteger(convert2);
 		assertEquals(convert2, converted2.longValue());
+		
+		assertEquals(Convert.toBigInteger("5,000"), Convert.toBigInteger("5000"));
+		assertEquals(Convert.toBigInteger("5,000.45"), Convert.toBigInteger("5000"));
 	}
 	
 	@Test
-	public void testToCents()
-	{
+	public void testToBigDecimal() {
+		assertEquals(Convert.toBigDecimal("5,000"), Convert.toBigDecimal("5000"));
+		assertEquals(Convert.toBigDecimal("5,000.345"), Convert.toBigDecimal("5000.345"));
+	}
+	
+	@Test
+	public void testToCents() {
 		BigDecimal val = new BigDecimal(1.60);
 		assertEquals(160, Convert.toCents(val));
 	}
 	
 	@Test
-	public void testToBigDecimalFromCents()
-	{
+	public void testToBigDecimalFromCents() {
 		BigDecimal expected = Convert.toBigDecimal(1.53);
 		BigDecimal actual = Convert.toBigDecimalFromCents(153);
 		assertEquals(expected, actual);
 	}
 	
 	@Test
-	public void testToStringList()
-	{
+	public void testToStringList() {
 		List<String> vals = new ArrayList<String>();
 		vals.add("A");
 		vals.add("B");
@@ -60,5 +65,15 @@ public class ConvertTest {
 		String html = "Don't you think that's fun?<br /><br />Right.";
 		//Utils.output(Convert.toHtml(txt));
 		assertEquals(html, Convert.toHtml(txt));
+	}
+	
+	@Test
+	public void testToInt() {
+		String val = "183000";
+		assertEquals(183000, Convert.toInt(val));
+		val = "183,000";
+		assertEquals(183000, Convert.toInt(val));
+		val = "183,000.23";
+		assertEquals(183000, Convert.toInt(val));
 	}
 }

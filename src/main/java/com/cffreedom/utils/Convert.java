@@ -9,12 +9,15 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
@@ -251,59 +254,63 @@ public class Convert
 	
 	//------------------------------------------------------------------
 	// Int methods
-	public static int toInt(String val)
-	{
-		return (new Integer(val)).intValue();	
+	public static int toInt(String val) {
+		try {
+			return NumberFormat.getNumberInstance(Locale.getDefault()).parse(val).intValue();
+		} catch (ParseException e) {
+			throw new NumberFormatException(val+" is not a valid integer");
+		}
 	}
 	
-	public static int toInt(long val)
-	{
+	public static int toInt(long val) {
 		return (new Long(val)).intValue();	
 	}
 	
-	public static int toInt(double val)
-	{
+	public static int toInt(double val) {
 		return (new Double(val)).intValue();	
 	}
 	
-	public static int toInt(boolean val)
-	{
-	    if (val == true)
-	    {
+	public static int toInt(boolean val) {
+	    if (val == true) {
 	        return 1;
-	    }else{
+	    } else {
 	        return 0;
 	    }
 	}
 	
-	public static int[] toIntArray(String[] vals)
-	{
+	public static int[] toIntArray(String[] vals) {
 		int[] retArray = new int[vals.length];
-		for (int x = 0; x < vals.length; x++)
-		{
+		for (int x = 0; x < vals.length; x++) {
 			retArray[x] = toInt(vals[x]);
 		}
 		return retArray;	
 	}
 
-	public static Integer toInteger(int val)
-	{
+	public static Integer toInteger(int val) {
 		return new Integer(val);
 	}
 	
 	//------------------------------------------------------------------
+	// Double methods
+	public static double toDouble(String val) {
+		try {
+			return NumberFormat.getNumberInstance(Locale.getDefault()).parse(val).doubleValue();
+		} catch (ParseException e) {
+			throw new NumberFormatException(val+" is not a valid double");
+		}
+	}
+	
+	//------------------------------------------------------------------
     // Boolean methods
-	public static boolean toBoolean(int val)
-	{
-		if (val == 0){
+	public static boolean toBoolean(int val) {
+		if (val == 0) {
 			return false;
-		}else{
+		} else {
 			return true;
 		}
 	}
 	
-	public static boolean toBoolean(String val)
-	{
+	public static boolean toBoolean(String val) {
 		if  (
 			(val == null) ||
 			(val.trim().length() == 0) ||
@@ -313,29 +320,28 @@ public class Convert
 			)
 		{
 			return false;
-		}
-		else
-		{
+		} else {
 			return true;
 		}
 	}
 	
 	//------------------------------------------------------------------
     // Long methods
-	public static long toLong(String val)
-	{
-		return (new Long(val)).longValue();	
+	public static long toLong(String val) {
+		try {
+			return NumberFormat.getNumberInstance(Locale.getDefault()).parse(val).longValue();
+		} catch (ParseException e) {
+			throw new NumberFormatException(val+" is not a valid long");
+		}
 	}
 	
-	public static long toLong(int val)
-	{
+	public static long toLong(int val) {
 		return (new Long(val)).longValue();
 	}
 	
     //------------------------------------------------------------------
     // Calendar methods
-    public static Calendar toCalendar(String val, String mask) throws ParseException
-    {
+    public static Calendar toCalendar(String val, String mask) throws ParseException {
     	if (val == null) return null;
     	try {
 	    	Calendar cal = Calendar.getInstance();
@@ -344,8 +350,7 @@ public class Convert
     	} catch (Exception e) { logger.error("Not a date {}", val); return null; }
     }
    
-    public static Calendar toCalendar(java.util.Date val)
-    {
+    public static Calendar toCalendar(java.util.Date val) {
     	if (val == null) return null;
     	try {
 	    	Calendar cal = Calendar.getInstance();
@@ -356,34 +361,29 @@ public class Convert
    
     //------------------------------------------------------------------
     // Date/Time methods           
-    public static java.util.Date toDate(Calendar val)
-    {
+    public static java.util.Date toDate(Calendar val) {
     	if (val == null) return null;
         try {
             return val.getTime();
         } catch (Exception e) { logger.error("Not a date {}", val); return null; }
     }
    
-    public static java.util.Date toDate(java.sql.Date val)
-    {
+    public static java.util.Date toDate(java.sql.Date val) {
     	if (val == null) return null;
         try {
             return (java.util.Date)val;
         } catch (Exception e) { logger.error("Not a date {}", val); return null; }
     }
    
-    public static java.util.Date toDate(String val)
-    {
+    public static java.util.Date toDate(String val) {
     	return toDate(val, Format.DATE_DEFAULT);
     }
     
-    public static java.util.Date toDate(long val)
-    {
+    public static java.util.Date toDate(long val) {
     	return new Date(val);
     }
    
-    public static java.util.Date toDate(String val, String mask)
-    {
+    public static java.util.Date toDate(String val, String mask) {
         String retVal = val;
        
         try
@@ -419,18 +419,15 @@ public class Convert
         catch (Exception e) { return null; }
     }
     
-    public static java.util.Date toDateNoTime(java.util.Date val)
-    {
+    public static java.util.Date toDateNoTime(java.util.Date val) {
     	return toDate(DateTimeUtils.dateFormat(val));
     }
    
-    public static java.util.Date[] toDateArray(String[] vals) throws ParseException
-    {
+    public static java.util.Date[] toDateArray(String[] vals) throws ParseException {
         return toDateArray(vals, Format.DATE_DEFAULT);
     }
                
-    public static java.util.Date[] toDateArray(String[] vals, String mask) throws ParseException
-    {
+    public static java.util.Date[] toDateArray(String[] vals, String mask) throws ParseException {
         java.util.Date[] dateArray = new java.util.Date[vals.length];
         for (int x = 0; x < vals.length; x++)
         {
@@ -440,29 +437,25 @@ public class Convert
     }
    
     @SuppressWarnings("deprecation")
-	public static java.sql.Date toSqlDate(String val)
-    {
+	public static java.sql.Date toSqlDate(String val) {
         try {
             return new java.sql.Date(java.sql.Date.parse(val));
         } catch (Exception e) { return null; }
     }
    
-    public static java.sql.Date toSqlDate(java.util.Date val)
-    {
+    public static java.sql.Date toSqlDate(java.util.Date val) {
         try {
             return (java.sql.Date)val;
         } catch (Exception e) { return null; }
     }
     
-    public static java.sql.Date toSqlDate(java.util.Calendar val)
-    {
+    public static java.sql.Date toSqlDate(java.util.Calendar val) {
         try {
             return new java.sql.Date(val.getTimeInMillis());
         } catch (Exception e) { return null; }
     }
    
-    public static java.util.Date toTime(String val) throws Exception
-    {
+    public static java.util.Date toTime(String val) throws Exception {
         try {
         	DateFormat df = new SimpleDateFormat(Format.DATE_TIME_12_HOUR);
             return df.parse(val);
@@ -475,7 +468,7 @@ public class Convert
      * @param inDate java.util.Date to convert to DB2 date string
     * @return DB2 date string
     */
-    public static String toDB2DateString(java.util.Date val){
+    public static String toDB2DateString(java.util.Date val) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         return df.format(val);
     }
@@ -486,10 +479,10 @@ public class Convert
      * @param inDate java.sql.Date to convert to DB2 date string
     * @return DB2 date string
     */       
-    public static String toDB2DateString(java.sql.Date val){
-       
-        return val.toString();
-    }          
+    public static String toDB2DateString(java.sql.Date val) {
+    	return val.toString();
+    }
+    
     /***
     * This function converts a standard java.util.Date to a
      * DB2 Formated date.
@@ -497,7 +490,7 @@ public class Convert
     * @return DB2 date string
     * @throws ParseException
     */
-    public static java.sql.Date toDB2Date(String val) throws ParseException{
+    public static java.sql.Date toDB2Date(String val) throws ParseException {
         DateFormat df;
         if (val.trim().charAt(4)=='-'){
             df = new SimpleDateFormat("yyyy-MM-dd");
@@ -517,8 +510,7 @@ public class Convert
     * @param a_dVal java.util.Date to convert to a Timestamp object
     * @return java.sql.Timestamp object
     */
-    public static java.sql.Timestamp toTimestamp(java.util.Date val)
-    {
+    public static java.sql.Timestamp toTimestamp(java.util.Date val) {
     	if (val == null) {
     		return null;
     	} else {
@@ -526,58 +518,63 @@ public class Convert
     	}
     }
     
-    public static java.sql.Timestamp toTimestamp(java.util.Calendar val)
-    {
+    public static java.sql.Timestamp toTimestamp(java.util.Calendar val) {
     	return toTimestamp(Convert.toDate(val));
     }
     
-    public static BigDecimal toBigDecimal(String val)
-    {
+    public static BigDecimal toBigDecimal(String val) {
+    	DecimalFormat df = (DecimalFormat)NumberFormat.getInstance(Locale.getDefault());
+    	df.setParseBigDecimal(true);
+    	try {
+			return ((BigDecimal)df.parseObject(val));
+		} catch (ParseException e) {
+			throw new NumberFormatException(val+" is not a valid BigDecimal");
+		}
+    }
+    
+    public static BigDecimal toBigDecimal(int val) {
     	return new BigDecimal(val);
     }
     
-    public static BigDecimal toBigDecimal(int val)
-    {
+    public static BigDecimal toBigDecimal(long val) {
     	return new BigDecimal(val);
     }
     
-    public static BigDecimal toBigDecimal(long val)
-    {
-    	return new BigDecimal(val);
-    }
-    
-    public static BigDecimal toBigDecimal(double val)
-    {
+    public static BigDecimal toBigDecimal(double val) {
     	return BigDecimal.valueOf(val);
     }
     
-    public static BigDecimal toBigDecimalFromCents(long cents)
-    {
+    public static BigDecimal toBigDecimalFromCents(long cents) {
     	return toBigDecimal(cents).divide(toBigDecimal(100));
     }
     
-    public static BigInteger toBigInteger(long val)
-    {
+    public static BigInteger toBigInteger(long val) {
     	return new BigInteger(toString(val));
     }
     
-    public static BigInteger toBigInteger(int val)
-    {
+    public static BigInteger toBigInteger(int val) {
     	return new BigInteger(toString(val));
     }
+    
+    public static BigInteger toBigInteger(String val) {
+    	DecimalFormat df = (DecimalFormat)NumberFormat.getInstance(Locale.getDefault());
+    	df.setParseBigDecimal(true);
+    	try {
+			return ((BigDecimal)df.parseObject(val)).toBigInteger();
+		} catch (ParseException e) {
+			throw new NumberFormatException(val+" is not a valid BigInteger");
+		}
+    }
 
-    public static int toCents(BigDecimal dollarAmt)
-	{
+    public static int toCents(BigDecimal dollarAmt) {
 		return dollarAmt.movePointRight(2).intValue();
 	}
     
-    public static int toCents(double dollarAmount)
-    {
+    public static int toCents(double dollarAmount) {
     	return toInt(dollarAmount * 100);
     }
     
-    public static int toCents(float dollarAmount)
-    {
+    public static int toCents(float dollarAmount) {
     	return toInt(dollarAmount * 100);
     }
     
@@ -586,8 +583,7 @@ public class Convert
      * @param text
      * @return
      */
-    public static String toHtml(String text)
-    {
+    public static String toHtml(String text) {
     	return text.replaceAll("(\r\n|\n)", "<br />").replace("\\'", "'");
     }
 }
