@@ -329,13 +329,30 @@ public class DateTimeUtils extends Format
     }
    
     public static boolean datesEqual(Date date1, Date date2) {
-    	if ((date1 != null) && (date2 != null) && (date1.compareTo(date2) == 0)){
-    		return true;
-        } else {
-        	return false;
-        }
+    	return datesEqual(Convert.toCalendar(date1), Convert.toCalendar(date2));
     }
     
+    public static boolean datesEqual(Calendar date1, Calendar date2) {
+    	return datesEqual(date1, date2, false);
+    }
+    
+    public static boolean datesEqual(Calendar date1, Calendar date2, boolean ignoreTime) {
+    	boolean equal = false;
+    	
+    	if ((date1 != null) && (date2 != null)) {
+    		if (ignoreTime == true) {
+        		date1 = stripTime(date1);
+        		date2 = stripTime(date2);
+        	}
+    		if (date1.compareTo(date2) == 0) {
+    			equal = true;
+    		}
+    	}
+    	
+    	return equal;
+    }
+    
+    @Deprecated
     public static boolean dateEqual(Calendar date1, Calendar date2) {
     	if ((date1 != null) && (date2 != null) && (date1.compareTo(date2) == 0)) {
     		return true;
