@@ -33,6 +33,15 @@ public class DateTimeUtilsTest
 	}
 	
 	@Test
+	public void testTimePieces() {
+		Calendar test = DateTimeUtils.setDateTime(2015, 10, 3, 15, 22, 16, 0);
+		assertEquals(DateTimeUtils.hour(test), 3);
+		assertEquals(DateTimeUtils.hour24(test), 15);
+		assertEquals(DateTimeUtils.minute(test), 22);
+		assertEquals(DateTimeUtils.second(test), 16);
+	}
+	
+	@Test
 	public void testSetValues() {
 		Calendar today = Calendar.getInstance();
 		Calendar noTime = DateTimeUtils.stripTime(today);
