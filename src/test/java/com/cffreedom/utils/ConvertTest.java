@@ -38,6 +38,13 @@ public class ConvertTest {
 	}
 	
 	@Test
+	public void testToSqlStringList() {
+		assertEquals(Convert.toSqlStringList("hi, bye", ",", true), "'hi','bye'");
+		assertEquals(Convert.toSqlStringList("hi, bye", ",", false), "'hi',' bye'");
+		assertEquals(Convert.toSqlStringList("hi, bye", "-", true), "'hi, bye'");
+	}
+	
+	@Test
 	public void testToBigDecimalFromCents() {
 		BigDecimal expected = Convert.toBigDecimal(1.53);
 		BigDecimal actual = Convert.toBigDecimalFromCents(153);

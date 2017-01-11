@@ -435,6 +435,23 @@ public class Convert
         }
         return dateArray;         
     }
+    
+    public static String toSqlStringList(String list, String delimiter, boolean trimElements) {
+    	String ret = "";
+    	if (Utils.hasLength(list)) {
+    		String[] strArray = list.split(delimiter);
+    		for (String tmp : strArray) {
+    			if (trimElements) {
+    				tmp = tmp.trim();
+    			}
+    			if (ret.length() > 0) {
+    				ret += ",";
+    			}
+    			ret += "'"+tmp+"'";
+    		}
+    	}
+    	return ret;
+    }
    
     @SuppressWarnings("deprecation")
 	public static java.sql.Date toSqlDate(String val) {
