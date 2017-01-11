@@ -51,19 +51,47 @@ public class Utils
      * @param val The number to evaluate
      * @return True if we can convert the value to an integer, otherwise false
      */
-	public static boolean isInt(String val)
-	{
+	public static boolean isInt(String val) {
 		boolean is = false;
-    	if (hasLength(val) == true)
-    	{
-			try
-			{
+    	if (hasLength(val) == true) {
+			try {
 				Convert.toInt(val);
 				is = true;
 			}
 			catch (Exception e){}
     	}
     	return is;
+	}
+	
+	/**
+	 * Determine if a string is a list of integers
+	 * @param val
+	 * @param delimiter
+	 * @param trimElements
+	 * @return
+	 */
+	public static boolean isIntList(String val, String delimiter, boolean trimElements) {
+		boolean is = false;
+		if (Utils.hasLength(val)) {
+			try {
+				String[] strArray = val.split(delimiter);
+				
+				if (strArray.length > 0) {
+					boolean allInts = true;
+					for (String tmp : strArray) {
+						if (trimElements) {
+							tmp = tmp.trim();
+						}
+						if (!isInt(tmp)) {
+							allInts = false;
+							break;
+						}
+					}
+					is = allInts;
+				}
+			} catch (Exception e) {}
+		}
+		return is;
 	}
 	
 	/**

@@ -47,4 +47,12 @@ public class UtilsTest
 		assertFalse(Utils.isPhoneNumber("234-G56-4987"));
 		assertFalse(Utils.isPhoneNumber("456-4987"));
 	}
+	
+	@Test
+	public final void isIntListTest() {
+		assertTrue(Utils.isIntList("12, 15,9", ",", true));
+		assertTrue(Utils.isIntList("1", ",", true));
+		
+		assertFalse(Utils.isIntList("12, 15,9", ",", false));
+	}
 }
