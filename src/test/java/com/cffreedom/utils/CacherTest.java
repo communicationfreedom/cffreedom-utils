@@ -70,4 +70,19 @@ public class CacherTest
 		assertNotNull(cache.get("val2"));
 		assertNull(cache.get("junk2"));
 	}
+	
+	/*
+	@Test
+	public void toListTest() {
+		Cacher cache = new Cacher(15);
+		cache.put("val1", Convert.toBigDecimal(17));
+		cache.put("val2", Convert.toBigDecimal(7.6));
+		
+		assertEquals(cache.toList().size(), 2);
+		
+		for (BigDecimal val : cache.toList<BigDecimal>()) {
+			
+		}
+	}
+	*/
 }

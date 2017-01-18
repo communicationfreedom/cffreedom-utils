@@ -1,8 +1,14 @@
 package com.cffreedom.utils;
 
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Original Class: com.cffreedom.utils.DateTimeUtils
@@ -26,19 +32,18 @@ import java.util.TimeZone;
  * 2013-09-03 	markjacobsen.net 	Added hourMinAsInt()
  * 2015-06-07   MarkJacobsen.net 	Added setTime()
  */
-public class DateTimeUtils extends Format
-{
+public class DateTimeUtils extends Format {
+	private static final Logger logger = LoggerFactory.getLogger(DateTimeUtils.class);
+	
     public static final char DATE_PART_SECOND = 's';
     public static final char DATE_PART_MINUTE = 'n';
     public static final char DATE_PART_HOUR = 'h';
     public static final char DATE_PART_DAY = 'd';
     public static final char DATE_PART_MONTH = 'm';
     public static final char DATE_PART_YEAR = 'Y';
-   
-           
+       
     @SuppressWarnings("deprecation")
-	public static Date time(int hour24, int minute)
-    {
+	public static Date time(int hour24, int minute) {
         Date date = new Date();
         date.setHours(hour24);
         date.setMinutes(minute);
@@ -46,78 +51,63 @@ public class DateTimeUtils extends Format
         return date;
     }
    
-    public static int second(Calendar date)
-    {
+    public static int second(Calendar date) {
     	return date.get(Calendar.SECOND);
     }
            
-    public static int second(Date date)
-    {
+    public static int second(Date date) {
     	return second(Convert.toCalendar(date));
     }
            
-    public static int minute(Calendar date)
-    {
+    public static int minute(Calendar date) {
     	return date.get(Calendar.MINUTE);
     }
            
-    public static int minute(Date date)
-    {
+    public static int minute(Date date) {
     	return minute(Convert.toCalendar(date));
     }
            
-    public static int hour24(Calendar date)
-    {
+    public static int hour24(Calendar date) {
     	return date.get(Calendar.HOUR_OF_DAY);
     }
            
-    public static int hour24(Date date)
-    {
+    public static int hour24(Date date) {
     	return hour24(Convert.toCalendar(date));
     }
    
-    public static int hour(Calendar date)
-    {
+    public static int hour(Calendar date) {
     	return date.get(Calendar.HOUR);
     }
    
-    public static int hour(Date date)
-    {
+    public static int hour(Date date) {
     	return hour(Convert.toCalendar(date));
     }
     
-    public static int hourMinAsInt(Date date)
-    {
+    public static int hourMinAsInt(Date date) {
     	return Convert.toInt(Format.date("Hmm", date));
     }
    
-    public static int day(Calendar date)
-    {
+    public static int day(Calendar date) {
     	return date.get(Calendar.DAY_OF_MONTH);
     }
    
-    public static int day(Date date)
-    {
+    public static int day(Date date) {
     	return day(Convert.toCalendar(date));
     }
    
-    public static int dayOfWeek(Calendar date)
-    {
+    public static int dayOfWeek(Calendar date) {
     	return date.get(Calendar.DAY_OF_WEEK);
     }
            
-    public static int dayOfWeek(Date date)
-    {
+    public static int dayOfWeek(Date date) {
     	return dayOfWeek(Convert.toCalendar(date));
     }
     
-    public static int dayOfYear(Calendar date)
-    {
+    public static int dayOfYear(Calendar date) {
     	return date.get(Calendar.DAY_OF_YEAR);
     }
     
-    public static int dayOfYear(Date date)
-    {
+    public static int dayOfYear(Date date) {
     	return dayOfYear(Convert.toCalendar(date));
     }
            
@@ -126,8 +116,7 @@ public class DateTimeUtils extends Format
 	* @param a_oDate Object containing the time
 	* @return Minutes in the time
 	*/
-    public static int minutes(Calendar date)
-    {
+    public static int minutes(Calendar date) {
         int min = date.get(Calendar.MINUTE);
         int hours = date.get(Calendar.HOUR_OF_DAY);
        
@@ -139,13 +128,11 @@ public class DateTimeUtils extends Format
 	* @param a_oDate Object containing the time
 	* @return Minutes in the time
 	*/
-	public static int minutes(Date date)
-	{
+	public static int minutes(Date date) {
         return minutes(Convert.toCalendar(date));
 	}
            
-	public static Date minutesToTime(int min) throws Exception
-	{
+	public static Date minutesToTime(int min) throws Exception {
 		String time;
         int hours = Convert.toInt( Math.floor(min / 60) );
         int minutes = min - (60 * hours);
@@ -159,28 +146,23 @@ public class DateTimeUtils extends Format
         return Convert.toDate(time, Format.DATE_TIME_24_HOUR);
     }
    
-    public static Date[] minutesToTimeArray(int[] minutes) throws Exception
-    {
+    public static Date[] minutesToTimeArray(int[] minutes) throws Exception {
         Date[] time = new Date[minutes.length];
-        for (int x = 0; x < minutes.length; x++)
-        {
+        for (int x = 0; x < minutes.length; x++) {
             time[x] = minutesToTime(minutes[x]);
         }
         return time;
     }
    
-    public static int month(Calendar date)
-    {
+    public static int month(Calendar date) {
     	return date.get(Calendar.MONTH) + 1;
     }
    
-    public static int month(Date date)
-    {
+    public static int month(Date date) {
     	return month(Convert.toCalendar(date));
     }
     
-    public static int month(String date)
-    {
+    public static int month(String date) {
     	if (date.length() >= 3)
     	{
     		date = date.trim().substring(0, 3).toUpperCase();
@@ -197,39 +179,31 @@ public class DateTimeUtils extends Format
 	    	else if (date.equals("NOV") == true) { return 11; } 
 	    	else if (date.equals("DEC") == true) { return 12; } 
 	    	else { return -1;	}
-    	}
-    	else if (Utils.isInt(date) == true)
-    	{
+    	} else if (Utils.isInt(date) == true) {
     		int val = Convert.toInt(date);
     		if ((val >= 1) && (val <= 12)) {
     			return val;
     		} else {
     			return -1;
     		}
-    	}
-    	else
-    	{
+    	} else {
     		return -1;
     	}
     }
    
-    public static int month()
-    {
+    public static int month() {
         return month(new Date());
     }
    
-    public static int year(Calendar date)
-    {
+    public static int year(Calendar date) {
     	return date.get(Calendar.YEAR);
     }
    
-    public static int year(Date date)
-    {
+    public static int year(Date date) {
     	return year(Convert.toCalendar(date));
     }
    
-    public static int year()
-    {
+    public static int year() {
         return year(new Date());
     }
    
@@ -240,12 +214,10 @@ public class DateTimeUtils extends Format
 	* @param a_cDatePart s = seconds, n = minutes, h = hours, d = days, m = months, y = years
 	* @return New date
 	*/
-    public static Calendar dateAdd(Calendar date, int interval, char datePart)
-    {
+    public static Calendar dateAdd(Calendar date, int interval, char datePart) {
     	Calendar cal = (Calendar)date.clone();
    
-        switch (datePart)
-        {
+        switch (datePart) {
         	case (DATE_PART_SECOND):
         		cal.add(Calendar.SECOND, interval);
                 break;
@@ -275,19 +247,16 @@ public class DateTimeUtils extends Format
     }
    
    
-    public static Date dateAdd(Date date, int interval, char datePart)
-    {
+    public static Date dateAdd(Date date, int interval, char datePart) {
         return Convert.toDate(dateAdd(Convert.toCalendar(date), interval, datePart));
     }
    
    
-    public static int dateDiff(Date dayOne, Date dayTwo, char datePart)
-    {
+    public static int dateDiff(Date dayOne, Date dayTwo, char datePart) {
     	int ret = 0;
                
         long milliseconds = dayTwo.getTime() - dayOne.getTime();
-        if (milliseconds < 0)
-        {
+        if (milliseconds < 0) {
         	milliseconds = -milliseconds;
         }
         long seconds = milliseconds / 1000L;
@@ -295,8 +264,7 @@ public class DateTimeUtils extends Format
         long hours = minutes / 60L;
         long days = hours / 24L;
                                        
-        switch (datePart)
-        {
+        switch (datePart) {
         	case (DATE_PART_MONTH):
         		int monthsOne = (year(dayOne) * 12) + month(dayOne);
         		int monthsTwo = (year(dayTwo) * 12) + month(dayTwo);
@@ -380,63 +348,52 @@ public class DateTimeUtils extends Format
     	}
     }
    
-    public static String dayOfWeekAsString(Date date)
-    {
+    public static String dayOfWeekAsString(Date date) {
     	return Format.date("EEEE", date);
     }
    
-    public static String monthAsString(Date date)
-    {
+    public static String monthAsString(Date date) {
     	return Format.date("MMMM", date);
     }
    
-    public static String monthAsString(int month) throws Exception
-    {
+    public static String monthAsString(int month) throws Exception {
         Date date = Convert.toDate(month + "/1/2000");
         return Format.date("MMMM", date);
     }
     
-    public static String timeFormat(Date date)
-    {
+    public static String timeFormat(Date date) {
     	return Format.date(Format.DATE_TIME_12_HOUR, date);
     }
     
-    public static String dateFormat(Date date)
-    {
+    public static String dateFormat(Date date) {
         return Format.date(Format.DATE_DEFAULT, date);
     }
     
-    public static String dateTimeFormat(Date date)
-    {
+    public static String dateTimeFormat(Date date) {
         return Format.date(Format.DATE_HUMAN, date);
     }
     
-    public static int dateAsEpoc(Date date)
-    {
+    public static int dateAsEpoc(Date date) {
     	return Convert.toInt(date.getTime() / 1000);
     }
    
-    public static int weekInYear(Date date)
-    {
+    public static int weekInYear(Date date) {
         return weekInYear(date, Calendar.SUNDAY);
     }
    
-    public static int weekInYear(Date date, int firstDayOfWeek)
-    {
+    public static int weekInYear(Date date, int firstDayOfWeek) {
         Calendar cal = Convert.toCalendar(date);
         cal.setFirstDayOfWeek(firstDayOfWeek);
         return cal.get(Calendar.WEEK_OF_YEAR);
     }
     
-    public static Date combineDates(Date dateDate, Date timeDate)
-    {
+    public static Date combineDates(Date dateDate, Date timeDate) {
     	Calendar dateCal = Convert.toCalendar(dateDate);
     	dateCal.setTime(timeDate);
     	return Convert.toDate(dateCal);
     }
     
-    public static Calendar stripTime(Calendar date)
-    {
+    public static Calendar stripTime(Calendar date) {
     	return setDate(date.get(Calendar.YEAR), date.get(Calendar.MONTH)+1, date.get(Calendar.DAY_OF_MONTH));
     }
     
@@ -447,13 +404,11 @@ public class DateTimeUtils extends Format
      * @param day
      * @return
      */
-    public static Calendar setDate(int year, int month, int day)
-    {
+    public static Calendar setDate(int year, int month, int day) {
     	return setDateTime(year, month, day, 0, 0, 0, 0);
     }
     
-    public static Calendar setTime(Calendar date, int hour24, int minute, int second, int millisecond)
-    {
+    public static Calendar setTime(Calendar date, int hour24, int minute, int second, int millisecond) {
     	date.set(Calendar.HOUR_OF_DAY, hour24);
     	date.set(Calendar.MINUTE, minute);
     	date.set(Calendar.SECOND, second);
@@ -461,8 +416,11 @@ public class DateTimeUtils extends Format
     	return date;
     }
     
-    public static Calendar setDateTime(int year, int month, int day, int hour24, int minute, int second, int millisecond)
-    {
+    public static Calendar setDateTime(int year, int month, int day, int hour24, int minute, int second) {
+    	return setDateTime(year, month, day, hour24, minute, second, 0);
+    }
+    
+    public static Calendar setDateTime(int year, int month, int day, int hour24, int minute, int second, int millisecond) {
     	Calendar date = Calendar.getInstance();
     	date.set(Calendar.MONTH, month-1);
     	date.set(Calendar.DAY_OF_MONTH, day);
@@ -482,23 +440,19 @@ public class DateTimeUtils extends Format
      * @param date Date with GMT value
      * @return Date in the local time
      */
-    public static Date gmtToLocal(Date gmtDate)
-    {
-    	try 
-    	{
+    public static Date gmtToLocal(Date gmtDate) {
+    	try {
     		TimeZone localTimeZone = Calendar.getInstance().getTimeZone();
     		Date ret = new Date(gmtDate.getTime() - localTimeZone.getRawOffset());
     		
     		// If we are now in DST, back off by the delta.  
     		// Note that we are checking the GMT date, this is the KEY.
-    		if (localTimeZone.inDaylightTime(gmtDate) == true)
-    		{
+    		if (localTimeZone.inDaylightTime(gmtDate) == true) {
     			Date dstDate = new Date(ret.getTime() - localTimeZone.getDSTSavings());
     			
     			// Check to make sure we have not crossed back into standard time.
                 // This happens when we are on the cusp of DST (7pm the day before the change for PDT)
-    			if (localTimeZone.inDaylightTime(dstDate) == true)
-    			{
+    			if (localTimeZone.inDaylightTime(dstDate) == true) {
     				ret = dstDate;
     			}
     		}
@@ -506,5 +460,64 @@ public class DateTimeUtils extends Format
     		return ret;
         }
     	catch (Exception e) {e.printStackTrace(); return null; }
+    }
+    
+    public static Calendar standardizeDate(String val) {
+    	// Order to try and standardize dates
+        final String[] STD_DATE_FORMATS = new String[] {
+        		Format.DATE_DEFAULT,
+        		"yyyy/MM/dd HH:mm:ss",
+            	Format.DATE_TIMESTAMP,
+            	"MM-dd-yyyy HH:mm:ss",
+            	"yyyy/MM/dd-HH:mm:ss",
+            	"yyyy-MM-dd-HH:mm:ss",
+            	"MM-dd-yyyy-HH:mm:ss",
+            	"MM/dd/yyyy-HH:mm:ss",
+                "yyyy/MM/dd",
+            	"yyyy-MM-dd",
+            	"MM-dd-yyyy",
+            	Format.DATE_TIMESTAMP_DEFAULT,
+            	"MMddyyyy"
+            };
+        
+        Calendar result = null;
+  	
+    	// search through potential date formats to find a match
+    	for(String potentialFormatMatch : STD_DATE_FORMATS)
+    	{
+    		SimpleDateFormat source = new SimpleDateFormat(potentialFormatMatch);
+    		source.setLenient(false);
+    		try 
+    		{
+    			ParsePosition pos = new ParsePosition(0);
+    			// no exception is being thrown by this parse method; instead null is returned
+    			result = Convert.toCalendar(source.parse(val, pos));
+    			
+    			if (result == null) {
+    				 throw new ParseException("Unparseable date: \"" + val + "\" for \"" + potentialFormatMatch + "\"" , pos.getErrorIndex());
+    			} else if (pos.getIndex() != val.length()) {
+    				result = null;
+    			} 
+    			
+    			if (result != null) {    				
+    				int yearPart = (result.get(Calendar.YEAR) / 100);
+        			//year should be 18,19,20,21 
+        			if( yearPart == 18 || yearPart == 19 || yearPart == 20 || yearPart == 21){
+        				break;
+        			}else{
+        				result = null; //not valid date
+        			}
+    			}
+    		} catch (ParseException ex) {
+    			// probably just not a matching date format, continue to next possible match
+    			continue;
+    		}
+    	}
+    	
+    	if (result == null) {
+    		logger.warn("Unable to parse into date: "+val);
+    	}
+    	
+    	return result;
     }
 }

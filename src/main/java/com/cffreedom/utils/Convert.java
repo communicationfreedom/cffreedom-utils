@@ -341,22 +341,36 @@ public class Convert
 	
     //------------------------------------------------------------------
     // Calendar methods
-    public static Calendar toCalendar(String val, String mask) throws ParseException {
-    	if (val == null) return null;
-    	try {
-	    	Calendar cal = Calendar.getInstance();
-	        cal.setTime(toDate(val, mask));
-	        return cal;
-    	} catch (Exception e) { logger.error("Not a date {}", val); return null; }
+	public static Calendar toCalendar(String val) {
+		return DateTimeUtils.standardizeDate(val);
+	}
+	
+    public static Calendar toCalendar(String val, String mask) {
+		Calendar ret = null;
+    	if (val != null) {
+	    	try {
+		    	Calendar cal = Calendar.getInstance();
+		        cal.setTime(toDate(val, mask));
+		        return cal;
+	    	} catch (Exception e) { 
+	    		logger.error("Not a date {}", val);
+	    	}
+    	}
+    	return ret;
     }
    
     public static Calendar toCalendar(java.util.Date val) {
-    	if (val == null) return null;
-    	try {
-	    	Calendar cal = Calendar.getInstance();
-	        cal.setTime(val);
-	        return cal;
-    	} catch (Exception e) { logger.error("Not a date {}", val); return null; }
+    	Calendar ret = null;
+    	if (val != null) {
+	    	try {
+		    	Calendar cal = Calendar.getInstance();
+		        cal.setTime(val);
+		        return cal;
+	    	} catch (Exception e) { 
+	    		logger.error("Not a date "+val);
+	    	}
+    	}
+    	return ret;
     }
    
     //------------------------------------------------------------------

@@ -56,4 +56,26 @@ public class DateTimeUtilsTest
 		assertTrue(DateTimeUtils.datesEqual(DateTimeUtils.dateAdd(one, 4, DateTimeUtils.DATE_PART_DAY), two, true));
 		assertFalse(DateTimeUtils.datesEqual(DateTimeUtils.dateAdd(one, 4, DateTimeUtils.DATE_PART_DAY), two, false));
 	}
+	
+	@Test
+	public void testStandardizeDate() {
+		Calendar one = DateTimeUtils.setDateTime(2015, 10, 3, 5, 23, 9);
+		Calendar two = DateTimeUtils.standardizeDate("10/03/2015 05:23:09");
+		assertTrue(DateTimeUtils.datesEqual(one, two, false));
+		
+		two = DateTimeUtils.standardizeDate("2015-10-03 05:23:09");
+		assertTrue(DateTimeUtils.datesEqual(one, two, false));
+		
+		two = DateTimeUtils.standardizeDate("2015/10/03");
+		assertTrue(DateTimeUtils.datesEqual(one, two, true));
+		
+		two = DateTimeUtils.standardizeDate("2015-10-03");
+		assertTrue(DateTimeUtils.datesEqual(one, two, true));
+		
+		two = DateTimeUtils.standardizeDate("10/03/2015");
+		assertTrue(DateTimeUtils.datesEqual(one, two, true));
+		
+		two = DateTimeUtils.standardizeDate("2015/10/03");
+		assertTrue(DateTimeUtils.datesEqual(one, two, true));
+	}
 }

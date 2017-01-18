@@ -46,6 +46,7 @@ public class Format
 	
 	public static final String DATE_DEFAULT = "MM/dd/yyyy";
     public static final String DATE_HUMAN = "MM/dd/yyyy hh:mm a";
+    public static final String DATE_TIMESTAMP_DEFAULT = "MM/dd/yyyy HH:mm:ss";
     public static final String DATE_TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_XML_TIMESTAMP = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String DATE_YYYYMM = "yyyyMM";
