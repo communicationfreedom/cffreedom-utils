@@ -1,5 +1,6 @@
 package com.cffreedom.utils;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -474,7 +475,7 @@ public class DateTimeUtils extends Format {
             	"MM-dd-yyyy-HH:mm:ss",
             	"MM/dd/yyyy-HH:mm:ss",
                 "yyyy/MM/dd",
-            	"yyyy-MM-dd",
+            	Format.DATE_FILE,
             	"MM-dd-yyyy",
             	Format.DATE_TIMESTAMP_DEFAULT,
             	"MMddyyyy"
@@ -483,12 +484,10 @@ public class DateTimeUtils extends Format {
         Calendar result = null;
   	
     	// search through potential date formats to find a match
-    	for(String potentialFormatMatch : STD_DATE_FORMATS)
-    	{
-    		SimpleDateFormat source = new SimpleDateFormat(potentialFormatMatch);
+    	for(String potentialFormatMatch : STD_DATE_FORMATS) {
+    		DateFormat source = new SimpleDateFormat(potentialFormatMatch);
     		source.setLenient(false);
-    		try 
-    		{
+    		try {
     			ParsePosition pos = new ParsePosition(0);
     			// no exception is being thrown by this parse method; instead null is returned
     			result = Convert.toCalendar(source.parse(val, pos));
@@ -499,14 +498,9 @@ public class DateTimeUtils extends Format {
     				result = null;
     			} 
     			
-    			if (result != null) {    				
-    				int yearPart = (result.get(Calendar.YEAR) / 100);
-        			//year should be 18,19,20,21 
-        			if( yearPart == 18 || yearPart == 19 || yearPart == 20 || yearPart == 21){
-        				break;
-        			}else{
-        				result = null; //not valid date
-        			}
+    			if (result != null) {
+    				// Date parsed successfully so we're good
+    				break;
     			}
     		} catch (ParseException ex) {
     			// probably just not a matching date format, continue to next possible match

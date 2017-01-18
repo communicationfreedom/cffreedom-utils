@@ -134,19 +134,14 @@ public class Utils
      * @param val The date to evaluate
      * @return True if we can convert it to a date, otherwise false
      */
-    public static boolean isDate(String val)
-    {
+    public static boolean isDate(String val) {
     	boolean isDate = false;
-    	if (hasLength(val) == true)
-    	{
-	        try
-	        {
-	        	if (Convert.toDate(val, Format.DATE_DEFAULT) != null) {
-	            	isDate = true;
-	            } else if (Convert.toDate(val, Format.DATE_FILE) != null) {
+    	if (hasLength(val) == true) {
+	        try {
+	        	if (Convert.toCalendar(val) != null) {
 	            	isDate = true;
 	            }
-	        }catch (Exception e){}
+	        } catch (Exception e) {}
     	}
         return isDate;
     }
