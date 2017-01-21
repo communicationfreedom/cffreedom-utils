@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cffreedom.exceptions.InfrastructureException;
-import com.cffreedom.exceptions.ValidationException;
 import com.cffreedom.utils.file.FileUtils;
 
 /**
@@ -62,7 +61,7 @@ public class Utils
 		boolean is = false;
     	if (hasLength(val) == true) {
 			try {
-				Convert.toInt(val);
+				Convert.toInt(val, liberalParse);
 				is = true;
 			}
 			catch (Exception e){}

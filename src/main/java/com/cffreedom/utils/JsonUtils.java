@@ -1,7 +1,5 @@
 package com.cffreedom.utils;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,8 +117,7 @@ public class JsonUtils
 	 * @param key
 	 * @return
 	 */
-	public static Map getMap(JSONObject jsonObj, String key)
-	{
+	public static Map getMap(JSONObject jsonObj, String key) {
 		return (Map)jsonObj.get(key);
 	}
 	
@@ -129,8 +126,7 @@ public class JsonUtils
 	 * @param jsonObj
 	 * @return
 	 */
-	public static Map getMap(JSONObject jsonObj)
-	{
+	public static Map getMap(JSONObject jsonObj) {
 		return (Map)jsonObj;
 	}
 	
@@ -140,8 +136,7 @@ public class JsonUtils
 	 * @param key
 	 * @return
 	 */
-	public static List getList(JSONObject jsonObj, String key)
-	{
+	public static List getList(JSONObject jsonObj, String key) {
 		return (List)jsonObj.get(key);
 	}
 	
@@ -150,8 +145,7 @@ public class JsonUtils
 	 * @param jsonObj
 	 * @return
 	 */
-	public static List getList(JSONArray jsonObj)
-	{
+	public static List getList(JSONArray jsonObj) {
 		return (List)jsonObj;
 	}
 	
@@ -161,8 +155,7 @@ public class JsonUtils
 	 * @param value
 	 * @return
 	 */
-	public static String getJson(String key, String value)
-	{		
+	public static String getJson(String key, String value) {		
 		Map obj = new HashMap();
 		obj.put(key, value);
 		return getJson(obj);
@@ -173,8 +166,7 @@ public class JsonUtils
 	 * @param obj
 	 * @return
 	 */
-	public static String getJson(Map obj)
-	{
+	public static String getJson(Map obj) {
 		return JSONValue.toJSONString(obj);
 	}
 	
@@ -183,8 +175,7 @@ public class JsonUtils
 	 * @param obj
 	 * @return
 	 */
-	public static String getJson(List obj)
-	{
+	public static String getJson(List obj) {
 		return JSONValue.toJSONString(obj);
 	}
 }

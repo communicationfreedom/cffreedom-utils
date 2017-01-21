@@ -85,7 +85,7 @@ public class DateTimeUtils extends Format {
     }
     
     public static int hourMinAsInt(Date date) {
-    	return Convert.toInt(Format.date("Hmm", date));
+    	return Convert.toInt(Format.date("Hmm", date), false);
     }
    
     public static int day(Calendar date) {
@@ -180,8 +180,8 @@ public class DateTimeUtils extends Format {
 	    	else if (date.equals("NOV") == true) { return 11; } 
 	    	else if (date.equals("DEC") == true) { return 12; } 
 	    	else { return -1;	}
-    	} else if (Utils.isInt(date) == true) {
-    		int val = Convert.toInt(date);
+    	} else if (Utils.isInt(date, false) == true) {
+    		int val = Convert.toInt(date, false);
     		if ((val >= 1) && (val <= 12)) {
     			return val;
     		} else {
