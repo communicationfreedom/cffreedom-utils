@@ -51,6 +51,18 @@ public class UtilsTest
 	}
 	
 	@Test
+	public final void isIntTest() {
+		assertTrue(Utils.isInt("1,800.23", true));
+		assertTrue(Utils.isInt("1,800", true));
+		assertTrue(Utils.isInt("1800.23", true));
+		assertTrue(Utils.isInt("1800", true));
+		assertTrue(Utils.isInt("1800", false));
+		assertFalse(Utils.isInt("1,800.23", false));
+		assertFalse(Utils.isInt("1,800", false));
+		assertFalse(Utils.isInt("1800.23", false));
+	}
+	
+	@Test
 	public final void isIntListTest() {
 		assertTrue(Utils.isIntList("12, 15,9", ",", true));
 		assertTrue(Utils.isIntList("1", ",", true));

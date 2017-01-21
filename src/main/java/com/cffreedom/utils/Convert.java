@@ -254,9 +254,18 @@ public class Convert
 	
 	//------------------------------------------------------------------
 	// Int methods
+	@Deprecated
 	public static int toInt(String val) {
+		return toInt(val, true);
+	}
+	
+	public static int toInt(String val, boolean liberalParse) {
 		try {
-			return NumberFormat.getNumberInstance(Locale.getDefault()).parse(val).intValue();
+			if (liberalParse == true) {
+				return NumberFormat.getNumberInstance(Locale.getDefault()).parse(val).intValue();
+			} else {
+				return (new Integer(val));
+			}
 		} catch (ParseException e) {
 			throw new NumberFormatException(val+" is not a valid integer");
 		}

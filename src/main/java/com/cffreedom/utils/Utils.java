@@ -47,11 +47,18 @@ public class Utils
 	private static final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	private static Random random = new Random();
 	
-	/**
-     * @param val The number to evaluate
-     * @return True if we can convert the value to an integer, otherwise false
-     */
+	@Deprecated
 	public static boolean isInt(String val) {
+		return isInt(val, true);
+	}
+	
+	/**
+	 * Check if a string is an integer
+	 * @param val Value to check
+	 * @param liberalParse true to consider thousands separators ok, false to ensure strict parsing (i.e. 1056 but not 1,056)
+	 * @return
+	 */
+	public static boolean isInt(String val, boolean liberalParse) {
 		boolean is = false;
     	if (hasLength(val) == true) {
 			try {

@@ -77,10 +77,20 @@ public class ConvertTest {
 	@Test
 	public void testToInt() {
 		String val = "183000";
-		assertEquals(183000, Convert.toInt(val));
+		assertEquals(183000, Convert.toInt(val, true));
 		val = "183,000";
-		assertEquals(183000, Convert.toInt(val));
+		assertEquals(183000, Convert.toInt(val, true));
 		val = "183,000.23";
-		assertEquals(183000, Convert.toInt(val));
+		assertEquals(183000, Convert.toInt(val, true));
+	}
+	
+	@Test(expected=NumberFormatException.class)
+	public void testToIntException1() {
+		Convert.toInt("SMITH-STREET", true);
+	}
+	
+	@Test(expected=NumberFormatException.class)
+	public void testToIntException2() {
+		Convert.toInt("18,000.50", false);
 	}
 }
