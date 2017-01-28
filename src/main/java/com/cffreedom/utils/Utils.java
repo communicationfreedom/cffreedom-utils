@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
@@ -157,11 +158,9 @@ public class Utils
      * @param val The value to evaluate
      * @return True if it is not null and has length, false otherwise
      */
-    public static boolean hasLength(String val)
-    {
+    public static boolean hasLength(String val) {
     	boolean hasLen = false;
-    	try
-    	{
+    	try {
     		if ((val != null) && (val.length() > 0)){
     			hasLen = true;
     		}
@@ -176,11 +175,26 @@ public class Utils
      * @param val The collection to evaluate
      * @return True if it is not null and has contains 1 or more elements, false otherwise
      */
-    public static boolean hasLength(Collection<?> val)
-    {
+    public static boolean hasLength(Collection<?> val) {
     	boolean hasLen = false;
-    	try
-    	{
+    	try {
+    		if ((val != null) && (val.isEmpty() == false)){
+    			hasLen = true;
+    		}
+    	}catch (NullPointerException e){
+    		// Do nothing
+    	}
+    	return hasLen;
+    }
+    
+    /**
+     * Determine if a map contains elements and is not null
+     * @param val The map to evaluate
+     * @return True if it is not null and has contains 1 or more elements, false otherwise
+     */
+    public static boolean hasLength(Map<?, ?> val) {
+    	boolean hasLen = false;
+    	try {
     		if ((val != null) && (val.isEmpty() == false)){
     			hasLen = true;
     		}

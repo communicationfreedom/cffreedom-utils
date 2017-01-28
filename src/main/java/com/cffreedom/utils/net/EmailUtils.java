@@ -2,7 +2,9 @@ package com.cffreedom.utils.net;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,26 +57,36 @@ public class EmailUtils
 	public static final String PROTOCOL_SMTP = "smtp";
 	public static final String PROTOCOL_SMTPS = "smtps";
     
-	public static void sendGmail(String to, String from, String subject, String body, boolean htmlBody, String user, String pass) throws Exception
-	{
-		sendEmail(to, from, subject, body, htmlBody, user, pass, SMTP_SERVER_GMAIL, PROTOCOL_SMTPS, SMTP_PORT_GMAIL);
+	public static void sendGmail(String to, String from, String subject, String body, boolean htmlBody, String user, String pass) throws Exception {
+		EmailMessage msg = new EmailMessage(to, from, subject, body);
+		if (htmlBody) {
+			msg.setBodyHtml(body);
+		}
+		sendGmail(msg, user, pass);
 	}
 	
-	public static void sendEmail(String to, String from, String subject, String body, String smtpServer, String port) throws Exception
-	{
-		sendEmail(to, from, subject, body, false, null, null, smtpServer, null, port);
+	public static void sendGmail(EmailMessage msg, String user, String pass) throws Exception {
+		if (!Utils.hasLength(user) || !Utils.hasLength(pass)) {
+			throw new Exception("You must supply values for the username and password");
+		}
+		Map<String, String> additionalProps = new HashMap<>();
+		additionalProps.put("mail.smtp.socketFactory.port", EmailUtils.SMTP_PORT_GMAIL);
+		additionalProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		sendEmail(msg, user, pass, SMTP_SERVER_GMAIL, PROTOCOL_SMTPS, SMTP_PORT_GMAIL, additionalProps);
 	}
 	
-	public static void sendHtmlEmail(String to, String from, String subject, String body, String smtpServer, String port) throws Exception
-	{
-		sendEmail(to, from, subject, body, true, null, null, smtpServer, null, port);
+	public static void sendEmail(String to, String from, String subject, String body, String smtpServer, String port) throws Exception {
+		sendEmail(to, from, subject, body, false, null, null, smtpServer, null, port, null);
 	}
 	
-    public static void sendEmail(String to, String from, String subject, String body, boolean htmlBody, String user, String pass, String smtpServer, String protocol, String port) throws Exception
-	{
+	public static void sendHtmlEmail(String to, String from, String subject, String body, String smtpServer, String port) throws Exception {
+		sendEmail(to, from, subject, body, true, null, null, smtpServer, null, port, null);
+	}
+	
+    public static void sendEmail(String to, String from, String subject, String body, boolean htmlBody, String user, String pass, String smtpServer, String protocol, String port, Map<String, String> additionalProps) throws Exception {
     	EmailMessage msg = new EmailMessage(to, from, subject, body);
     	if (htmlBody == true) { msg.setBodyHtml(body); }
-    	sendEmail(msg, user, pass, smtpServer, protocol, port);		
+    	sendEmail(msg, user, pass, smtpServer, protocol, port, additionalProps);		
 	}
     
     /**
@@ -87,18 +99,23 @@ public class EmailUtils
      * @param port SMTP port
      * @throws Exception
      */
-    public static void sendEmail(EmailMessage msg, String user, String pass, String smtpServer, String protocol, String port) throws Exception
-    {	
+    public static void sendEmail(EmailMessage msg, String user, String pass, String smtpServer, String protocol, String port, Map<String, String> additionalProps) throws Exception {	
     	boolean authenticatedSession = true;
-    	if ((user == null) || (user.length() == 0)) { authenticatedSession = false; }
+    	if ((user == null) || (user.length() == 0)) {
+    		authenticatedSession = false; 
+    	}
 		Properties sysProps = System.getProperties();
 		sysProps.put("mail.smtp.host", smtpServer);
-		if (protocol != null)
-		{
+		if (protocol != null) {
 			sysProps.put("mail.transport.protocol", protocol);
 		}
-		if (authenticatedSession == true){
+		if (authenticatedSession == true) {
 			sysProps.put("mail.smtps.auth", "true");
+		}
+		if (Utils.hasLength(additionalProps)) {
+			for (String prop : additionalProps.keySet()) {
+				sysProps.put(prop, additionalProps.get(prop));
+			}
 		}
 		
 		String[] toArray = getRecipientArray(msg.getTo());
