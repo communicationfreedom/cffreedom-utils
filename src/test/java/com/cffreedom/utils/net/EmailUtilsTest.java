@@ -15,6 +15,12 @@ public class EmailUtilsTest {
 		assertEquals(emails.get(0), "jdoe@example.com");
 		assertEquals(emails.get(1), "steve@there.com");
 		
+		text = "John Doe <jdoe@example.com>, \n;steve@there.com";
+		emails = EmailUtils.getEmailAddresses(text);
+		assertEquals(emails.size(), 2);
+		assertEquals(emails.get(0), "jdoe@example.com");
+		assertEquals(emails.get(1), "steve@there.com");
+		
 		text = null;
 		emails = EmailUtils.getEmailAddresses(text);
 		assertEquals(emails.size(), 0);
