@@ -51,6 +51,15 @@ public class UtilsTest
 	}
 	
 	@Test
+	public final void isEmailTest() {
+		assertTrue(Utils.isEmail("me@a.com"));
+		assertTrue(Utils.isEmail("something@cfg2.com"));
+		assertTrue(Utils.isEmail("joe.heisman@there.net"));
+		
+		assertFalse(Utils.isEmail("mark@cfg2"));
+	}
+	
+	@Test
 	public final void isIntTest() {
 		assertTrue(Utils.isInt("1,800.23", true));
 		assertTrue(Utils.isInt("1,800", true));

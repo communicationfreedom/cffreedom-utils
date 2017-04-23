@@ -136,6 +136,23 @@ public class Utils
     	}
     	return result;
     }
+    
+    /**
+     * @param val The value to evaluate
+     * @return true if an email address, false otherwise
+     */
+    public static boolean isEmail(String val) {
+    	boolean result = false;
+    	if 	(
+    		(val.length() > 7) && 
+    		val.contains("@") && 
+    		val.contains(".") &&
+			(val.indexOf("@") < val.lastIndexOf("."))
+			) {
+			result = true;
+		}
+    	return result;
+    }
    
     /**
      * @param val The date to evaluate

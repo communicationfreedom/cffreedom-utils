@@ -1,6 +1,5 @@
 package com.cffreedom.utils.net;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +12,6 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.Message;
-import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.*;
@@ -118,9 +116,9 @@ public class EmailUtils
 			}
 		}
 		
-		String[] toArray = getRecipientArray(msg.getTo());
-		String[] ccArray = getRecipientArray(msg.getCc());
-		String[] bccArray = getRecipientArray(msg.getBcc());
+		List<String> toArray = getRecipientArray(msg.getTo());
+		List<String> ccArray = getRecipientArray(msg.getCc());
+		List<String> bccArray = getRecipientArray(msg.getBcc());
 		
 		Session session = Session.getDefaultInstance(sysProps, null);
         
@@ -132,19 +130,19 @@ public class EmailUtils
 			message.setFrom(new InternetAddress(msg.getFrom()));
 		}
 		
-		for (int y = 0; y < toArray.length; y++) {
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(toArray[y]));
+		for (String email : toArray) {
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
 		}
 		
-		if (ccArray != null) {
-			for (int y = 0; y < ccArray.length; y++) {
-				message.addRecipient(Message.RecipientType.CC, new InternetAddress(ccArray[y]));
+		if (Utils.hasLength(ccArray)) {
+			for (String email : ccArray) {
+				message.addRecipient(Message.RecipientType.CC, new InternetAddress(email));
 			}
 		}
 		
-		if (bccArray != null) {
-			for (int y = 0; y < bccArray.length; y++) {
-				message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bccArray[y]));
+		if (Utils.hasLength(bccArray)) {
+			for (String email : bccArray) {
+				message.addRecipient(Message.RecipientType.BCC, new InternetAddress(email));
 			}
 		}
 		
@@ -219,7 +217,7 @@ public class EmailUtils
 		
 		if (authenticatedSession == true){
 			Transport transport = session.getTransport();
-			transport.connect(smtpServer, Convert.toInt(port), user, pass);
+			transport.connect(smtpServer, Convert.toInt(port, false), user, pass);
 			transport.sendMessage(message, message.getAllRecipients());
 			transport.close();
 		}else{
@@ -227,13 +225,20 @@ public class EmailUtils
 		}
     }
     
-    private static String[] getRecipientArray(String recipients)
-    {
-    	String[] returnArray = null;
-		if (Utils.hasLength(recipients) == true) {
+    private static List<String> getRecipientArray(String recipients) {
+    	List<String> returnArray = new ArrayList<>();
+		if (Utils.hasLength(recipients)) {
+			recipients = recipients.replace("\n", ";");
 			recipients = recipients.replace(',', ';');
 			recipients = recipients.replace(' ', ';');
-			returnArray = recipients.split(";");
+			String[] tempArray = recipients.split(";");
+			
+			for (int x = 0; x < tempArray.length; x++) {
+				String email = tempArray[x].trim();
+				if (Utils.isEmail(email)) {
+					returnArray.add(email);
+				}
+			}
 		}
 		return returnArray;
     }
@@ -246,7 +251,7 @@ public class EmailUtils
     public static List<String> getEmailAddresses(String text) {
     	List<String> emails = new ArrayList<String>();
     	
-    	if (Utils.hasLength(text) == true) {
+    	if (Utils.hasLength(text)) {
 	    	Pattern p = Pattern.compile("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b", Pattern.CASE_INSENSITIVE);
 			Matcher matcher = p.matcher(text);
 			while(matcher.find()) {
