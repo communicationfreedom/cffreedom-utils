@@ -59,37 +59,29 @@ public class Format
     public static final String DATE_DB2_TIMESTAMP = DATE_TIMESTAMP;
     public static final String DATE_MMDDYY = "MMddyy";
 	
-	public static String date(String format, Date date)
-	{
+	public static String date(String format, Date date) {
 		String ret = null;
-		if (date != null)
-		{
+		if (date != null) {
 			DateFormat dateformat = new SimpleDateFormat(format);
 			ret = dateformat.format(date);
 		}
 		return ret;
 	}
 	
-	public static String date(String format, Calendar date)
-	{
+	public static String date(String format, Calendar date) {
 		return Format.date(format, Convert.toDate(date));
 	}
 	
-	public static String bigDecimal(BigDecimal n, int decimalPlaces)
-	{
+	public static String bigDecimal(BigDecimal n, int decimalPlaces) {
 		return bigDecimal(n, decimalPlaces, true);
 	}
 
-	public static String bigDecimal(BigDecimal n, int decimalPlaces, boolean includeThousandsSeparator)
-	{
+	public static String bigDecimal(BigDecimal n, int decimalPlaces, boolean includeThousandsSeparator) {
 		String format = null;
 
-		if (includeThousandsSeparator == false)
-		{
+		if (includeThousandsSeparator == false) {
 			format = "#0." + repeatString("0", decimalPlaces - 1);
-		}
-		else
-		{
+		} else {
 			format = "#,##0." + repeatString("0", decimalPlaces - 1);
 		}
 
@@ -104,8 +96,7 @@ public class Format
 	 * @param phoneNumber
 	 * @return
 	 */
-	public static String phoneNumber(String format, String phoneNumber)
-	{
+	public static String phoneNumber(String format, String phoneNumber) {
 		try {
 			if ((Utils.hasLength(phoneNumber) == true) && (phoneNumber.length() > 2)) {
 				if (format.equalsIgnoreCase(PHONE_10) == true) {
@@ -127,12 +118,9 @@ public class Format
 					phoneNumber = phoneNumber.substring(0, 3) + "." + phoneNumber.substring(3, 6) + "." + phoneNumber.substring(6, 10);
 				} else if (format.equalsIgnoreCase(PHONE_INT) == true) {
 					phoneNumber = stripNonNumeric(phoneNumber);
-					if (phoneNumber.length() == 10)
-					{
+					if (phoneNumber.length() == 10) {
 						phoneNumber = "+1" + phoneNumber;
-					}
-					else if (phoneNumber.length() == 11)
-					{
+					} else if (phoneNumber.length() == 11) {
 						phoneNumber = "+" + phoneNumber;
 					}
 				}
@@ -144,74 +132,68 @@ public class Format
 		return phoneNumber;
 	}
 	
-	public static String currency(int amount, boolean includeDecimals)
-	{
+	public static String currency(int amount, boolean includeDecimals) {
 		int decimalPlaces = 2;
 		if (includeDecimals == false) { decimalPlaces = 0; }
 		return "$" + Format.number(amount, decimalPlaces);
 	}
 	
-	public static String currency(BigDecimal amount, boolean includeDecimals)
-	{
-		int decimalPlaces = 2;
-		if (includeDecimals == false) { decimalPlaces = 0; }
-		return "$" + Format.number(amount, decimalPlaces);
+	public static String currency(BigDecimal amount, boolean includeDecimals) {
+		String ret = null;
+		if (amount != null) {
+			int decimalPlaces = 2;
+			if (!includeDecimals) { decimalPlaces = 0; }
+			ret = "$" + Format.number(amount, decimalPlaces);
+		}
+		return ret;
 	}
 	
-	public static String number(double number, int decimalPlaces)
-	{
+	public static String number(double number, int decimalPlaces) {
 		BigDecimal val = new BigDecimal(number);
 		return Format.number(val, decimalPlaces, true);
 	}
 	
-	public static String number(int number, int decimalPlaces)
-	{
+	public static String number(int number, int decimalPlaces) {
 		BigDecimal val = new BigDecimal(number);
 		return Format.number(val, decimalPlaces, true);
 	}
 	
-	public static String number(BigDecimal number, int decimalPlaces)
-	{
+	public static String number(BigDecimal number, int decimalPlaces) {
 		return Format.number(number, decimalPlaces, true);
 	}
 
-	public static String number(BigDecimal n, int decimalPlaces, boolean includeThousandsSeparator)
-	{
+	public static String number(BigDecimal n, int decimalPlaces, boolean includeThousandsSeparator) {
 		String format = null;
 		String decimalFormat = "";
+		String ret = null;
 		
-		if (decimalPlaces > 0)
-		{
-			decimalFormat = "." + repeatString("0", decimalPlaces);
+		if (n != null) {
+			if (decimalPlaces > 0) {
+				decimalFormat = "." + repeatString("0", decimalPlaces);
+			}
+			
+			if (includeThousandsSeparator == false) {
+				format = "#0" + decimalFormat;
+			} else {
+				format = "#,##0" + decimalFormat;
+			}
+	
+			NumberFormat formatter = new DecimalFormat(format);
+			ret = formatter.format(n);
 		}
-		
-		if (includeThousandsSeparator == false)
-		{
-			format = "#0" + decimalFormat;
-		}
-		else
-		{
-			format = "#,##0" + decimalFormat;
-		}
-
-		NumberFormat formatter = new DecimalFormat(format);
-		return formatter.format(n);
+		return ret;
 	}
 
-	public static String repeatString(String repeatThis, int repeatTimes)
-	{
+	public static String repeatString(String repeatThis, int repeatTimes) {
 		StringBuffer buffer = new StringBuffer();
-		for (int x = 0; x < repeatTimes; x++)
-		{
+		for (int x = 0; x < repeatTimes; x++) {
 			buffer.append(repeatThis);
 		}
 		return buffer.toString();
 	}
 
-	public static String upperCaseFirstChar(String value)
-	{
-		if (Utils.hasLength(value) == false)
-		{
+	public static String upperCaseFirstChar(String value) {
+		if (Utils.hasLength(value) == false) {
 			return value;
 		}
 		char[] titleCase = value.toCharArray();
@@ -219,10 +201,8 @@ public class Format
 		return new String(titleCase);
 	}
 
-	public static String upperCaseFirstCharAllWords(String value)
-	{
-		if (Utils.hasLength(value) == false)
-		{
+	public static String upperCaseFirstCharAllWords(String value) {
+		if (Utils.hasLength(value) == false) {
 			return value;
 		}
 		StringBuffer sb = new StringBuffer();
@@ -238,16 +218,12 @@ public class Format
 		return sb.toString().trim();
 	}
 
-	public static String stripNonNumeric(String source)
-	{
+	public static String stripNonNumeric(String source) {
 		String ret = source;
-		if (Utils.hasLength(source) == true)
-		{
+		if (Utils.hasLength(source)) {
 			ret = "";
-			for (int x = 0; x < source.length(); x++)
-			{
-				if (Character.isDigit(source.charAt(x)) == true)
-				{
+			for (int x = 0; x < source.length(); x++) {
+				if (Character.isDigit(source.charAt(x)) == true) {
 					ret += source.charAt(x);
 				}
 			}
@@ -260,16 +236,12 @@ public class Format
 	 * @param source
 	 * @return
 	 */
-	public static String stripNumeric(String source)
-	{
+	public static String stripNumeric(String source) {
 		String ret = source;
-		if (Utils.hasLength(source) == true)
-		{
+		if (Utils.hasLength(source) == true) {
 			ret = "";
-			for (int x = 0; x < source.length(); x++)
-			{
-				if (Character.isDigit(source.charAt(x)) == false)
-				{
+			for (int x = 0; x < source.length(); x++) {
+				if (Character.isDigit(source.charAt(x)) == false) {
 					ret += source.charAt(x);
 				}
 			}
@@ -278,8 +250,7 @@ public class Format
 		return ret;
 	}
 
-	public static String stripCrLf(String source)
-	{
+	public static String stripCrLf(String source) {
 		return Format.replace(replace(source, "\n", ""), "\r", "");
 	}
 	
@@ -288,8 +259,7 @@ public class Format
 	 * @param source
 	 * @return
 	 */
-	public static String stripHtml(String source)
-	{
+	public static String stripHtml(String source) {
 		String ret = source;
 		if (Utils.hasLength(source) == true) {
 			ret = source.replaceAll("\\<[^>]*>", "").trim();
@@ -297,8 +267,7 @@ public class Format
 		return ret;
 	}
 	
-	public static String stripExtraSpaces(String source)
-	{
+	public static String stripExtraSpaces(String source) {
 		String val = source;
 		if (source != null) {
 			val = source.replaceAll("\\s+", " ").trim();
@@ -306,21 +275,18 @@ public class Format
 		return val;
 	}
 	
-	public static String maxLenString(String val, int maxLen)
-	{
+	public static String maxLenString(String val, int maxLen) {
 		if ((val != null) && (val.length() > maxLen)) {
 			val = val.substring(0, maxLen);
 		}
 		return val;
 	}
 
-	public static String replace(String source, String find, String replace)
-	{
+	public static String replace(String source, String find, String replace) {
 		return Format.replace(source, find, replace, false);
 	}
 
-	public static String replace(String source, String find, String replace, boolean caseSensative)
-	{
+	public static String replace(String source, String find, String replace, boolean caseSensative) {
 		if (source != null)
 		{
 			final int len = find.length();
@@ -328,27 +294,20 @@ public class Format
 			int found = -1;
 			int start = 0;
 
-			if (caseSensative == true)
-			{
+			if (caseSensative == true) {
 				found = source.indexOf(find, start);
-			}
-			else
-			{
+			} else {
 				found = source.toLowerCase().indexOf(find.toLowerCase(), start);
 			}
 
-			while (found != -1)
-			{
+			while (found != -1) {
 				sb.append(source.substring(start, found));
 				sb.append(replace);
 				start = found + len;
 
-				if (caseSensative == true)
-				{
+				if (caseSensative == true) {
 					found = source.indexOf(find, start);
-				}
-				else
-				{
+				} else {
 					found = source.toLowerCase().indexOf(find.toLowerCase(), start);
 				}
 			}
@@ -356,15 +315,12 @@ public class Format
 			sb.append(source.substring(start));
 
 			return sb.toString();
-		}
-		else
-		{
+		} else {
 			return "";
 		}
 	}
 
-	public static String replaceSpan(String source, String findStart, String findEnd, String replace)
-	{
+	public static String replaceSpan(String source, String findStart, String findEnd, String replace) {
 		return Format.replaceSpan(source, findStart, findEnd, replace, false);
 	}
 
@@ -378,41 +334,32 @@ public class Format
 	 * @param caseSensative True if we want to perform a case sensative search
 	 * @return String with all instances of the span stripped out
 	 */
-	public static String replaceSpan(String source, String findStart, String findEnd, String replace, boolean caseSensative)
-	{
-		if (source != null)
-		{
+	public static String replaceSpan(String source, String findStart, String findEnd, String replace, boolean caseSensative) {
+		if (source != null) {
 			int findEndLen = findEnd.length();
 			StringBuffer sb = new StringBuffer();
 			int foundStart = -1;
 			int foundEnd = -1;
 			int start = 0;
 
-			if (caseSensative == true)
-			{
+			if (caseSensative == true) {
 				foundStart = source.indexOf(findStart, start);
 				foundEnd = source.indexOf(findEnd, start);
-			}
-			else
-			{
+			} else {
 				foundStart = source.toLowerCase().indexOf(findStart.toLowerCase(), start);
 				foundEnd = source.toLowerCase().indexOf(findEnd.toLowerCase(), start);
 			}
 
-			while ((foundStart != -1) && (foundEnd != -1))
-			{
+			while ((foundStart != -1) && (foundEnd != -1)) {
 				sb.append(source.substring(start, foundStart));
 				sb.append(replace);
 				foundStart = foundEnd + findEndLen;
 				start = foundStart;
 
-				if (caseSensative == true)
-				{
+				if (caseSensative == true) {
 					foundStart = source.indexOf(findStart, start);
 					foundEnd = source.indexOf(findEnd, start);
-				}
-				else
-				{
+				} else {
 					foundStart = source.toLowerCase().indexOf(findStart.toLowerCase(), start);
 					foundEnd = source.toLowerCase().indexOf(findEnd.toLowerCase(), start);
 				}
@@ -421,20 +368,16 @@ public class Format
 			sb.append(source.substring(start));
 
 			return sb.toString();
-		}
-		else
-		{
+		} else {
 			return "";
 		}
 	}
 	
 	public static String pad(String val, int totalChars) { return Format.pad(val, totalChars, " "); }
 	public static String pad(String val, int totalChars, String padChar) { return Format.pad(val, totalChars, padChar, true); }
-	public static String pad(String val, int totalChars, String padChar, boolean padRight)
-	{
+	public static String pad(String val, int totalChars, String padChar, boolean padRight) {
 		int len = val.length();
-		if (len < totalChars)
-		{
+		if (len < totalChars) {
 			String pad = repeatString(padChar, totalChars - len);
 			if (padRight == true) { val += pad; }
 			else { val = pad + val; }
