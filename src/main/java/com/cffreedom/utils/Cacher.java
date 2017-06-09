@@ -29,14 +29,18 @@ import java.util.Set;
 public class Cacher {
 	public static final int DEFAULT_CACHE_MIN = 60;
 	private static int defaultCacheMin = DEFAULT_CACHE_MIN;
-	private Map<String, CachedObject> cache = new HashMap<String, CachedObject>();
+	private boolean maintainOrder = false;
+	private Map<String, CachedObject> cache = new HashMap<>();
 	
 	public Cacher(){}
 	public Cacher(int defaultCacheMinutes) { this(defaultCacheMinutes, false); }
 	public Cacher(int defaultCacheMinutes, boolean maintainOrder) { 
 		defaultCacheMin = defaultCacheMinutes;
+		this.maintainOrder = maintainOrder;
 		if (maintainOrder == true) {
-			cache = new LinkedHashMap<String, CachedObject>();
+			cache = new LinkedHashMap<>();
+		} else {
+			cache = new HashMap<>();
 		}
 	}
 	
@@ -86,7 +90,11 @@ public class Cacher {
 	 * Clear all cached items
 	 */
 	public void clear()	{
-		cache = new HashMap<String, CachedObject>();
+		if (maintainOrder) {
+			cache = new LinkedHashMap<>();
+		} else {
+			cache = new HashMap<>();
+		}
 	}
 	
 	/**
@@ -121,7 +129,7 @@ public class Cacher {
 	 */
 	public void cleanupExpiredItems() {
 		// Done as a 2 step process to eliminate concurrency issues
-		List<String> removeKeys = new ArrayList<String>();
+		List<String> removeKeys = new ArrayList<>();
 		
 		for (String key : cache.keySet()) {
 			if (cache.get(key).isExpired() == true) {
