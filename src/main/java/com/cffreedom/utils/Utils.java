@@ -174,70 +174,70 @@ public class Utils
         return isDate;
     }
     
-    public Object isNull(Object value, Object defVal) {
+    public static Object isNull(Object value, Object defVal) {
     	if (value == null) {
     		value = defVal;
     	}
     	return value;
     }
     
-    public String isNull(String value, String defVal) {
+    public static String isNull(String value, String defVal) {
     	if (value == null) {
     		value = defVal;
     	}
     	return value;
     }
     
-    public BigDecimal isNull(BigDecimal value, BigDecimal defVal) {
+    public static BigDecimal isNull(BigDecimal value, BigDecimal defVal) {
     	if (value == null) {
     		value = defVal;
     	}
     	return value;
     }
     
-    public BigInteger isNull(BigInteger value, BigInteger defVal) {
+    public static BigInteger isNull(BigInteger value, BigInteger defVal) {
     	if (value == null) {
     		value = defVal;
     	}
     	return value;
     }
     
-    public Boolean isNull(Boolean value, Boolean defVal) {
+    public static Boolean isNull(Boolean value, Boolean defVal) {
     	if (value == null) {
     		value = defVal;
     	}
     	return value;
     }
     
-    public Integer isNull(Integer value, Integer defVal) {
+    public static Integer isNull(Integer value, Integer defVal) {
     	if (value == null) {
     		value = defVal;
     	}
     	return value;
     }
     
-    public Double isNull(Double value, Double defVal) {
+    public static Double isNull(Double value, Double defVal) {
     	if (value == null) {
     		value = defVal;
     	}
     	return value;
     }
     
-    public Long isNull(Long value, Long defVal) {
+    public static Long isNull(Long value, Long defVal) {
     	if (value == null) {
     		value = defVal;
     	}
     	return value;
     }
     
-    public Calendar isNull(Calendar value, Calendar defVal) {
+    public static Calendar isNull(Calendar value, Calendar defVal) {
     	if (value == null) {
     		value = defVal;
     	}
     	return value;
     }
     
-    public Date isNull(Date value, Date defVal) {
+    public static Date isNull(Date value, Date defVal) {
     	if (value == null) {
     		value = defVal;
     	}
@@ -523,6 +523,7 @@ public class Utils
 	 * @param defaultVal The value to replace val with if it is null
 	 * @return
 	 */
+	@Deprecated
 	public static String replaceNull(String val, String defaultVal) {
 		if (val == null) {
 			val = defaultVal;
@@ -536,6 +537,7 @@ public class Utils
 	 * @param defaultVal The value to replace val with if it is null
 	 * @return
 	 */
+	@Deprecated
 	public static BigDecimal replaceNull(BigDecimal val, BigDecimal defaultVal) {
 		if (val == null) {
 			val = defaultVal;
@@ -549,6 +551,7 @@ public class Utils
 	 * @param defaultVal The value to replace val with if it is null
 	 * @return
 	 */
+	@Deprecated
 	public static Integer replaceNull(Integer val, Integer defaultVal) {
 		if (val == null) {
 			val = defaultVal;
