@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -21,7 +24,7 @@ import com.cffreedom.utils.file.FileUtils;
 
 /**
  * Original Class: com.cffreedom.utils.Utils
- * @author markjacobsen.net (http://mjg2.net/code)
+ * @author markjacobsen.net
  * Copyright: Communication Freedom, LLC - http://www.communicationfreedom.com
  * 
  * Free to use, modify, redistribute.  Must keep full class header including 
@@ -30,7 +33,7 @@ import com.cffreedom.utils.file.FileUtils;
  * If this helped you out or saved you time, please consider...
  * 1) Donating: http://www.communicationfreedom.com/go/donate/
  * 2) Shoutout on twitter: @MarkJacobsen or @cffreedom
- * 3) Linking to: http://visit.markjacobsen.net
+ * 3) Linking to: http://markjacobsen.net
  * 
  * Changes:
  * 2013-04-08 	markjacobsen.net 	Added JavaDoc comments
@@ -40,6 +43,7 @@ import com.cffreedom.utils.file.FileUtils;
  * 2013-09-15 	markjacobsen.net 	Added getRandomString()
  * 2014-10-22 	MarkJacobsen.net 	Added getProperties()
  * 2015-03-29 	MarkJacobsen.net 	Added replaceLast()
+ * 2017-06-30	MarkJacobsen.net 	Added isNull(x, x) functions
  */
 public class Utils
 {
@@ -168,6 +172,76 @@ public class Utils
 	        } catch (Exception e) {}
     	}
         return isDate;
+    }
+    
+    public Object isNull(Object value, Object defVal) {
+    	if (value == null) {
+    		value = defVal;
+    	}
+    	return value;
+    }
+    
+    public String isNull(String value, String defVal) {
+    	if (value == null) {
+    		value = defVal;
+    	}
+    	return value;
+    }
+    
+    public BigDecimal isNull(BigDecimal value, BigDecimal defVal) {
+    	if (value == null) {
+    		value = defVal;
+    	}
+    	return value;
+    }
+    
+    public BigInteger isNull(BigInteger value, BigInteger defVal) {
+    	if (value == null) {
+    		value = defVal;
+    	}
+    	return value;
+    }
+    
+    public Boolean isNull(Boolean value, Boolean defVal) {
+    	if (value == null) {
+    		value = defVal;
+    	}
+    	return value;
+    }
+    
+    public Integer isNull(Integer value, Integer defVal) {
+    	if (value == null) {
+    		value = defVal;
+    	}
+    	return value;
+    }
+    
+    public Double isNull(Double value, Double defVal) {
+    	if (value == null) {
+    		value = defVal;
+    	}
+    	return value;
+    }
+    
+    public Long isNull(Long value, Long defVal) {
+    	if (value == null) {
+    		value = defVal;
+    	}
+    	return value;
+    }
+    
+    public Calendar isNull(Calendar value, Calendar defVal) {
+    	if (value == null) {
+    		value = defVal;
+    	}
+    	return value;
+    }
+    
+    public Date isNull(Date value, Date defVal) {
+    	if (value == null) {
+    		value = defVal;
+    	}
+    	return value;
     }
     
     /**
