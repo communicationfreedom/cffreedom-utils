@@ -109,20 +109,39 @@ public class Utils
      * @param val The number to evaluate
      * @return True if all characters in the string are digits, otherwise false
      */
-    public static boolean isNumeric(String val)
-    {
+    public static boolean isNumeric(String val) {
         if (hasLength(val) == false) {
             return false;
         }
        
-        for (int x = 0; x < val.length(); x++)
-        {
-            if (Character.isDigit(val.charAt(x)) == false)
-            {
+        for (int x = 0; x < val.length(); x++) {
+            if (Character.isDigit(val.charAt(x)) == false) {
                 return false;
             }
         }
         return true;
+    }
+    
+    public static boolean isBigDecimal(String val) {
+    	boolean is = false;
+    	try {
+    		Convert.toBigDecimal(val);
+    		is = true;
+    	} catch (Exception e) {
+    		is = false;
+    	}
+    	return is;
+    }
+    
+    public static boolean isBigInteger(String val) {
+    	boolean is = false;
+    	try {
+    		Convert.toBigInteger(val);
+    		is = true;
+    	} catch (Exception e) {
+    		is = false;
+    	}
+    	return is;
     }
     
     /**
