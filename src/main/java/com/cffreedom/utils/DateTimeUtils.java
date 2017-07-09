@@ -52,6 +52,10 @@ public class DateTimeUtils extends Format {
         return date;
     }
    
+    public static int millisecond(Calendar date) {
+    	return date.get(Calendar.MILLISECOND);
+    }
+   
     public static int second(Calendar date) {
     	return date.get(Calendar.SECOND);
     }
@@ -392,6 +396,11 @@ public class DateTimeUtils extends Format {
     	Calendar dateCal = Convert.toCalendar(dateDate);
     	dateCal.setTime(timeDate);
     	return Convert.toDate(dateCal);
+    }
+    
+    public static Calendar combineDates(Calendar dateDate, Calendar timeDate) {
+    	DateTimeUtils.setTime(dateDate, DateTimeUtils.hour24(timeDate), DateTimeUtils.minute(timeDate), DateTimeUtils.second(timeDate), DateTimeUtils.millisecond(timeDate));
+    	return dateDate;
     }
     
     public static Calendar stripTime(Calendar date) {
