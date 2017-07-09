@@ -381,6 +381,12 @@ public class Convert
     	}
     	return ret;
     }
+    
+    public static Calendar toCalendar(long val) {
+    	Calendar tmp = Calendar.getInstance();
+    	tmp.setTimeInMillis(val);
+    	return tmp;
+    }
    
     //------------------------------------------------------------------
     // Date/Time methods           
