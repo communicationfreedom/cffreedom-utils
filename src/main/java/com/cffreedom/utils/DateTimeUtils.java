@@ -472,6 +472,18 @@ public class DateTimeUtils extends Format {
     	catch (Exception e) {e.printStackTrace(); return null; }
     }
     
+    /**
+     * Convert a date in GMT to the local time
+     * 
+     * Hat tip to: http://stackoverflow.com/questions/10599109/how-to-convert-a-local-date-to-gmt
+     * 
+     * @param date Date with GMT value
+     * @return Date in the local time
+     */
+    public static Calendar gmtToLocal(Calendar gmtCalendar) {
+    	return Convert.toCalendar(gmtToLocal(Convert.toDate(gmtCalendar)));
+    }
+    
     public static Calendar standardizeDate(String val) {
     	// Order to try and standardize dates
         final String[] STD_DATE_FORMATS = new String[] {
