@@ -116,13 +116,13 @@ public class DateTimeUtils extends Format {
     	return dayOfYear(Convert.toCalendar(date));
     }
     
-    public boolean isWeekday(Calendar date) {
+    public static boolean isWeekday(Calendar date) {
     	int dow = dayOfWeek(date);
     	boolean is = ((dow >= Calendar.MONDAY) && (dow <= Calendar.FRIDAY));
     	return is;
     }
     
-    public boolean isWeekend(Calendar date) {
+    public static boolean isWeekend(Calendar date) {
     	int dow = dayOfWeek(date);
     	boolean is = ((dow == Calendar.SUNDAY) || (dow == Calendar.SATURDAY));
     	return is;
