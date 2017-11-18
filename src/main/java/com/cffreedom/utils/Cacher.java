@@ -2,6 +2,7 @@ package com.cffreedom.utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.ConcurrentModificationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.HashMap;
@@ -131,15 +132,17 @@ public class Cacher {
 		// Done as a 2 step process to eliminate concurrency issues
 		List<String> removeKeys = new ArrayList<>();
 		
-		for (String key : cache.keySet()) {
-			if (cache.get(key).isExpired() == true) {
-				removeKeys.add(key);
+		try {
+			for (String key : cache.keySet()) {
+				if (cache.get(key).isExpired()) {
+					removeKeys.add(key);
+				}
 			}
-		}
-		
-		for (String key : removeKeys) {
-			this.remove(key);
-		}
+			
+			for (String key : removeKeys) {
+				this.remove(key);
+			}
+		} catch (ConcurrentModificationException e) { /* ignore */ }
 	}
 	
 	/**
