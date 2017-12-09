@@ -5,7 +5,9 @@ import java.util.Calendar;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -130,9 +132,17 @@ public class Cacher {
 	 */
 	public void cleanupExpiredItems() {
 		// Done as a 2 step process to eliminate concurrency issues
-		List<String> removeKeys = new ArrayList<>();
+		//List<String> removeKeys = new ArrayList<>();
 		
 		try {
+			Iterator<Map.Entry<String, CachedObject>> it = cache.entrySet().iterator();
+			while (it.hasNext()) {
+				Entry<String, CachedObject> entry = it.next();
+				if (entry.getValue().isExpired()) {
+					it.remove();
+				}
+			}
+			/*
 			for (String key : cache.keySet()) {
 				if (cache.get(key).isExpired()) {
 					removeKeys.add(key);
@@ -142,6 +152,7 @@ public class Cacher {
 			for (String key : removeKeys) {
 				this.remove(key);
 			}
+			*/
 		} catch (ConcurrentModificationException e) { /* ignore */ }
 	}
 	
