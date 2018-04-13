@@ -1,14 +1,11 @@
 package com.cffreedom.utils;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.ConcurrentModificationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -153,7 +150,7 @@ public class Cacher {
 				this.remove(key);
 			}
 			*/
-		} catch (ConcurrentModificationException e) { /* ignore */ }
+		} catch (Exception e) { /* ignore */ }
 	}
 	
 	/**
@@ -196,8 +193,12 @@ public class Cacher {
 		public int getCacheMinutes() { return this.cacheMinutes; }
 		
 		public boolean isExpired() {
-			Calendar testDate = DateTimeUtils.dateAdd(Calendar.getInstance(), this.cacheMinutes * -1, DateTimeUtils.DATE_PART_MINUTE);
-			return this.cached.before(testDate);	
+			boolean expired = false;
+			try {
+				Calendar testDate = DateTimeUtils.dateAdd(Calendar.getInstance(), this.cacheMinutes * -1, DateTimeUtils.DATE_PART_MINUTE);
+				expired = this.cached.before(testDate);
+			} catch (Exception e) {}
+			return expired;
 		}
 	}
 }
