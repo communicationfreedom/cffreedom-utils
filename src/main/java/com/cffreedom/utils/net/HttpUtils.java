@@ -310,14 +310,14 @@ public class HttpUtils
 	public static String encodeParams(Map<String, String> params) throws UnsupportedEncodingException
 	{
 		String ret = "";
-		for (Map.Entry<String, String> entry : params.entrySet())
-		{
-			ret += entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), "UTF-8") + "&";
-		}
-		if ((ret.length() > 0) && (ret.charAt(ret.length() - 1) == '&'))
-		{
-			// Strip the last ampersand
-			ret = ret.substring(0, ret.length() - 1);
+		if (params != null) {
+			for (Map.Entry<String, String> entry : params.entrySet()) {
+				ret += entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), "UTF-8") + "&";
+			}
+			if ((ret.length() > 0) && (ret.charAt(ret.length() - 1) == '&')) {
+				// Strip the last ampersand
+				ret = ret.substring(0, ret.length() - 1);
+			}
 		}
 		return ret;
 	}
