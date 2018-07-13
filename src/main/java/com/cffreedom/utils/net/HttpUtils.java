@@ -210,14 +210,11 @@ public class HttpUtils
 		}		
 	}
 
-	public static String httpGetWithReqProp(String urlStr, Map<String, String> reqProps) throws NetworkException
-	{
-		try
-		{
+	public static String httpGetWithReqProp(String urlStr, Map<String, String> reqProps) throws NetworkException {
+		try {
 			URL url = new URL(urlStr);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			for (String key : reqProps.keySet())
-			{
+			for (String key : reqProps.keySet()) {
 				conn.setRequestProperty(key, reqProps.get(key));
 			}
 	
@@ -236,22 +233,33 @@ public class HttpUtils
 	
 			conn.disconnect();
 			return sb.toString();
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			throw new NetworkException("Error during httpGetWithReqProp: " + e.getMessage(), e);
 		}
 	}
 	
-	public static String httpPost(String urlStr, Map<String, String> queryParams) throws GeneralException, NetworkException { return httpPost(urlStr, queryParams, null); }
-	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps) throws GeneralException, NetworkException { return httpPost(urlStr, queryParams, reqProps, true); }
-	public static String httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> reqProps, boolean setupProxy) throws GeneralException, NetworkException
-	{
-		try
-		{
-			int responseCode = 0;
-			StringBuilder response = new StringBuilder();
-			String urlParameters = encodeParams(queryParams);
+	public static Response httpPost(String urlStr, Map<String, String> postParams) { return httpPost(urlStr, null, postParams); }
+	public static Response httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> postParams) { return httpPost(urlStr, queryParams, postParams, null); }
+	public static Response httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> postParams, Map<String, String> reqProps) { return httpPost(urlStr, queryParams, postParams, reqProps, true); }
+	
+	/**
+	 * Perform an HTTP POST
+	 * @param urlStr The URL to post to (optionally including any query parameters, or use queryParams variable)
+	 * @param queryParams Key value pairs to add to the query string of the URL
+	 * @param postParams The key value pairs to post to the URL
+	 * @param reqProps Any request properties like "User-Agent"
+	 * @param setupProxy Attempt to setup proxy using system/env values if set to true 
+	 * @return The response
+	 */
+	public static Response httpPost(String urlStr, Map<String, String> queryParams, Map<String, String> postParams, Map<String, String> reqProps, boolean setupProxy) {
+		Response response = new Response(false, 0, "", "", "");
+		response.setBooleanCode(false);
+		response.setErrorLevel(Response.ErrorLevel.ERROR);
+		
+		try {
+			StringBuilder responseSb = new StringBuilder();
+			String postParameters = encodeParams(postParams);
+			urlStr = buildUrl(urlStr, queryParams);
 			
 			if (setupProxy == true) { setupProxy(); }
 			
@@ -259,10 +267,8 @@ public class HttpUtils
 			URL url = new URL(urlStr);
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			
-			if (reqProps != null)
-			{
-				for (String key : reqProps.keySet())
-				{
+			if (reqProps != null) {
+				for (String key : reqProps.keySet()) {
 					conn.setRequestProperty(key, reqProps.get(key));
 				}
 			}
@@ -273,42 +279,46 @@ public class HttpUtils
 			conn.setRequestMethod("POST"); 
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
 			conn.setRequestProperty("charset", "utf-8");
-			conn.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+			conn.setRequestProperty("Content-Length", "" + Integer.toString(postParameters.getBytes().length));
 			conn.setUseCaches(false);
 	
 			DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-			wr.writeBytes(urlParameters);
+			wr.writeBytes(postParameters);
 			wr.flush();
 			wr.close();
 	
-			responseCode = conn.getResponseCode();
+			response.setIntCode(conn.getResponseCode());
 			
-			if ((responseCode == 200) || (responseCode == 301) || (responseCode == 302))
-			{
+			if ((response.getIntCode() == 200) || (response.getIntCode() == 301) || (response.getIntCode() == 302)) {
 				// Buffer the result into a string
 				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 				String line;
 				while ((line = rd.readLine()) != null) {
-					response.append(line);
+					responseSb.append(line);
 				}
 				rd.close();
+				response.setDetail(responseSb.toString());
 			}
 			
 			conn.disconnect();
 			
-			if (responseCode != 200) {
-				throw new GeneralException("Bad Response Code: " + responseCode);
+			if (response.getIntCode() == 200) {
+				response.setBooleanCode(true);
+				response.setErrorLevel(Response.ErrorLevel.INFO);
+			} else if ((response.getIntCode() == 301) || (response.getIntCode() == 302)) {
+				response.setErrorLevel(Response.ErrorLevel.WARN);
+				response.setMessage("Redirect");
 			}
-			return response.toString();
+		} catch (IOException e) {
+			logger.error("Error during httpPost: " + e.getMessage(), e);
+			response.setMessage(e.getMessage());
+			response.setErrorLevel(Response.ErrorLevel.ERROR);
 		}
-		catch (IOException e)
-		{
-			throw new NetworkException("Error during httpPost: " + e.getMessage(), e);
-		}
+		
+		return response;
 	}
 	
-	public static String encodeParams(Map<String, String> params) throws UnsupportedEncodingException
-	{
+	public static String encodeParams(Map<String, String> params) throws UnsupportedEncodingException {
 		String ret = "";
 		if (params != null) {
 			for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -322,14 +332,10 @@ public class HttpUtils
 		return ret;
 	}
 	
-	public static void setupProxy()
-	{		
-		if (System.getProperties().get("http.proxyHost") != null)
-		{
+	public static void setupProxy() {		
+		if (System.getProperties().get("http.proxyHost") != null) {
 			logger.debug("Proxy already setup via system properties");
-		}
-		else
-		{
+		} else {
 			String proxy = null;
 			String envVar = null;
 			if ((envVar == null) && (SystemUtils.getEnvVal("HTTP_PROXY") != null)) { envVar = "HTTP_PROXY"; }
@@ -337,34 +343,28 @@ public class HttpUtils
 			if ((envVar == null) && (SystemUtils.getEnvVal("http_proxy") != null)) { envVar = "http_proxy"; }
 			if ((envVar == null) && (SystemUtils.getEnvVal("https_proxy") != null)) { envVar = "https_proxy"; }
 			
-			if (envVar != null)
-			{
+			if (envVar != null) {
 				logger.debug("Setting up proxy from env var = {}", envVar);
 				proxy = SystemUtils.getEnvVal(envVar);
 				String[] parts = proxy.split("@");
-				if (parts.length == 1)
-				{
+				if (parts.length == 1) {
 					String[] serverParts = parts[0].split(":");
 					
 					System.getProperties().put("http.proxyHost", serverParts[0]);
 					System.getProperties().put("https.proxyHost", serverParts[0]);
 					
-					if (serverParts.length > 1)
-					{
+					if (serverParts.length > 1) {
 						System.getProperties().put("http.proxyPort", serverParts[1]);
 						System.getProperties().put("https.proxyPort", serverParts[1]);
 					}
-				}
-				else if (parts.length == 2)
-				{
+				} else if (parts.length == 2) {
 					String[] userParts = parts[0].replace("http://", "").split(":");
 					String[] serverParts = parts[1].split(":");
 					
 					System.getProperties().put("http.proxyUser", userParts[0]);
 					System.getProperties().put("https.proxyUser", userParts[0]);
 					
-					if (userParts.length > 1)
-					{
+					if (userParts.length > 1) {
 						System.getProperties().put("http.proxyPassword", userParts[1]);
 						System.getProperties().put("https.proxyPassword", userParts[1]);
 					}
@@ -372,8 +372,7 @@ public class HttpUtils
 					System.getProperties().put("http.proxyHost", serverParts[0]);
 					System.getProperties().put("https.proxyHost", serverParts[0]);
 					
-					if (serverParts.length > 1)
-					{
+					if (serverParts.length > 1) {
 						System.getProperties().put("http.proxyPort", serverParts[1]);
 						System.getProperties().put("https.proxyPort", serverParts[1]);
 					}
