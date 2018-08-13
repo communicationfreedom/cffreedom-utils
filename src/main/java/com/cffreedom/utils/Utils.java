@@ -167,6 +167,7 @@ public class Utils
     public static boolean isEmail(String val) {
     	boolean result = false;
     	if 	(
+    		(val != null) &&
     		(val.length() > 7) && 
     		val.contains("@") && 
     		val.contains(".") &&
