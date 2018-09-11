@@ -477,24 +477,23 @@ public class HttpUtils
 	 * @param url
 	 * @return
 	 */
-	public static String getScript(String url)
-	{
+	public static String getScript(String url) {
+		String script = "";
 		String protocol = getProtocol(url);
 		String domain = getDomain(url);
 		String qs = getQueryString(url);
 		
-		url = url.replace(protocol + "://" + domain, "");
+		script = url.replace(protocol + "://" + domain, "");
 		
-		if (qs.length() > 0)
-		{
-			url = url.replace("?" + qs, "");
-		}
-		else if (url.substring(url.length() - 1).equalsIgnoreCase("?") == true)
-		{
-			url = url.substring(0, url.length() - 1);
+		if (script.length() == 0) {
+			script = "";
+		} else if (qs.length() > 0) {
+			script = script.replace("?" + qs, "");
+		} else if (script.substring(script.length() - 1).equalsIgnoreCase("?")) {
+			script = script.substring(0, url.length() - 1);
 		}
 		
-		return url;
+		return script;
 	}
 	
 	/**
