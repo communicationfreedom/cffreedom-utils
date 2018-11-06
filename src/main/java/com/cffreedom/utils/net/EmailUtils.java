@@ -129,6 +129,7 @@ public class EmailUtils
 		} else {
 			message.setFrom(new InternetAddress(msg.getFrom()));
 		}
+		message.setReplyTo(new javax.mail.Address[]{new InternetAddress(msg.getFrom())});
 		
 		for (String email : toArray) {
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
