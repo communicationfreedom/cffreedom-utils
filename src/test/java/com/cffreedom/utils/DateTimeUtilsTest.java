@@ -78,4 +78,11 @@ public class DateTimeUtilsTest
 		two = DateTimeUtils.standardizeDate("2015/10/03");
 		assertTrue(DateTimeUtils.datesEqual(one, two, true));
 	}
+	
+	@Test
+	public void testDateDiff() {
+		assertEquals(4, DateTimeUtils.dateDiff(DateTimeUtils.setDate(2014, 9, 1), DateTimeUtils.setDate(2018, 10, 1), DateTimeUtils.DATE_PART_YEAR));
+		assertEquals(0, DateTimeUtils.dateDiff(DateTimeUtils.setDate(2014, 9, 1), DateTimeUtils.setDate(2015, 8, 30), DateTimeUtils.DATE_PART_YEAR));
+		assertEquals(1, DateTimeUtils.dateDiff(DateTimeUtils.setDate(2014, 9, 1), DateTimeUtils.setDate(2015, 9, 2), DateTimeUtils.DATE_PART_YEAR));
+	}
 }

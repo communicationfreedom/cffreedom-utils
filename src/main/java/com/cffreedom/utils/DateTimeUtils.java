@@ -282,6 +282,13 @@ public class DateTimeUtils extends Format {
         long days = hours / 24L;
                                        
         switch (datePart) {
+        	case (DATE_PART_YEAR):
+        		ret = year(dayTwo) - year(dayOne);
+        		if (month(dayOne) > month(dayTwo) || ((month(dayOne) == month(dayTwo)) && (day(dayOne) > day(dayTwo)))) {
+        			ret--;
+        		}
+        		break;
+        		
         	case (DATE_PART_MONTH):
         		int monthsOne = (year(dayOne) * 12) + month(dayOne);
         		int monthsTwo = (year(dayTwo) * 12) + month(dayTwo);
