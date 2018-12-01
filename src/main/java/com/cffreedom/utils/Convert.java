@@ -569,13 +569,17 @@ public class Convert
     }
     
     public static BigDecimal toBigDecimal(String val) {
-    	DecimalFormat df = (DecimalFormat)NumberFormat.getInstance(Locale.getDefault());
-    	df.setParseBigDecimal(true);
-    	try {
-			return ((BigDecimal)df.parseObject(val));
-		} catch (ParseException e) {
-			throw new NumberFormatException(val+" is not a valid BigDecimal");
-		}
+    	if (val == null) {
+    		return null;
+    	} else {
+	    	DecimalFormat df = (DecimalFormat)NumberFormat.getInstance(Locale.getDefault());
+	    	df.setParseBigDecimal(true);
+	    	try {
+				return ((BigDecimal)df.parseObject(val));
+			} catch (ParseException e) {
+				throw new NumberFormatException(val+" is not a valid BigDecimal");
+			}
+    	}
     }
     
     public static BigDecimal toBigDecimal(int val) {
@@ -603,13 +607,17 @@ public class Convert
     }
     
     public static BigInteger toBigInteger(String val) {
-    	DecimalFormat df = (DecimalFormat)NumberFormat.getInstance(Locale.getDefault());
-    	df.setParseBigDecimal(true);
-    	try {
-			return ((BigDecimal)df.parseObject(val)).toBigInteger();
-		} catch (ParseException e) {
-			throw new NumberFormatException(val+" is not a valid BigInteger");
-		}
+    	if (val == null) {
+    		return null;
+    	} else {
+	    	DecimalFormat df = (DecimalFormat)NumberFormat.getInstance(Locale.getDefault());
+	    	df.setParseBigDecimal(true);
+	    	try {
+				return ((BigDecimal)df.parseObject(val)).toBigInteger();
+			} catch (ParseException e) {
+				throw new NumberFormatException(val+" is not a valid BigInteger");
+			}
+    	}
     }
 
     public static int toCents(BigDecimal dollarAmt) {
