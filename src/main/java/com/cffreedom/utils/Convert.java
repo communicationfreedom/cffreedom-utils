@@ -57,30 +57,25 @@ import org.slf4j.LoggerFactory;
  * 2014-11-25 	MarkJacobsen.net 	Added toStringList(List<String>, delimiter)
  * 2015-05-07 	MarkJacobsen.net 	Added toSqlDate(Calendar)
  */
-public class Convert
-{
+public class Convert {
 	private static final Logger logger = LoggerFactory.getLogger("com.cffreedom.utils.Convert");
 	
-	public static String toBase64(String val)
-	{
+	public static String toBase64(String val) {
 		return new String(Base64.encodeBase64(val.getBytes()));
 	}
 	
-	public static String toSHA512(String val, String salt) throws NoSuchAlgorithmException
-	{
+	public static String toSHA512(String val, String salt) throws NoSuchAlgorithmException {
 	    MessageDigest md = MessageDigest.getInstance("SHA-512");
         md.update(salt.getBytes());
         byte[] bytes = md.digest(val.getBytes());
         StringBuilder sb = new StringBuilder();
-        for(int i=0; i< bytes.length ;i++)
-        {
+        for(int i=0; i< bytes.length; i++) {
             sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
         }
         return sb.toString();
 	}
 
-	public static String toMd5(String val) throws NoSuchAlgorithmException
-	{
+	public static String toMd5(String val) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		md.update(val.getBytes());
 
@@ -96,8 +91,7 @@ public class Convert
 
 		// convert the byte to hex format method 2
 		StringBuffer hexString = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++)
-		{
+		for (int i = 0; i < byteData.length; i++) {
 			String hex = Integer.toHexString(0xff & byteData[i]);
 			if (hex.length() == 1)
 				hexString.append('0');
@@ -107,49 +101,40 @@ public class Convert
 		return hexString.toString();
 	}
 	
-	public static String toDelimitedString(String[] vals, String delimiter)
-	{
+	public static String toDelimitedString(String[] vals, String delimiter) {
 		String ret = "";
-		for (String val : vals)
-		{
+		for (String val : vals) {
 			ret += val + delimiter;
 		}
 		return ret.substring(0, ret.length() - 1);
 	}
 	
-	public static String toDelimitedString(Set<String> vals, String delimiter)
-	{
+	public static String toDelimitedString(Set<String> vals, String delimiter) {
 		String ret = "";
-		for (String val : vals)
-		{
+		for (String val : vals) {
 			ret += val + delimiter;
 		}
 		return ret.substring(0, ret.length() - 1);
 	}
 	
 	public static String toString(Date val) { return toString(val, Format.DATE_TIMESTAMP); }
-	public static String toString(Date val, String mask)
-	{
+	public static String toString(Date val, String mask) {
 		return Format.date(mask, val);
 	}
 
-	public static String toString(Long val)
-	{
+	public static String toString(Long val) {
 		return String.valueOf(val.longValue());
 	}
 	
-	public static String toString(int val)
-    {
+	public static String toString(int val) {
         return (new Integer(val)).toString();
     }
 	
-	public static String toString(byte val)
-	{
+	public static String toString(byte val) {
 		return Byte.toString(val);
 	}
 	
-	public static String toString(byte[] val)
-	{
+	public static String toString(byte[] val) {
 		return new String(val);
 	}
 	
@@ -158,24 +143,20 @@ public class Convert
 	 * @param val
 	 * @return
 	 */
-	public static String toString(boolean val)
-	{
+	public static String toString(boolean val) {
 		if (val == true) { return "true"; }
 		else { return "false"; }
 	}
 	
-	public static String toString(char val)
-	{
+	public static String toString(char val) {
 		return Character.toString(val);
 	}
 	
-	public static String toString(char[] val)
-	{
+	public static String toString(char[] val) {
 		return new String(val);
 	}
 	
-	public static String toString(InputStream val) throws IOException
-	{
+	public static String toString(InputStream val) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		String line = null;
 		BufferedReader br = new BufferedReader(new InputStreamReader(val));
@@ -190,23 +171,18 @@ public class Convert
 	 * @param vals
 	 * @return
 	 */
-	public static String toStringList(List<String> vals, String delimiter)
-	{
+	public static String toStringList(List<String> vals, String delimiter) {
 		if (vals == null) { return null; }
 		
 		String ret = "";
 		
-		if (vals.size() > 0)
-		{
-			for (String val : vals)
-			{
+		if (vals.size() > 0) {
+			for (String val : vals) {
 				ret += val + delimiter;
 			}
 			
 			return ret.substring(0, ret.length() - delimiter.length());
-		}
-		else
-		{
+		} else {
 			return "";
 		}
 	}
@@ -216,13 +192,10 @@ public class Convert
 	 * @param vals
 	 * @return
 	 */
-	public static List<String> toListOfStrings(String[] vals)
-	{
+	public static List<String> toListOfStrings(String[] vals) {
 		List<String> ret = new ArrayList<String>();
-		if (vals != null)
-		{
-			for (int x = 0; x < vals.length; x++)
-			{
+		if (vals != null) {
+			for (int x = 0; x < vals.length; x++) {
 				ret.add(vals[x]);
 			}
 		}
@@ -236,14 +209,11 @@ public class Convert
 	 * @param trimWhiteSpace
 	 * @return
 	 */
-	public static List<String> toListOfStrings(String val, String regexDelimiter, boolean trimWhiteSpace)
-	{
+	public static List<String> toListOfStrings(String val, String regexDelimiter, boolean trimWhiteSpace) {
 		String[] vals = null;
-		if (val != null)
-		{
+		if (val != null) {
 			vals = val.split(regexDelimiter);
-			if (trimWhiteSpace == true)
-			{
+			if (trimWhiteSpace) {
 				for (int x = 0; x < vals.length; x++) {
 					vals[x] = vals[x].trim();
 				}
@@ -415,10 +385,8 @@ public class Convert
     public static java.util.Date toDate(String val, String mask) {
         String retVal = val;
        
-        try
-        {
-        	if (mask.compareTo(Format.DATE_DEFAULT) == 0)
-            {
+        try {
+        	if (mask.compareTo(Format.DATE_DEFAULT) == 0) {
         		String[] parts = val.split("/"); // split(a_sVal, "/");
                 if ( (parts.length == 3) && (parts[2].length() != 4) )
                 {
@@ -427,15 +395,11 @@ public class Convert
                     year = year + parts[2];
                     retVal = parts[0] + "/" + parts[1] + "/" + year;
                 }
-            }
-        	else if (mask.compareTo(Format.DATE_FILE_TIMESTAMP) == 0)
-        	{
+            } else if (mask.compareTo(Format.DATE_FILE_TIMESTAMP) == 0) {
         		String tmp = val.substring(5, val.length()) + "-" + val.substring(0, 4);
         		retVal = tmp.replace('-', '/');
         		mask = Format.DATE_DEFAULT; // Have to reset it to parse correctly
-        	}
-        	else if (mask.compareTo(Format.DATE_TIMESTAMP) == 0)
-        	{
+        	} else if (mask.compareTo(Format.DATE_TIMESTAMP) == 0) {
         		String tmp = val.substring(5, 10) + "-" + val.substring(0, 4) + " " + val.substring(11, val.length());
         		retVal = tmp.replace('-', '/');
         		mask = "MM/dd/yyyy HH:mm:ss"; // Have to use to parse correctly
@@ -569,7 +533,7 @@ public class Convert
     }
     
     public static BigDecimal toBigDecimal(String val) {
-    	if (val == null) {
+    	if (!Utils.hasLength(val)) {
     		return null;
     	} else {
 	    	DecimalFormat df = (DecimalFormat)NumberFormat.getInstance(Locale.getDefault());
@@ -607,7 +571,7 @@ public class Convert
     }
     
     public static BigInteger toBigInteger(String val) {
-    	if (val == null) {
+    	if (!Utils.hasLength(val)) {
     		return null;
     	} else {
 	    	DecimalFormat df = (DecimalFormat)NumberFormat.getInstance(Locale.getDefault());
