@@ -147,7 +147,7 @@ public class EmailUtils
 			}
 		}
 		
-		message.setSubject(msg.getSubject());
+		message.setSubject(msg.getSubject(), "utf-8");
 		
 		try
 		{
