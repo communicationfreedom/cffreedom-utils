@@ -161,7 +161,7 @@ public class EmailUtils
 				if (Utils.hasLength(msg.getBodyHtml()) == true){
 					messageBodyPart.setContent(msg.getBodyHtml(), "text/html; charset=utf-8");
 				}else{
-					messageBodyPart.setText(msg.getBody());
+					messageBodyPart.setText(msg.getBody(), "utf-8");
 				}
 		        multipart.addBodyPart(messageBodyPart);
 				
