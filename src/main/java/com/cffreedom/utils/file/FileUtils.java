@@ -66,15 +66,16 @@ public class FileUtils
 	}
 	
 	/**
-	 * Get the file extension. If there is no period return a zero length string.
+	 * Get the file extension. If there is no period or the last period is before the last / or \ return a zero length string.
 	 * 
 	 * @param file File to get the extension for
 	 * @return the file extension (does NOT include the .)
 	 */
-	public static String getFileExtension(String file)
-	{
+	public static String getFileExtension(String file) {
 		int period = file.lastIndexOf(".");
-		if (period < 0) {
+		int lastForwardSlash = file.lastIndexOf("/");
+		int lastBackwardSlash = file.lastIndexOf("\\");
+		if ((period < 0) || (lastForwardSlash > period) || (lastBackwardSlash > period)) {
 			return "";
 		} else {
 			return file.substring(period + 1, file.length());

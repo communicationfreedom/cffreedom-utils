@@ -47,6 +47,8 @@ public class FileUtilsTest
 		assertEquals("txt", FileUtils.getFileExtension("somefile.txt"));
 		assertEquals("txt", FileUtils.getFileExtension("somefile.withextradot.txt"));
 		assertEquals("", FileUtils.getFileExtension("somefile"));
+		assertEquals("", FileUtils.getFileExtension("somedomain.com/myfile"));
+		assertEquals("jpg", FileUtils.getFileExtension("somedomain.com/myfile.jpg"));
 	}
 	
 	@Test
