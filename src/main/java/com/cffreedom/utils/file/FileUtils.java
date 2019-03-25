@@ -661,7 +661,7 @@ public class FileUtils
 			if (!folder.exists()) {
 				return folder.mkdir();
 			} else {
-				return false;
+				return true;
 			}
 		} catch (Exception e) {
 			logger.error("Error creating folder "+path, e);
@@ -695,7 +695,7 @@ public class FileUtils
 			if (!file.exists()) {
 				return file.createNewFile();
 			} else {
-				return false;
+				return true;
 			}
 		} catch (Exception e) {
 			logger.error("Error creating file "+path, e);
