@@ -650,28 +650,21 @@ public class FileUtils
 	 * @return True on success, false otherwise
 	 * @throws Exception
 	 */
-	public static boolean createFolder(String path, boolean overwrite)
-	{
-		try
-		{
+	public static boolean createFolder(String path, boolean overwrite) {
+		try {
 			File folder = new File(path);
 
-			if ((overwrite == true) && (folder.exists() == true))
-			{
+			if (overwrite && folder.exists()) {
 				folder.delete();
 			}
 
-			if (folder.exists() == false)
-			{
+			if (!folder.exists()) {
 				return folder.mkdir();
-			}
-			else
-			{
+			} else {
 				return false;
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
+			logger.error("Error creating folder "+path, e);
 			return false;
 		}
 	}
@@ -683,38 +676,29 @@ public class FileUtils
 	 * @return True on success, false otherwise
 	 * @throws Exception
 	 */
-	public static boolean createFolder(String path)
-	{
+	public static boolean createFolder(String path) {
 		return createFolder(path, false);
 	}
 
-	public static boolean createFile(String path)
-	{
+	public static boolean createFile(String path) {
 		return createFile(path, false);
 	}
 
-	public static boolean createFile(String path, boolean overwrite)
-	{
-		try
-		{
+	public static boolean createFile(String path, boolean overwrite) {
+		try {
 			File file = new File(path);
 
-			if ((overwrite == true) && (file.exists() == true))
-			{
+			if (overwrite && file.exists()) {
 				file.delete();
 			}
 
-			if (file.exists() == false)
-			{
+			if (!file.exists()) {
 				return file.createNewFile();
-			}
-			else
-			{
+			} else {
 				return false;
 			}
-		}
-		catch (IOException e)
-		{
+		} catch (Exception e) {
+			logger.error("Error creating file "+path, e);
 			return false;
 		}
 	}
