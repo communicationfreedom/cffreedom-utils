@@ -213,6 +213,10 @@ public class EmailUtils
 				message.setText(msg.getBody());
 			}
 		}
+		
+		if (Utils.hasLength(msg.getInReplyTo())) {
+			message.setHeader("In-Reply-To", msg.getInReplyTo());
+		}
         
 		logger.trace("Sending message to {}, cc {}, bcc {}, from {} w/ subject: {}", msg.getTo(), msg.getCc(), msg.getBcc(), msg.getFrom(), msg.getSubject());
 		
