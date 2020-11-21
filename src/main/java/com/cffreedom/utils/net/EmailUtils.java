@@ -123,7 +123,6 @@ public class EmailUtils
 		Session session = Session.getDefaultInstance(sysProps, null);
         
 		MimeMessage message = new MimeMessage(session);
-		msg.setMessageId(message.getMessageID());
 		
 		if (Utils.hasLength(msg.getFromName()) == true) {
 			message.setFrom(new InternetAddress(msg.getFrom(), msg.getFromName()));
@@ -225,6 +224,9 @@ public class EmailUtils
 		}else{
 			Transport.send(message);
 		}
+		
+		// This has to be done after sending the message because the ID is generated when sending
+		msg.setMessageId(message.getMessageID());
     }
     
     private static List<String> getRecipientArray(String recipients) {
