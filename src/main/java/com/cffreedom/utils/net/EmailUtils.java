@@ -123,6 +123,7 @@ public class EmailUtils
 		Session session = Session.getDefaultInstance(sysProps, null);
         
 		MimeMessage message = new MimeMessage(session);
+		msg.setMessageId(message.getMessageID());
 		
 		if (Utils.hasLength(msg.getFromName()) == true) {
 			message.setFrom(new InternetAddress(msg.getFrom(), msg.getFromName()));
