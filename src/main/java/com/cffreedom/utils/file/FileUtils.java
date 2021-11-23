@@ -95,6 +95,18 @@ public class FileUtils
 	}
 
 	/**
+	 * Get just the directory name from a full path ex: c:\temp\junk.txt would return c:\temp
+	 * 
+	 * @param fullPath Full path of the file to get the directory name for
+	 * @return Directory name
+	 */
+	public static String getFileDirectory(String fullPath)
+	{
+		File file = new File(fullPath);
+		return file.getParent();
+	}
+
+	/**
 	 * Same thing as getFileName, but removes the extension
 	 * 
 	 * @param fullPath Full path of the file to get the file name for
