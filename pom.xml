@@ -60,14 +60,14 @@
 			<version>2.10.0</version>
 		</dependency>
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.2.7</version>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.12</version>
+			<version>1.7.32</version> <!-- prev: 1.7.12 -->
+			<!-- 
+			Intentionally not including a logging impl 
+			like: ch.qos.logback | logback-classic | 1.2.7
+			because your impl should be providing it 
+			-->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
