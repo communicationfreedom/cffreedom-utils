@@ -4,8 +4,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import org.slf4j.Logger;
@@ -438,6 +441,9 @@ public class DateTimeUtils extends Format {
     }
     
     public static Calendar setTime(Calendar date, int hour24, int minute, int second, int millisecond) {
+    	if (date == null) {
+    		date = Calendar.getInstance();
+    	}
     	date.set(Calendar.HOUR_OF_DAY, hour24);
     	date.set(Calendar.MINUTE, minute);
     	date.set(Calendar.SECOND, second);
@@ -462,45 +468,32 @@ public class DateTimeUtils extends Format {
     }
     
     /**
-     * Convert a date in GMT to the local time
-     * 
-     * Hat tip to: http://stackoverflow.com/questions/10599109/how-to-convert-a-local-date-to-gmt
+     * Convert a date in GMT to the local time.
+     * Note, the TimeZone on the passed in date is ignored and assumed to be UTC/GMT.
      * 
      * @param date Date with GMT value
      * @return Date in the local time
      */
     public static Date gmtToLocal(Date gmtDate) {
-    	try {
-    		TimeZone localTimeZone = Calendar.getInstance().getTimeZone();
-    		Date ret = new Date(gmtDate.getTime() - localTimeZone.getRawOffset());
-    		
-    		// If we are now in DST, back off by the delta.  
-    		// Note that we are checking the GMT date, this is the KEY.
-    		if (localTimeZone.inDaylightTime(gmtDate) == true) {
-    			Date dstDate = new Date(ret.getTime() - localTimeZone.getDSTSavings());
-    			
-    			// Check to make sure we have not crossed back into standard time.
-                // This happens when we are on the cusp of DST (7pm the day before the change for PDT)
-    			if (localTimeZone.inDaylightTime(dstDate) == true) {
-    				ret = dstDate;
-    			}
-    		}
-    		
-    		return ret;
-        }
-    	catch (Exception e) {e.printStackTrace(); return null; }
+    	return Convert.toDate(gmtToLocal(Convert.toCalendar(gmtDate)));
     }
     
     /**
-     * Convert a date in GMT to the local time
-     * 
-     * Hat tip to: http://stackoverflow.com/questions/10599109/how-to-convert-a-local-date-to-gmt
-     * 
+     * Convert a date in GMT to the local time.
+     * Note, the TimeZone on the passed in date is ignored and assumed to be UTC/GMT.
+     *  
      * @param date Date with GMT value
      * @return Date in the local time
      */
     public static Calendar gmtToLocal(Calendar gmtCalendar) {
-    	return Convert.toCalendar(gmtToLocal(Convert.toDate(gmtCalendar)));
+		Calendar ret = (Calendar)gmtCalendar.clone();
+		
+		//logger.debug(hour(ret)+" <- hour before convert");
+		long offset = ret.getTimeZone().getOffset((new Date()).getTime());
+		ret.add(Calendar.MILLISECOND, Convert.toInt(offset));
+		//logger.debug(hour(ret)+" <- hour after convert");
+		
+		return ret;
     }
     
     public static Calendar standardizeDate(String val) {
@@ -518,7 +511,8 @@ public class DateTimeUtils extends Format {
             	Format.DATE_FILE,
             	"MM-dd-yyyy",
             	Format.DATE_TIMESTAMP_DEFAULT,
-            	"MMddyyyy"
+            	"MMddyyyy",
+            	"yyyy-MM-dd'T'HH:mm'Z'"
             };
         
         Calendar result = null;

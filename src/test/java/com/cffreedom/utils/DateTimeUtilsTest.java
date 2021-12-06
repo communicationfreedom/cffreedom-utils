@@ -85,4 +85,12 @@ public class DateTimeUtilsTest
 		assertEquals(0, DateTimeUtils.dateDiff(DateTimeUtils.setDate(2014, 9, 1), DateTimeUtils.setDate(2015, 8, 30), DateTimeUtils.DATE_PART_YEAR));
 		assertEquals(1, DateTimeUtils.dateDiff(DateTimeUtils.setDate(2014, 9, 1), DateTimeUtils.setDate(2015, 9, 2), DateTimeUtils.DATE_PART_YEAR));
 	}
+	
+	@Test
+	public void testGmtUtc() {
+		Calendar gmt = DateTimeUtils.standardizeDate("2021-12-05T18:00Z");
+		assertEquals(6, gmt.get(Calendar.HOUR));
+		Calendar local = DateTimeUtils.gmtToLocal(gmt);
+		assertEquals(1, local.get(Calendar.HOUR));
+	}
 }

@@ -29,11 +29,6 @@
 	</build>
     
     <dependencies>
-    	<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
-		</dependency>
 		<dependency>
 			<groupId>com.cffreedom</groupId>
 			<artifactId>cffreedom-beans</artifactId>
@@ -60,16 +55,6 @@
 			<version>2.10.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.32</version> <!-- prev: 1.7.12 -->
-			<!-- 
-			Intentionally not including a logging impl 
-			like: ch.qos.logback | logback-classic | 1.2.7
-			because your impl should be providing it 
-			-->
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
 			<version>2.1.1</version>
@@ -78,6 +63,29 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.32</version> <!-- prev: 1.7.12 -->
+			<!-- 
+			Intentionally not including a logging impl (outside of test scope) 
+			like: ch.qos.logback | logback-classic | 1.2.7
+			because your impl should be providing it 
+			-->
+		</dependency>
+		<!-- Test only dependencies -->
+    	<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.7</version>
+			<scope>test</scope>
 		</dependency>
      </dependencies>
 </project>
