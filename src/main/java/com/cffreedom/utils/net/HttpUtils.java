@@ -174,6 +174,7 @@ public class HttpUtils
 			}
 			
 			response.setIntCode(conn.getResponseCode());
+			response.setHeaders(conn.getHeaderFields());
 	
 			if (conn.getResponseCode() != 200) 
 			{
@@ -288,6 +289,7 @@ public class HttpUtils
 			wr.close();
 	
 			response.setIntCode(conn.getResponseCode());
+			response.setHeaders(conn.getHeaderFields());
 			
 			if ((response.getIntCode() == 200) || (response.getIntCode() == 301) || (response.getIntCode() == 302)) {
 				// Buffer the result into a string
